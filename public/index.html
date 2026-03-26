@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accueil - Horlogerie Prestige</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              beige: '#f1f1eb',
+              ivory: '#fcfcf8',
+              green: '#0f4b22',
+              sage: '#4f6e5b'
+            }
+          },
+          fontFamily: {
+            title: ['Cormorant Garamond', 'serif'],
+            body: ['Playfair Display', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="font-body text-lg min-h-screen text-brand-green/90">
+  <div class="min-h-screen flex flex-col">
+    <header class="sticky top-0 z-20 bg-brand-ivory/85 border-b border-brand-green/20 backdrop-blur">
+      <nav class="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
+        <a href="index.html" class="font-title text-2xl font-semibold tracking-wide flex items-center gap-3">
+          <img src="logo-projet.png" alt="Logo HEH Time" class="h-10 w-10 object-contain" />
+          <span>HEH Time</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6 text-lg">
+          <a href="index.html" class="hover:text-brand-green">Collection</a>
+          <a href="admin.html" class="hover:text-brand-green">Panel admin</a>
+          <a href="#footer" class="hover:text-brand-green">A propos</a>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="connexion.html" class="px-4 py-2 border border-brand-green/40 rounded-full hover:bg-brand-green/5 transition">Connexion</a>
+          <a href="inscription.html" class="px-4 py-2 rounded-full bg-brand-green text-brand-ivory cta-highlight">Inscription</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="flex-1 soft-grid">
+      <section class="mx-auto max-w-6xl px-6 py-10">
+        <div>
+            <p class="uppercase tracking-[0.35em] text-sm text-brand-sage">Projet technologie mobile</p>
+            <h1 class="font-title text-5xl md:text-6xl mt-3">Collection de montres elegante</h1>
+            <p class="text-2xl mt-4 max-w-xl">Filtrez, explorez et decouvrez les details de chaque montre en un coup d oeil.</p>
+            <div class="mt-6 flex gap-3">
+              <a href="#catalogue" class="px-5 py-3 rounded-full bg-brand-green text-brand-ivory cta-highlight">Voir la collection</a>
+              <a href="connexion.html" class="px-5 py-3 rounded-full border border-brand-green/35 hover:bg-brand-green/5">Emprunter une montre</a>
+            </div>
+        </div>
+      </section>
+
+      <section id="catalogue" class="mx-auto max-w-6xl px-6 pb-14">
+        <div class="grid lg:grid-cols-[1fr_300px] gap-7 items-start">
+          <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-6" id="watchGrid">
+          <article class="watch-card bg-brand-ivory border border-brand-green/15 rounded-2xl overflow-hidden" data-category="Classique">
+            <img src="https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=900&q=80" alt="Montre classique" class="h-52 w-full object-cover" />
+            <div class="p-5">
+              <h3 class="font-title text-2xl">Horizon 38</h3>
+              <p class="text-lg text-brand-sage">Categorie: Classique</p>
+              <p class="text-lg mt-2">Boitier acier, bracelet cuir, reserve 42h</p>
+            </div>
+          </article>
+
+          <article class="watch-card bg-brand-ivory border border-brand-green/15 rounded-2xl overflow-hidden" data-category="Sport">
+            <img src="https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&w=900&q=80" alt="Montre sport" class="h-52 w-full object-cover" />
+            <div class="p-5">
+              <h3 class="font-title text-2xl">Pulse X</h3>
+              <p class="text-lg text-brand-sage">Categorie: Sport</p>
+              <p class="text-lg mt-2">Etanche 200m, chrono, verre saphir</p>
+            </div>
+          </article>
+
+          <article class="watch-card bg-brand-ivory border border-brand-green/15 rounded-2xl overflow-hidden" data-category="Luxe">
+            <img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=900&q=80" alt="Montre luxe" class="h-52 w-full object-cover" />
+            <div class="p-5">
+              <h3 class="font-title text-2xl">Imperial Gold</h3>
+              <p class="text-lg text-brand-sage">Categorie: Luxe</p>
+              <p class="text-lg mt-2">Edition limitee, mecanique auto, 18k</p>
+            </div>
+          </article>
+          </div>
+
+          <aside class="glass-panel border border-brand-green/20 rounded-3xl p-6 lg:sticky lg:top-24">
+            <h2 class="font-title text-3xl">Filtrer</h2>
+            <p class="text-xl mt-2 text-brand-sage">Par categorie, comme un panneau de tri sur la droite.</p>
+            <div class="mt-5 flex flex-wrap lg:flex-col gap-2" id="filterButtons">
+              <button data-filter="all" class="filter-btn px-4 py-2 rounded-full bg-brand-green text-brand-ivory text-left">Toutes</button>
+              <button data-filter="Classique" class="filter-btn px-4 py-2 rounded-full border border-brand-green/30 text-left">Classique</button>
+              <button data-filter="Sport" class="filter-btn px-4 py-2 rounded-full border border-brand-green/30 text-left">Sport</button>
+              <button data-filter="Luxe" class="filter-btn px-4 py-2 rounded-full border border-brand-green/30 text-left">Luxe</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer id="footer" class="border-t border-brand-green/15 bg-brand-ivory/90">
+      <div class="mx-auto max-w-6xl px-6 py-6 text-center text-lg md:text-xl">
+        projet technologie mobile - Haute Ecole en Hainaut - Bac 2 Developpement d application
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('#watchGrid article');
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const value = button.dataset.filter;
+
+        buttons.forEach((item) => {
+          item.classList.remove('bg-brand-green', 'text-brand-ivory');
+          item.classList.add('border', 'border-brand-green/30');
+        });
+
+        button.classList.add('bg-brand-green', 'text-brand-ivory');
+        button.classList.remove('border', 'border-brand-green/30');
+
+        cards.forEach((card) => {
+          const show = value === 'all' || card.dataset.category === value;
+          card.style.display = show ? 'block' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
