@@ -1,0 +1,146 @@
+export const watches = [
+  {
+    id: "royal-oak-automatique",
+    brand: "Audemars Piguet",
+    model: "Royal Oak Automatique",
+    category: "Chronographe",
+    material: "Acier",
+    price: 25500,
+    movement: "Mecanique automatique",
+    caliber: "3120",
+    case: "Acier 41mm",
+    reserve: "60 heures",
+    waterResistance: "50 metres",
+    description:
+      "Un classique moderne aux lignes architecturales, pense pour traverser les epoques avec elegance.",
+    images: [
+      "https://images.unsplash.com/photo-1523170335258-f5c6c6bdcf94?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1619134778706-7015533a6150?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?auto=format&fit=crop&w=1200&q=80",
+    ],
+  },
+  {
+    id: "datograph-up-down",
+    brand: "A. Lange & Sohne",
+    model: "Datograph Up/Down",
+    category: "Complication",
+    material: "Or Rose",
+    price: 95000,
+    movement: "Mecanique a remontage manuel",
+    caliber: "L951.6",
+    case: "Or rose 41mm",
+    reserve: "60 heures",
+    waterResistance: "30 metres",
+    description:
+      "Une oeuvre de haute horlogerie qui expose un mouvement d'une profondeur spectaculaire.",
+    images: [
+      "https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1548171915-eeb9e5b5346d?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=1200&q=80",
+    ],
+  },
+  {
+    id: "calatrava",
+    brand: "Patek Philippe",
+    model: "Calatrava",
+    category: "Dress",
+    material: "Or Rose",
+    price: 36200,
+    movement: "Mecanique automatique",
+    caliber: "26-330",
+    case: "Or rose 39mm",
+    reserve: "45 heures",
+    waterResistance: "30 metres",
+    description:
+      "Silhouette epuree et sophistication silencieuse, parfaite expression d'un luxe discret.",
+    images: [
+      "https://images.unsplash.com/photo-1619134778706-7015533a6150?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=1200&q=80",
+    ],
+  },
+  {
+    id: "fifty-fathoms",
+    brand: "Blancpain",
+    model: "Fifty Fathoms",
+    category: "Plongee",
+    material: "Titane",
+    price: 15400,
+    movement: "Mecanique automatique",
+    caliber: "1315",
+    case: "Titane 45mm",
+    reserve: "120 heures",
+    waterResistance: "300 metres",
+    description:
+      "Puissante et technique, cette montre de plongee reste raffinee dans toutes les situations.",
+    images: [
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1495856458515-0637185db551?auto=format&fit=crop&w=1200&q=80",
+    ],
+  },
+  {
+    id: "patrimony",
+    brand: "Vacheron Constantin",
+    model: "Patrimony",
+    category: "Dress",
+    material: "Acier",
+    price: 28800,
+    movement: "Mecanique automatique",
+    caliber: "2450",
+    case: "Acier 40mm",
+    reserve: "40 heures",
+    waterResistance: "30 metres",
+    description:
+      "Des proportions parfaites, une lecture limpide et une presence sereine au poignet.",
+    images: [
+      "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1511370235399-1802cae1d32f?auto=format&fit=crop&w=1200&q=80",
+    ],
+  },
+];
+
+export const reservationSeed = [
+  {
+    id: 1,
+    firstName: "Jean",
+    lastName: "Dupont",
+    email: "jean.dupont@example.com",
+    phone: "+33 6 12 34 56 78",
+    reservationDate: "2026-03-25",
+    reservationTime: "14:30",
+    returnDate: "2026-04-02",
+    watchId: "datograph-up-down",
+  },
+  {
+    id: 2,
+    firstName: "Marie",
+    lastName: "Curie",
+    email: "m.curie@example.com",
+    phone: "",
+    reservationDate: "2026-03-20",
+    reservationTime: "09:15",
+    returnDate: "2026-03-26",
+    watchId: "fifty-fathoms",
+  },
+  {
+    id: 3,
+    firstName: "Albert",
+    lastName: "Einstein",
+    email: "albert.e@example.com",
+    phone: "",
+    reservationDate: "2026-04-04",
+    reservationTime: "16:45",
+    returnDate: "2026-04-09",
+    watchId: "calatrava",
+  },
+];
+
+export function formatPrice(value) {
+  return new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
