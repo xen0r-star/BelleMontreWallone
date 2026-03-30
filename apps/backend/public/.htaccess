@@ -1,0 +1,6 @@
+RewriteEngine On
+
+# Always route through index.php for API endpoints.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
