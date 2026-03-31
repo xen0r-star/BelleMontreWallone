@@ -1,0 +1,60 @@
+/* --- Greation des tanbles --- */
+SET LC_TIME_NAMES = 'fr_BE';
+CREATE DATABASE IF NOT EXISTS tableTechnologieMobile CHARACTER SET = 'utf8mb4';
+
+create table if not EXISTS user(
+    userId numeric(1) not null auto increment,
+    userName varchar(50) not null,
+    mail varchar(90) not null,
+    dateOfBirth date not null,
+    hashPassWord varchar(255) not null,
+    isAdmin boolean default 0,
+    primary key (userId)
+)engine=innodb;
+
+create table if not EXISTS loan(
+    userId numeric(1) not null auto increment,
+    watchId numeric(10) not null,
+    loanDate varchar(1) not null,
+    returnLoanDate char(1) not null,
+    isOutDelay char(1) not null,
+    primary key (userId, watchId),
+)engine=innodb;
+
+create table if not EXISTS watch (
+    watchId numeric(10) not null,
+    model varchar(255) not null,
+    watchCollection varchar(255) not null,
+    imageUrl varchar(255) not null,
+    retailPrice numeric(10,2) not null,
+    marketPrice numeric(10,2) not null,
+    /*ajouter la partie avec les features je ne sais plus comment on fait*/
+    primary key (watchId)
+)engine=innodb;
+
+create table if not EXISTS shelf (
+    idShelf char(12) not null,
+    primary key (idShelf)
+)engine=innodb;
+
+create table if not EXISTS watchCabinet (
+    idWatchCabinet char(12) not null,
+    primary key (idWatchCabinet)
+)engine=innodb;
+
+create table if not EXISTS store (
+    idStore char(12) not null,
+    primary key (idStore)
+)engine=innodb;
+
+create table if not EXISTS city (
+    idCity varchar(255) not null,
+    shelf numeric(1) not null,
+    primary key (idCity)
+)engine=innodb;
+
+/* --- Gestion des clés étrangères --- */
+ALTER TABLE ... ADD CONSTRAINT ... FOREIGN KEY(...) REFERENCES ...(...)
+
+/* --- Insertion des données --- */
+INSERT INTO () VALUES ();
