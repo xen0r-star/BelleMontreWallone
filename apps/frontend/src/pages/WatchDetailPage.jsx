@@ -94,17 +94,17 @@ export default function WatchDetailPage() {
                             <span>{watch.case}</span>
                         </li>
                         <li>
-                            <span>Reserve</span>
+                            <span>Réserve</span>
                             <span>{watch.reserve}</span>
                         </li>
                         <li>
-                            <span>Etancheite</span>
+                            <span>Étanchéité</span>
                             <span>{watch.waterResistance}</span>
                         </li>
                     </ul>
 
                     <button type="button" className="btn" onClick={() => setIsModalOpen(true)}>
-                        Demander une reservation
+                        Demander une réservation
                     </button>
                 </section>
             </main>

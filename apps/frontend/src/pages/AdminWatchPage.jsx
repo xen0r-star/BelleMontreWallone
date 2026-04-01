@@ -171,7 +171,7 @@ export default function AdminWatchPage() {
                             <span className="plus-circle">+</span>
                             <h2>Nouvelle montre</h2>
                             <p>
-                                Clique ici pour ajouter une montre avec ses informations et son
+                                Cliquez-ici pour ajouter une montre avec ses informations et son
                                 image.
                             </p>
                         </article>
@@ -181,22 +181,22 @@ export default function AdminWatchPage() {
                         <section className="admin-builder">
                             <div className="admin-builder-grid">
                                 <article className="preview-card">
-                                    <h3>Preview en direct</h3>
+                                    <h3>Prévisualisation en direct</h3>
                                     <div className="admin-watch-card">
                                         <div className="admin-preview-media-box">
                                             <ImageWithFallback
                                                 src={form.image}
-                                                alt={`${form.brand || "Marque"} ${form.model || "Modele"}`}
+                                                alt={`${form.brand || "Marque"} ${form.model || "Modèle"}`}
                                                 fallbackText="Aucune image selectionnee"
                                             />
                                         </div>
                                         <div>
-                                            <h4>{(form.brand || "Marque") + " - " + (form.model || "Modele")}</h4>
-                                            <p className="muted small">Reference: {form.reference || "--"}</p>
-                                            <p className="small">Annee: {form.year || "--"}</p>
-                                            <p className="small">Diametre: {(form.diameter || "--") + " mm"}</p>
-                                            <p className="small">Materiaux boitier: {form.caseMaterial || "--"}</p>
-                                            <p className="small">Categorie: {form.category || "Classique"}</p>
+                                            <h4>{(form.brand || "Marque") + " - " + (form.model || "Modèle")}</h4>
+                                            <p className="muted small">Référence: {form.reference || "--"}</p>
+                                            <p className="small">Année: {form.year || "--"}</p>
+                                            <p className="small">Diamètre: {(form.diameter || "--") + " mm"}</p>
+                                            <p className="small">Matériaux boitier: {form.caseMaterial || "--"}</p>
+                                            <p className="small">Catégorie: {form.category || "Classique"}</p>
                                         </div>
                                     </div>
                                 </article>
@@ -205,9 +205,9 @@ export default function AdminWatchPage() {
                                     <h3>Informations montre</h3>
                                     <form className="form-grid" onSubmit={handleSaveWatch}>
                                         <input name="brand" required value={form.brand} onChange={handleChange} placeholder="Marque" />
-                                        <input name="reference" required value={form.reference} onChange={handleChange} placeholder="Reference" />
-                                        <input name="model" required value={form.model} onChange={handleChange} placeholder="Modele" />
-                                        <input name="year" type="number" min="1900" max="2100" value={form.year} onChange={handleChange} placeholder="Annee" />
+                                        <input name="reference" required value={form.reference} onChange={handleChange} placeholder="Référence" />
+                                        <input name="model" required value={form.model} onChange={handleChange} placeholder="Modèle" />
+                                        <input name="year" type="number" min="1900" max="2100" value={form.year} onChange={handleChange} placeholder="Année" />
                                         <input name="diameter" type="number" min="1" step="0.1" value={form.diameter} onChange={handleChange} placeholder="Diametre (mm)" />
                                         <input name="caseMaterial" value={form.caseMaterial} onChange={handleChange} placeholder="Materiaux boitier" />
                                         <select name="category" value={form.category} onChange={handleChange}>
@@ -221,7 +221,7 @@ export default function AdminWatchPage() {
                                             onDragOver={(event) => event.preventDefault()}
                                             onDrop={handleDrop}
                                         >
-                                            <span>Glisse/depose une image ou clique</span>
+                                            <span>Glisser/déposer une image ou cliquer</span>
                                             <input type="file" accept="image/*" onChange={handleImageChange} />
                                         </label>
 
@@ -247,8 +247,8 @@ export default function AdminWatchPage() {
                     )}
 
                     <section className="mt-section">
-                        <div className="section-title-row">
-                            <h2>Montres ajoutees</h2>
+                        <div classNamé="section-title-row">
+                            <h2>Montres ajoutées</h2>
                             <p className="muted">Modification et suppression disponibles</p>
                         </div>
 
@@ -267,11 +267,11 @@ export default function AdminWatchPage() {
                                     </div>
                                     <div className="watch-meta">
                                         <h3>{watch.brand} - {watch.model}</h3>
-                                        <p className="muted small">Reference: {watch.reference}</p>
-                                        <p className="small">Annee: {watch.year || "--"}</p>
-                                        <p className="small">Diametre: {(watch.diameter || "--") + " mm"}</p>
-                                        <p className="small">Materiaux: {watch.caseMaterial || "--"}</p>
-                                        <p className="small">Categorie: {watch.category}</p>
+                                        <p className="muted small">Référence: {watch.reference}</p>
+                                        <p className="small">Année: {watch.year || "--"}</p>
+                                        <p className="small">Diamètre: {(watch.diameter || "--") + " mm"}</p>
+                                        <p className="small">Matériaux: {watch.caseMaterial || "--"}</p>
+                                        <p className="small">Catégorie: {watch.category}</p>
                                     </div>
                                     <div className="action-cell">
                                         <button type="button" onClick={() => handleEdit(watch.id)}>Modifier</button>
@@ -349,7 +349,7 @@ function ImageWithFallback({ src, alt, fallbackText = "Aucune image" }) {
 function NoImage({ text = "Aucune image" }) {
     return (
         <div className="no-image" aria-label="Aucune image disponible">
-            <span className="material-symbols-outlined">image_not_supported</span>
+            <span className="material-symbols-outlined">Aucune image disponible</span>
             <p>{text}</p>
         </div>
     );

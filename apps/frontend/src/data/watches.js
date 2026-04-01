@@ -5,7 +5,7 @@ export const watches = [
         model: "Royal Oak Automatique",
         category: "Chronographe",
         material: "Acier",
-        price: 25500,
+        price: 25458.99,
         movement: "Mecanique automatique",
         caliber: "3120",
         case: "Acier 41mm",
@@ -140,7 +140,6 @@ export const reservationSeed = [
 export function formatPrice(value) {
     return new Intl.NumberFormat("fr-FR", {
         style: "currency",
-        currency: "EUR",
-        maximumFractionDigits: 0,
+        currency: "EUR"
     }).format(value);
 }

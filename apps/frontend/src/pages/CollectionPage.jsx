@@ -92,12 +92,12 @@ export default function CollectionPage() {
 
             <main className="container collection-layout">
                 <aside className="filters-card">
-                    <h2>Filtres & Tri</h2>
+                    <h2>Recherche de produit</h2>
 
                     <div className="filter-section">
                         <p className="muted">Trier</p>
                         <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
-                            <option value="featured">Selection maison</option>
+                            <option value="featured">Sélection maison</option>
                             <option value="priceAsc">Prix croissant</option>
                             <option value="priceDesc">Prix decroissant</option>
                             <option value="nameAsc">Nom A-Z</option>
@@ -105,7 +105,7 @@ export default function CollectionPage() {
                     </div>
 
                     <div className="filter-section">
-                        <p className="muted">Categorie</p>
+                        <p className="muted">Catégorie</p>
                         <div className="chips-row">
                             {categories.map((category) => (
                                 <button
@@ -121,7 +121,7 @@ export default function CollectionPage() {
                     </div>
 
                     <div className="filter-section">
-                        <p className="muted">Matiere</p>
+                        <p className="muted">Matière</p>
                         <div className="chips-row">
                             {materials.map((material) => (
                                 <button
@@ -145,7 +145,7 @@ export default function CollectionPage() {
                             setSortBy("featured");
                         }}
                     >
-                        Reinitialiser
+                        Réinitialiser
                     </button>
 
                     <Link className="btn cta-collection-login" to="/connexion">
@@ -156,7 +156,7 @@ export default function CollectionPage() {
                 <section>
                     <div className="section-title-row">
                         <h1>Collection</h1>
-                        <p className="muted">{filteredWatches.length} modele(s)</p>
+                        <p className="muted">{filteredWatches.length} modèle(s)</p>
                     </div>
                     <div className="cards-grid">
                         {filteredWatches.map((watch) => (
@@ -173,7 +173,7 @@ export default function CollectionPage() {
                                 </div>
                                 <div className="watch-actions">
                                     <Link className="btn" to={`/montre/${watch.id}`}>
-                                        Voir le detail
+                                        Voir le détail
                                     </Link>
                                 </div>
                             </article>
