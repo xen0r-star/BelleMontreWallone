@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 
-use RuntimeException;
-
 function requireEnv(string $key): string {
     $value = getenv($key);
 
     if ($value === false || trim($value) === '') {
-        throw new RuntimeException('Missing required environment variable: ' . $key);
+        throw new \RuntimeException('Missing required environment variable: ' . $key);
     }
 
     return $value;

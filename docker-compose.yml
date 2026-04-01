@@ -21,6 +21,9 @@ services:
       ADMIN_USER: admin
       ADMIN_PASSWORD: admin123
       ADMIN_API_KEY: change-me-api-key
+    volumes:
+      - ./apps/backend:/var/www/html
+      - ./config/php.ini:/usr/local/etc/php/conf.d/docker-php-config.ini
     depends_on:
       - db
 

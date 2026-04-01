@@ -2,23 +2,33 @@
 
 declare(strict_types=1);
 
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('display_startup_errors', '0');
+ini_set('log_errors', '1');
+
 use App\Core\Database;
 use App\Core\Response;
-use Throwable;
 use function App\Utils\configureCors;
 use function App\Routes\dispatch;
 
 require __DIR__ . '/../src/Core/Response.php';
 require __DIR__ . '/../src/Core/Database.php';
-require __DIR__ . '/../src/Utils/helpers.php';
-require __DIR__ . '/../src/Utils/routes.php';
+require __DIR__ . '/../src/Utils/cors.php';
+
+require __DIR__ . '/../src/Routes/auth.routes.php';
+require __DIR__ . '/../src/Routes/admin.routes.php';
+require __DIR__ . '/../src/Routes/contact.routes.php';
+require __DIR__ . '/../src/Routes/reservation.routes.php';
+require __DIR__ . '/../src/Routes/watches.routes.php';
+require __DIR__ . '/../src/Routes/routes.php';
 
 
 
 try {
     $config = require __DIR__ . '/../src/Config/config.php';
 
-} catch (Throwable) {
+} catch (\Throwable) {
     Response::json([
         'success' => false,
         'error' => 'internal_server_error',
