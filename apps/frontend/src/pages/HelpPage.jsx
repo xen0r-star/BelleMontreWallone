@@ -4,16 +4,16 @@ import SiteFooter from "../components/SiteFooter";
 
 const faqs = [
     {
-        q: "Comment se deroule la reservation ?",
-        a: "Nous confirmons votre demande sous 24h puis un conseiller vous accompagne jusqu'a la livraison."
+        q: "Comment se déroule la réservation ?",
+        a: "Nous confirmons votre demande sous 24h puis un conseiller vous accompagne jusqu'à la livraison."
     },
     {
-        q: "Quels sont les delais de livraison ?",
-        a: "En general entre 3 et 7 jours ouvres selon la disponibilite de la piece."
+        q: "Quels sont les délais de livraison ?",
+        a: "En général entre 3 et 7 jours ouvres selon la disponibilité de la pièce."
     },
     {
-        q: "Proposez-vous des rendez-vous prives ?",
-        a: "Oui, en salon ou en visio, selon vos preferences."
+        q: "Proposez-vous des rendez-vous privés ?",
+        a: "Oui, en salon ou en visio-conférence, selon vos préférences."
     }
 ];
 
@@ -32,16 +32,16 @@ export default function HelpPage() {
             <main className="container help-layout">
                 <section className="help-hero">
                     <p className="kicker">Accompagnement Signature</p>
-                    <h1>Maison de Conseils Prives</h1>
+                    <h1>Maison de Conseils Privés</h1>
                     <p className="muted help-intro">
-                        Une equipe dediee aux collectionneurs vous accompagne avec discretion
-                        pour le choix d'une piece, la reservation et l'organisation de
+                        Une équipe dédiée aux collectionneurs vous accompagne avec discrétion
+                        pour le choix d'une pièce, la réservation et l'organisation de
                         rendez-vous confidentiels.
                     </p>
                 </section>
 
                 <section className="help-section-card">
-                    <h2>Questions frequentes</h2>
+                    <h2>Questions fréquentes</h2>
                     {faqs.map((faq) => (
                         <details key={faq.q} className="faq-item">
                             <summary>{faq.q}</summary>
@@ -55,16 +55,16 @@ export default function HelpPage() {
                     {!isSent ? (
                         <form className="form-grid help-form" onSubmit={handleSubmit}>
                             <input required placeholder="Nom" />
-                            <input required placeholder="Prenom" />
+                            <input required placeholder="Prénom" />
                             <input required type="email" placeholder="Email" />
-                            <input placeholder="Telephone" />
+                            <input placeholder="Téléphone" />
                             <textarea required rows="4" placeholder="Votre message" />
                             <button className="btn" type="submit">Envoyer la demande</button>
                         </form>
                         
                     ) : (
                         <p className="success-msg">
-                            Message envoye. Notre equipe te repond rapidement.
+                            Message envoyée. Notre équipe vous fera un retour rapidement.
                         </p>
                     )}
                 </section>

@@ -588,6 +588,7 @@ h3,
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     margin-top: 2rem;
     margin-bottom: 3rem;
+    margin-left: 25px;
 }
 
 .hero-image {
@@ -626,6 +627,7 @@ h3,
     display: grid;
     gap: 1rem;
     align-content: start;
+    margin-right: 25px;
 }
 
 .price {

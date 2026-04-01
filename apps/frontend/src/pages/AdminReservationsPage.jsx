@@ -27,7 +27,7 @@ function computeStatus(reservationDate, reservationTime, returnDate) {
     }
 
     if (now > end) {
-        return { label: "Depasse", className: "pill late" };
+        return { label: "Dépasser", className: "pill late" };
     }
 
     return { label: "En cours", className: "pill current" };
@@ -136,13 +136,13 @@ export default function AdminReservationsPage() {
                     <table>
                         <thead>
                             <tr>
-                                <th>Date reservation</th>
+                                <th>Date réservation</th>
                                 <th>Temps</th>
                                 <th>Date retour</th>
                                 <th>Statut</th>
                                 <th>Nom</th>
-                                <th>Prenom</th>
-                                <th>Modele</th>
+                                <th>Prénom</th>
+                                <th>Modèle</th>
                             </tr>
                         </thead>
                         <tbody>

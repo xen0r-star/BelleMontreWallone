@@ -7,7 +7,7 @@ export default function SiteFooter() {
                 <div>
                     <h3>Minimalisme Noble</h3>
                     <p>
-                        L'exclusivite horlogere pensee pour les connaisseurs. Une selection
+                        L'exclusivité horlogère pensée pour les connaisseurs. Une sélection
                         rigoureuse de garde-temps exceptionnels.
                     </p>
                 </div>
@@ -27,7 +27,7 @@ export default function SiteFooter() {
                 </div>
 
                 <div>
-                    <h4>Cercle Prive</h4>
+                    <h4>Cercle Privé</h4>
                     <form>
                         <input type="email" placeholder="Votre adresse email" />
                         <button type="submit">
@@ -39,10 +39,10 @@ export default function SiteFooter() {
             </div>
 
             <div className="hx-footer-bottom">
-                <p>© 2024 Minimalisme Noble. Tous droits reserves.</p>
+                <p>© 2024 Minimalisme Noble. Tous droits réservés.</p>
                 <div>
-                    <a href="#legal">Mentions Legales</a>
-                    <a href="#privacy">Confidentialite</a>
+                    <a href="#legal">Mentions Légales</a>
+                    <a href="#privacy">Confidentialité</a>
                 </div>
             </div>
         </footer>

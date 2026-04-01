@@ -46,24 +46,24 @@ export default function HomePage() {
             >
                 <div className="hx-hero-content">
                     <h1>Le Temps, Sublime.</h1>
-                    <a className="hx-btn-outline" href="#discover">Decouvrir</a>
+                    <a className="hx-btn-outline" href="#discover">Découvrir</a>
                 </div>
 
                 <div className="hx-scroll-indicator">
-                    <span className="material-symbols-outlined">expand_more</span>
+                    <span className="material-symbols-outlined">expand_all</span>
                 </div>
             </section>
 
             <div className="hx-main" id="discover">
                 <section className="hx-editorial">
                     <article className="hx-editorial-text">
-                        <span className="hx-label">Heritage</span>
-                        <h2>L'Art de la Precision Absolue</h2>
+                        <span className="hx-label">Héritage</span>
+                        <h2>L'Art de la Précision Absolue</h2>
                         <p>
-                            Chaque garde-temps est une celebration silencieuse du savoir-faire
-                            artisanal. Nous ne creons pas de simples montres, nous forgeons des
-                            heritages concus pour traverser les generations avec une elegance
-                            discrete.
+                            Chaque garde-temps est une célébration silencieuse du savoir-faire
+                            Artisanal. Nous ne créons pas de simples montres, nous forgeons des
+                            Héritages conçus pour traverser les générations avec une élégance
+                            Discrète.
                         </p>
                         <Link to="/collection" className="hx-btn-solid">Explorez la Collection</Link>
                     </article>
@@ -94,13 +94,13 @@ export default function HomePage() {
                         <span className="hx-label">Philosophie</span>
                         <h2>Le Luxe Dans Sa Plus Simple Expression</h2>
                         <p>
-                            Dans un monde bruyant, nous choisissons le murmure. Nos creations
-                            refusent l'ostentation au profit d'une purete de lignes et d'une
-                            selection de materiaux nobles. Le veritable luxe se ressent, il ne
+                            Dans un monde bruyant, nous choisissons le murmure. Nos créations
+                            refusent l'ostentation au profit d'une pureté de lignes et d'une
+                            sélection de matériaux nobles. Le veritable luxe se ressent, il ne
                             s'affiche pas.
                         </p>
                         <a className="hx-link-inline" href="#brand">
-                            Decouvrir Notre Marque
+                            Découvrir Notre Marque
                             <span className="material-symbols-outlined">arrow_forward</span>
                         </a>
                     </article>
