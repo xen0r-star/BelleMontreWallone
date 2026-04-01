@@ -6,7 +6,7 @@ use App\Core\Database;
 use App\Core\Response;
 use Throwable;
 use function App\Utils\configureCors;
-use function App\Utils\dispatch;
+use function App\Routes\dispatch;
 
 require __DIR__ . '/../src/Core/Response.php';
 require __DIR__ . '/../src/Core/Database.php';
@@ -37,8 +37,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'OPTIONS') {
 
 
 
-$db = Database::connection($config);
+Database::connection($config);
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET'); // Type: GET, POST, PUT, DELETE, PATCH, OPTIONS
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/'; // Path: /api/watches, /api/watches/{id}
 
-dispatch($db, $config, $method, $path);
+dispatch($method, $path);
