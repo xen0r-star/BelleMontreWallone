@@ -3,7 +3,11 @@ services:
     build:
       context: ./apps/backend
       dockerfile: Dockerfile
-    container_name: projetti_backend
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    container_name: projetTI-backend
     ports:
       - "8080:80"
     environment:
@@ -19,12 +23,14 @@ services:
       ADMIN_API_KEY: change-me-api-key
     depends_on:
       - db
-    restart: unless-stopped
 
   db:
-    image: mysql:8.4
-    container_name: projetti_mysql
-    command: --default-authentication-plugin=mysql_native_password
+    image: mysql:9.5
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    container_name: projetTI-db
     ports:
       - "3307:3306"
     environment:
@@ -35,20 +41,24 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./apps/backend/database/init:/docker-entrypoint-initdb.d
-    restart: unless-stopped
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5
-    container_name: projetti_phpmyadmin
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    container_name: projetTI-phpmyadmin
     ports:
       - "8081:80"
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpass
       MYSQL_ROOT_PASSWORD: root_password
     depends_on:
       - db
-    restart: unless-stopped
 
 volumes:
   db_data:
