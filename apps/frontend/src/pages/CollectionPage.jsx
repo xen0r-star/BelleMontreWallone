@@ -1,8 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { formatPrice, watches } from "../data/watches";
+import { formatPrice } from "../data/watches";
+import { getWatches } from '../services/api';
+
 
 const categories = ["Chronographe", "Plongee", "Dress", "Complication"];
 const materials = ["Acier", "Or Rose", "Titane"];
@@ -43,11 +45,32 @@ function WatchImage({ watch }) {
 }
 
 export default function CollectionPage() {
+    const [watches, setWatches] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     const [activeCategories, setActiveCategories] = useState([]);
     const [activeMaterials, setActiveMaterials] = useState([]);
     const [sortBy, setSortBy] = useState("featured");
 
+    useEffect(() => {
+        const fetchWatches = async () => {
+            try {
+                const response = await getWatches();
+                if (response && response.data) {
+                    setWatches(response.data);
+                }
+            } catch (e) {
+                console.error("Erreur lors du chargement des données:", e);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchWatches();
+    }, [])
+
     const filteredWatches = useMemo(() => {
+        if (!watches) return [];
+
         const filtered = watches.filter((watch) => {
             const categoryOk =
                 activeCategories.length === 0 || activeCategories.includes(watch.category);
@@ -68,7 +91,9 @@ export default function CollectionPage() {
             sorted.sort((a, b) => a.model.localeCompare(b.model, "fr"));
         }
         return sorted;
-    }, [activeCategories, activeMaterials, sortBy]);
+    }, [watches, activeCategories, activeMaterials, sortBy]);
+
+    if (isLoading) return <p>Chargement de la collection...</p>;
 
     function toggleCategory(category) {
         setActiveCategories((prev) =>
