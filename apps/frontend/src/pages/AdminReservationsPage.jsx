@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { reservationSeed, watches } from "../data/watches";
+import { reservationSeed } from "../data/watches";
+import { getWatches } from '../services/api';
 
 function toDateTime(date, time) {
     return new Date(`${date}T${time}:00`);
@@ -42,21 +43,40 @@ function computeDurationDays(reservationDate, returnDate) {
 }
 
 export default function AdminReservationsPage() {
+    const [watches, setWatches] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
     const reservations = reservationSeed;
     const [statusFilter, setStatusFilter] = useState("all");
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
 
-    const allRows = useMemo(
-        () =>
-            reservations.map((item) => ({
-                ...item,
-                watch: watches.find((watch) => watch.id === item.watchId),
-                status: computeStatus(item.reservationDate, item.reservationTime, item.returnDate),
-                durationDays: computeDurationDays(item.reservationDate, item.returnDate)
-            })),
-        [reservations]
-    );
+    useEffect(() => {
+            const fetchWatches = async () => {
+                try {
+                    const response = await getWatches();
+                    if (response && response.data) {
+                        setWatches(response.data);
+                    }
+                } catch (e) {
+                    console.error("Erreur lors du chargement des données:", e);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+            fetchWatches();
+        }, [])
+
+    const allRows = useMemo(() => {
+        if (!reservations || !watches) return [];
+    
+        return reservations.map((item) => ({
+            ...item,
+            watch: watches.find((watch) => watch.id === item.watchId),
+            status: computeStatus(item.reservationDate, item.reservationTime, item.returnDate),
+            durationDays: computeDurationDays(item.reservationDate, item.returnDate)
+        }));
+    }, [reservations, watches]);
 
     const rows = useMemo(() => {
         return allRows.filter((row) => {
@@ -74,6 +94,8 @@ export default function AdminReservationsPage() {
     }, [allRows, statusFilter, fromDate, toDate]);
 
     const kpis = useMemo(() => {
+        if (!watches) return [];
+
         const waiting = allRows.filter((row) => row.status.className.includes("future")).length;
         const late = allRows.filter((row) => row.status.className.includes("late")).length;
 
@@ -82,7 +104,7 @@ export default function AdminReservationsPage() {
             waitingReservations: waiting,
             lateReturns: late
         };
-    }, [allRows]);
+    }, [allRows, watches]);
 
     return (
         <div className="page-root">
