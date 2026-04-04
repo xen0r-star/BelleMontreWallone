@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { watches as catalogWatches } from "../data/watches";
+import { getWatches } from '../services/api';
 
 const emptyForm = {
     brand: "",
@@ -44,10 +44,27 @@ function mapCatalogWatchToAdminWatch(watch) {
 export default function AdminWatchPage() {
     const [showBuilder, setShowBuilder] = useState(false);
     const [form, setForm] = useState(emptyForm);
-    const [watches, setWatches] = useState(() => catalogWatches.map(mapCatalogWatchToAdminWatch));
+    const [watches, setWatches] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [editingId, setEditingId] = useState(null);
     const [toast, setToast] = useState("");
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
+
+    useEffect(() => {
+        const fetchWatches = async () => {
+            try {
+                const response = await getWatches();
+                if (response && response.data) {
+                    setWatches((response.data).map(mapCatalogWatchToAdminWatch));
+                }
+            } catch (e) {
+                console.error("Erreur lors du chargement des données:", e);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchWatches();
+    }, [])
 
     function pushToast(message) {
         setToast(message);
@@ -117,6 +134,7 @@ export default function AdminWatchPage() {
     }
 
     function handleEdit(id) {
+        if (!watches) return;
         const watch = watches.find((item) => item.id === id);
         if (!watch) {
             return;
@@ -247,7 +265,7 @@ export default function AdminWatchPage() {
                     )}
 
                     <section className="mt-section">
-                        <div classNamé="section-title-row">
+                        <div className="section-title-row">
                             <h2>Montres ajoutées</h2>
                             <p className="muted">Modification et suppression disponibles</p>
                         </div>

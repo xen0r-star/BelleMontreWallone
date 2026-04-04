@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { formatPrice, watches } from "../data/watches";
-
+import { formatPrice } from "../data/watches";
+import { getWatches } from '../services/api';
 
 function ImageWithSkeleton({ src, alt, className }) {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -22,12 +22,33 @@ function ImageWithSkeleton({ src, alt, className }) {
 }
 
 export default function WatchDetailPage() {
+    const [watches, setWatches] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
+
+    useEffect(() => {
+        const fetchWatches = async () => {
+            try {
+                const response = await getWatches();
+                if (response && response.data) {
+                    setWatches(response.data);
+                }
+            } catch (e) {
+                console.error("Erreur lors du chargement des données:", e);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchWatches();
+    }, [])
+
     const watch = watches.find((item) => item.id === id);
+
     const [imageIndex, setImageIndex] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sent, setSent] = useState(false);
 
+    if (isLoading) return <p>Chargement de la montre...</p>;
     if (!watch) {
         return (
             <div className="page-root">
