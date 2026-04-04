@@ -12,22 +12,20 @@ final class Database {
     private static ?PDO $connection = null;
 
     public static function connection(): PDO {
-        try {
-            $config = require __DIR__ . '/../Config/config.php';
-
-        } catch (\Throwable) {
-            Response::json([
-                'success' => false,
-                'error' => 'internal_server_error',
-            ], 500);
-            exit;
-        }
-
-
-
         if (self::$connection instanceof PDO) {
             return self::$connection;
         }
+
+
+        $configPath = __DIR__ . '/../Config/config.php';
+        
+        if (!file_exists($configPath)) {
+            self::sendError('Configuration file missing');
+        }
+
+        $config = require $configPath;
+
+
 
         $dsn = sprintf(
             'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
@@ -48,14 +46,19 @@ final class Database {
             );
 
         } catch (PDOException) {
-            Response::json([
-                'success' => false,
-                'error' => 'database_connection_failed',
-                'message' => 'Unable to connect to database.',
-            ], 500);
+            self::sendError('database_connection_failed');
             exit;
         }
 
         return self::$connection;
+    }
+
+    
+    private static function sendError(string $error): void {
+        Response::json([
+            'success' => false,
+            'error'   => $error,
+        ], 500);
+        exit;
     }
 }
