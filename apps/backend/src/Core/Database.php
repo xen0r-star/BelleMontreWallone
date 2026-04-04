@@ -7,10 +7,24 @@ namespace App\Core;
 use PDO;
 use PDOException;
 
+
 final class Database {
     private static ?PDO $connection = null;
 
-    public static function connection(array $config): PDO {
+    public static function connection(): PDO {
+        try {
+            $config = require __DIR__ . '/../Config/config.php';
+
+        } catch (\Throwable) {
+            Response::json([
+                'success' => false,
+                'error' => 'internal_server_error',
+            ], 500);
+            exit;
+        }
+
+
+
         if (self::$connection instanceof PDO) {
             return self::$connection;
         }
