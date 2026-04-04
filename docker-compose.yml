@@ -8,8 +8,6 @@ services:
         limits:
           memory: 512m
     container_name: projetTI-backend
-    ports:
-      - "8080:80"
     environment:
       APP_ENV: development
       DB_HOST: db
@@ -21,6 +19,8 @@ services:
       ADMIN_USER: admin
       ADMIN_PASSWORD: admin123
       ADMIN_API_KEY: change-me-api-key
+    ports:
+      - "8080:80"
     volumes:
       - ./apps/backend:/var/www/html
       - ./config/php.ini:/usr/local/etc/php/conf.d/docker-php-config.ini
@@ -34,10 +34,9 @@ services:
         limits:
           memory: 512m
     container_name: projetTI-db
-    ports:
-      - "3307:3306"
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: watch_store
       MYSQL_USER: watch_user
       MYSQL_PASSWORD: watch_password
@@ -52,16 +51,15 @@ services:
         limits:
           memory: 512m
     container_name: projetTI-phpmyadmin
-    ports:
-      - "8081:80"
+    restart: always
     environment:
       PMA_HOST: db
-      PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: rootpass
-      MYSQL_ROOT_PASSWORD: root_password
     depends_on:
       - db
+    ports:
+      - "8081:80"
 
 volumes:
   db_data:
