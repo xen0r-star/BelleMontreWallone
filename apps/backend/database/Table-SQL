@@ -1,0 +1,90 @@
+SET LC_TIME_NAMES = 'fr_BE';
+CREATE DATABASE IF NOT EXISTS watch_store CHARACTER SET = 'utf8mb4';
+USE watch_store;
+
+CREATE TABLE IF NOT EXISTS user(
+    userId INT AUTO_INCREMENT NOT NULL,
+    userName varchar(50) NOT NULL,
+    mail varchar(90) NOT NULL,
+    dateOfBirth date NOT NULL,
+    hashPassWord varchar(255) NOT NULL,
+    isAdmin boolean DEFAULT 0,
+    PRIMARY KEY (userId)
+)engine=innodb;
+
+CREATE TABLE IF NOT EXISTS city (
+    idCity varchar(255) NOT NULL,
+    cityName varchar(255) NOT NULL,
+    PRIMARY KEY (idCity)
+)engine=innodb;
+
+CREATE TABLE IF NOT EXISTS store (
+    idStore char(12) NOT NULL,
+    storeName varchar(255) NOT NULL,
+    idCity varchar(255) NOT NULL,
+    PRIMARY KEY (idStore),
+    KEY(idCity)
+)engine=innodb;
+
+CREATE TABLE IF NOT EXISTS watchCabinet (
+    idWatchCabinet char(12) NOT NULL,
+    idStore char(12) NOT NULL,
+    positionInStore varchar(4) NOT NULL,
+    cabinetName varchar(255) NOT NULL,
+    PRIMARY KEY (idWatchCabinet),
+    KEY(idStore)
+)engine=innodb;
+
+CREATE TABLE IF NOT EXISTS shelf (
+    idShelf char(12) NOT NULL,
+    idWatchCabinet char(12) NOT NULL,
+    positionInCabinet varchar(4) NOT NULL,
+    PRIMARY KEY (idShelf),
+    KEY(idWatchCabinet)
+)engine=innodb;
+
+CREATE TABLE IF NOT EXISTS watch (
+    watchId INT AUTO_INCREMENT NOT NULL,
+    idShelf char(12) NOT NULL,
+    model varchar(255) NOT NULL,
+    watchCollection varchar(255) NOT NULL,
+    imageUrl varchar(255) NOT NULL,
+    retailPrice numeric(10,2),
+    marketPrice numeric(10,2) NOT NULL,
+
+    isInProduction boolean DEFAULT 1,
+    materials varchar (255),
+    diameter numeric(5,2),
+    watertightness varchar(50),
+
+    PRIMARY KEY (watchId),
+    KEY(idShelf)
+)engine=innodb;
+
+
+CREATE TABLE IF NOT EXISTS loan(
+    userId INT NOT NULL,
+    watchId INT NOT NULL,
+    loanDate date DEFAULT (CURRENT_DATE),
+    returnLoanDate date NOT NULL,
+    isOutDelay boolean,
+    PRIMARY KEY (userId, watchId)
+)engine=innodb;
+
+
+
+ALTER TABLE store
+ADD CONSTRAINT fk_idCity FOREIGN KEY (idCity) REFERENCES city(idCity);
+
+ALTER TABLE watchCabinet
+ADD CONSTRAINT fk_idStore FOREIGN KEY (idStore) REFERENCES store(idStore);
+
+ALTER TABLE shelf
+ADD CONSTRAINT fk_idWatchCabinet FOREIGN KEY (idWatchCabinet) REFERENCES watchCabinet(idWatchCabinet);
+
+ALTER TABLE watch
+ADD CONSTRAINT fk_idShelf FOREIGN KEY (idShelf) REFERENCES shelf(idShelf);
+
+ALTER TABLE loan 
+ADD CONSTRAINT fk_userId FOREIGN KEY (userId) REFERENCES user(userId),
+ADD CONSTRAINT fk_watchId FOREIGN KEY (watchId) REFERENCES watch(watchId);

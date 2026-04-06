@@ -10,79 +10,83 @@ use PDOException;
 
 
 function getWatches(): void {
-    // $db = Database::connection();
+    $db = Database::connection();
+    $PER_PAGE = 20;
 
-    // try {
-    //     $statement = $db->query('SELECT * FROM watches');
-    //     $watches = $statement !== false ? $statement->fetchAll() : [];
-    // } catch (PDOException) {
-    //     try {
-    //         // Backward compatibility for projects using the singular table name.
-    //         $statement = $db->query('SELECT * FROM watch');
-    //         $watches = $statement !== false ? $statement->fetchAll() : [];
-    //     } catch (PDOException) {
-    //         Response::json([
-    //             'success' => false,
-    //             'error' => 'table_watches_not_found',
-    //         ], 500);
-    //         return;
-    //     }
-    // }
+    $pageValue = $_GET['page'] ?? '1';
+    if (!is_numeric($pageValue) || (int) $pageValue < 1) {
+        Response::json([
+            'error' => 'INVALID_PAGE',
+            'message' => 'Query param page must be an integer greater than or equal to 1',
+        ], 400);
+        return;
+    }
 
-    // Response::json([
-    //     'success' => true,
-    //     'data' => $watches
-    // ]);
+    $page = (int) $pageValue;
+    $offset = ($page - 1) * $PER_PAGE;
+
+    try {
+        $countStatement = $db->query('SELECT COUNT(*) AS total FROM watch');
+        $total = $countStatement !== false ? (int) $countStatement->fetchColumn() : 0;
+
+        $statement = $db->prepare('SELECT * FROM watch ORDER BY watchId ASC LIMIT :limit OFFSET :offset');
+        if ($statement === false) {
+            throw new PDOException('Unable to prepare watches query');
+        }
+
+        $statement->bindValue(':limit', $PER_PAGE, \PDO::PARAM_INT);
+        $statement->bindValue(':offset', $offset, \PDO::PARAM_INT);
+        $statement->execute();
+
+        $watches = $statement->fetchAll();
+
+    } catch (PDOException) {
+        Response::json([
+            'error' => 'NO_RESULTS_FOUND',
+            'message' => 'No results found',
+        ], 500);
+        return;
+    }
 
     Response::json([
-        'success' => true,
-        'data' => [[
-            'id' => "royal-oak-automatique",
-            'brand' => "Audemars Piguet",
-            'model' => "Royal Oak Automatique",
-            'category' => "Chronographe",
-            'material' => "Acier",
-            'price' => 25500,
-            'movement' => "Mecanique automatique",
-            'caliber' => "3120",
-            'case' => "Acier 41mm",
-            'reserve' => "60 heures",
-            'waterResistance' => "50 metres",
-            'description' => "Un classique moderne aux lignes architecturales, pense pour traverser les epoques avec elegance.",
-            'images' => [
-                "https://images.unsplash.com/photo-1523170335258-f5c6c6bdcf94?auto=format&fit=crop&w=1200&q=80",
-                "https://images.unsplash.com/photo-1619134778706-7015533a6150?auto=format&fit=crop&w=1200&q=80",
-                "https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?auto=format&fit=crop&w=1200&q=80",
-            ],
-        ]]
+        'data' => $watches,
+        'pagination' => [
+            'page' => $page,
+            'perPage' => $PER_PAGE,
+            'total' => $total,
+            'totalPages' => $PER_PAGE > 0 ? (int) ceil($total / $PER_PAGE) : 0,
+        ],
     ]);
-
     return;
 }
 
 
+
 function getWatchById(string $id): void {
+    $db = Database::connection();
+
+    try {
+        $statement = $db->prepare('SELECT * FROM watch WHERE watchId = :id');
+        $statement->execute(['id' => $id]);
+        $watch = $statement->fetch();
+
+        if (!$watch) {
+            Response::json([
+                'error' => 'NO_RESULTS_FOUND',
+                'message' => 'No results found for the given ID',
+            ], 404);
+            return;
+        }
+
+    } catch (PDOException) {
+        Response::json([
+            'error' => 'NO_RESULTS_FOUND',
+            'message' => 'No results found for the given ID',
+        ], 500);
+        return;
+    }
+
     Response::json([
-        'success' => true,
-        'data' => [
-            'id' => "royal-oak-automatique",
-            'brand' => "Audemars Piguet",
-            'model' => "Royal Oak Automatique",
-            'category' => "Chronographe",
-            'material' => "Acier",
-            'price' => 25500,
-            'movement' => "Mecanique automatique",
-            'caliber' => "3120",
-            'case' => "Acier 41mm",
-            'reserve' => "60 heures",
-            'waterResistance' => "50 metres",
-            'description' => "Un classique moderne aux lignes architecturales, pense pour traverser les epoques avec elegance.",
-            'images' => [
-                "https://images.unsplash.com/photo-1523170335258-f5c6c6bdcf94?auto=format&fit=crop&w=1200&q=80",
-                "https://images.unsplash.com/photo-1619134778706-7015533a6150?auto=format&fit=crop&w=1200&q=80",
-                "https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?auto=format&fit=crop&w=1200&q=80",
-            ],
-        ]
+        'data' => $watch
     ]);
-    return;
 }

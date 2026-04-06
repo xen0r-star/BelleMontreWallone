@@ -68,8 +68,7 @@ function dispatch(string $method, string $path): void {
 
 function sendNotFound(): void {
     Response::json([
-        'success' => false,
-        'error' => 'route_not_found',
-        'message' => 'Endpoint not found.',
+        'error' => 'ROUTE_NOT_FOUND',
+        'message' => 'Endpoint not found',
     ], 404);
 }

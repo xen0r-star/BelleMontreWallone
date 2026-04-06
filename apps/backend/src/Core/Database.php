@@ -20,7 +20,7 @@ final class Database {
         $configPath = __DIR__ . '/../Config/config.php';
         
         if (!file_exists($configPath)) {
-            self::sendError('Configuration file missing');
+            self::sendError();
         }
 
         $config = require $configPath;
@@ -46,7 +46,7 @@ final class Database {
             );
 
         } catch (PDOException) {
-            self::sendError('database_connection_failed');
+            self::sendError();
             exit;
         }
 
@@ -54,10 +54,10 @@ final class Database {
     }
 
     
-    private static function sendError(string $error): void {
+    private static function sendError(): void {
         Response::json([
-            'success' => false,
-            'error'   => $error,
+            'error' => 'INTERNAL_SERVER_ERROR',
+            'message' => 'An internal server error occurred',
         ], 500);
         exit;
     }

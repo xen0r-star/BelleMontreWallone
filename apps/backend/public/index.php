@@ -30,8 +30,8 @@ try {
 
 } catch (\Throwable) {
     Response::json([
-        'success' => false,
-        'error' => 'internal_server_error',
+        'error' => 'INTERNAL_SERVER_ERROR',
+        'message' => 'An internal server error occurred',
     ], 500);
     exit;
 }
