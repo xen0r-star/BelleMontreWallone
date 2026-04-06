@@ -1247,3 +1247,9 @@ INSERT INTO loan(userId, watchId, loanDate, returnLoanDate, isOutDelay) VALUES
 (1, 1, CURRENT_DATE, '2026-04-20', 0),
 (2, 2, CURRENT_DATE, '2026-04-15', 0),
 (3, 3, CURRENT_DATE, '2026-04-10', 1);
+
+
+
+-- Contacts
+INSERT INTO `contact` (`contactId`, `surname`, `name`, `email`, `tel`, `message`, `createdAt`) VALUES
+(1, 'Dupont', 'Jean', 'jean.dupont@gmail.com', '0495 85 71 29', 'Bonjour, j\'aimerais obtenir plus d\'informations sur vos services.', '2026-04-06 15:26:56');

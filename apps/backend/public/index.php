@@ -15,6 +15,7 @@ use function App\Routes\dispatch;
 require __DIR__ . '/../src/Core/Response.php';
 require __DIR__ . '/../src/Core/Database.php';
 require __DIR__ . '/../src/Utils/cors.php';
+require __DIR__ . '/../src/Utils/json.php';
 
 require __DIR__ . '/../src/Routes/auth.routes.php';
 require __DIR__ . '/../src/Routes/admin.routes.php';

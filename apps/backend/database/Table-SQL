@@ -4,73 +4,90 @@ USE watch_store;
 
 CREATE TABLE IF NOT EXISTS user(
     userId INT AUTO_INCREMENT NOT NULL,
-    userName varchar(50) NOT NULL,
-    mail varchar(90) NOT NULL,
-    dateOfBirth date NOT NULL,
-    hashPassWord varchar(255) NOT NULL,
-    isAdmin boolean DEFAULT 0,
+    userName VARCHAR(50) NOT NULL,
+    mail VARCHAR(90) NOT NULL,
+    dateOfBirth DATE NOT NULL,
+    hashPassWord VARCHAR(255) NOT NULL,
+    isAdmin BOOLEAN DEFAULT 0,
+    
     PRIMARY KEY (userId)
 )engine=innodb;
 
 CREATE TABLE IF NOT EXISTS city (
-    idCity varchar(255) NOT NULL,
-    cityName varchar(255) NOT NULL,
+    idCity VARCHAR(255) NOT NULL,
+    cityName VARCHAR(255) NOT NULL,
+
     PRIMARY KEY (idCity)
 )engine=innodb;
 
 CREATE TABLE IF NOT EXISTS store (
-    idStore char(12) NOT NULL,
-    storeName varchar(255) NOT NULL,
-    idCity varchar(255) NOT NULL,
+    idStore CHAR(12) NOT NULL,
+    storeName VARCHAR(255) NOT NULL,
+    idCity VARCHAR(255) NOT NULL,
+
     PRIMARY KEY (idStore),
     KEY(idCity)
 )engine=innodb;
 
 CREATE TABLE IF NOT EXISTS watchCabinet (
-    idWatchCabinet char(12) NOT NULL,
-    idStore char(12) NOT NULL,
-    positionInStore varchar(4) NOT NULL,
-    cabinetName varchar(255) NOT NULL,
+    idWatchCabinet CHAR(12) NOT NULL,
+    idStore CHAR(12) NOT NULL,
+    positionInStore VARCHAR(4) NOT NULL,
+    cabinetName VARCHAR(255) NOT NULL,
+
     PRIMARY KEY (idWatchCabinet),
     KEY(idStore)
 )engine=innodb;
 
 CREATE TABLE IF NOT EXISTS shelf (
-    idShelf char(12) NOT NULL,
-    idWatchCabinet char(12) NOT NULL,
-    positionInCabinet varchar(4) NOT NULL,
+    idShelf CHAR(12) NOT NULL,
+    idWatchCabinet CHAR(12) NOT NULL,
+    positionInCabinet VARCHAR(4) NOT NULL,
+
     PRIMARY KEY (idShelf),
     KEY(idWatchCabinet)
 )engine=innodb;
 
 CREATE TABLE IF NOT EXISTS watch (
     watchId INT AUTO_INCREMENT NOT NULL,
-    idShelf char(12) NOT NULL,
-    model varchar(255) NOT NULL,
-    watchCollection varchar(255) NOT NULL,
-    imageUrl varchar(255) NOT NULL,
-    retailPrice numeric(10,2),
-    marketPrice numeric(10,2) NOT NULL,
+    idShelf CHAR(12) NOT NULL,
+    model VARCHAR(255) NOT NULL,
+    watchCollection VARCHAR(255) NOT NULL,
+    imageUrl VARCHAR(255) NOT NULL,
+    retailPrice NUMERIC(10,2),
+    marketPrice NUMERIC(10,2) NOT NULL,
 
-    isInProduction boolean DEFAULT 1,
-    materials varchar (255),
-    diameter numeric(5,2),
-    watertightness varchar(50),
+    isInProduction BOOLEAN DEFAULT 1,
+    materials VARCHAR (255),
+    diameter NUMERIC(5,2),
+    watertightness VARCHAR(50),
 
     PRIMARY KEY (watchId),
     KEY(idShelf)
 )engine=innodb;
 
-
 CREATE TABLE IF NOT EXISTS loan(
     userId INT NOT NULL,
     watchId INT NOT NULL,
-    loanDate date DEFAULT (CURRENT_DATE),
-    returnLoanDate date NOT NULL,
-    isOutDelay boolean,
+    loanDate DATE DEFAULT (CURRENT_DATE),
+    returnLoanDate DATE NOT NULL,
+    isOutDelay BOOLEAN,
+
     PRIMARY KEY (userId, watchId)
 )engine=innodb;
 
+
+CREATE TABLE IF NOT EXISTS contact(
+    contactId INT AUTO_INCREMENT NOT NULL,
+    surname VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    tel VARCHAR(20) NOT NULL,
+    message TEXT NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (contactId)
+)
 
 
 ALTER TABLE store
