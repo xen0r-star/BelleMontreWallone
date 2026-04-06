@@ -4,7 +4,7 @@ CREATE DATABASE IF NOT EXISTS tableTechnologieMobile CHARACTER SET = 'utf8mb4';
 USE tableTechnologieMobile;
 
 create table if not EXISTS user(
-    userId numeric(10) not null,
+    userId int not null auto_increment,
     userName varchar(50) not null,
     mail varchar(90) not null,
     dateOfBirth date not null,
@@ -21,6 +21,7 @@ create table if not EXISTS city (
 
 create table if not EXISTS store (
     idStore char(12) not null,
+    idCity varchar(255) not null,
     storeName varchar(255) not null,
     primary key (idStore),
     key(idCity)
@@ -51,10 +52,6 @@ create table if not EXISTS watch (
     imageUrl varchar(255) not null,
     retailPrice numeric(10,2) not null,
     marketPrice numeric(10,2) not null,
-    /* 
-        Y avait rien à ajouter poto si tu veux tu peux mette un "feature_" 
-        pour faire la différence 
-    */
     isInProduction boolean default 1,
     materials varchar (255),
     diameter numeric(5,2),
@@ -62,10 +59,9 @@ create table if not EXISTS watch (
     primary key (watchId),
     key(idShelf)
 )engine=innodb;
-µ
 
 create table if not EXISTS loan(
-    userId numeric(10) not null,
+    userId int not null,
     watchId numeric(10) not null,
     loanDate date default (CURRENT_DATE),
     returnLoanDate date not null,
@@ -74,6 +70,8 @@ create table if not EXISTS loan(
 )engine=innodb;
 
 /* --- Gestion des clés étrangères --- */
+alter table user auto_increment = 1000;   -- Démarrer l'auto-incrémentation à 1000 pour les utilisateurs
+
 ALTER TABLE store
 ADD CONSTRAINT fk_idCity FOREIGN KEY (idCity) REFERENCES city(idCity);
 
