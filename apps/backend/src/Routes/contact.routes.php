@@ -13,9 +13,7 @@ use PDOException;
 
 function contact(): void {
     $data = readJsonBody(8192);
-    if ($data === null) {
-        return;
-    }
+    if ($data === null) return;
 
 
     $requiredFields = ['surname', 'name', 'email', 'tel', 'message'];
