@@ -23,4 +23,7 @@ return [
     'admin_user' => $requireEnv('ADMIN_USER'),
     'admin_password' => $requireEnv('ADMIN_PASSWORD'),
     'admin_api_key' => $requireEnv('ADMIN_API_KEY'),
+    'jwt_secret' => $requireEnv('JWT_SECRET'),
+    'access_token_expires' => 900,
+    'refresh_token_expires' => 604800,
 ];

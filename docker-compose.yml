@@ -19,6 +19,7 @@ services:
       ADMIN_USER: admin
       ADMIN_PASSWORD: admin123
       ADMIN_API_KEY: change-me-api-key
+      JWT_SECRET: super-secret-jwt
     ports:
       - "8080:80"
     volumes:

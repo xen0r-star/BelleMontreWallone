@@ -25,12 +25,11 @@ function dispatch(string $method, string $path): void {
 
             '/api/auth/login'    => fn() => login(),
             '/api/auth/register' => fn() => register(),
-            '/api/auth/logout'   => fn() => logout(),
+            '/api/auth/refresh'  => fn() => refresh(),
 
             '/api/admin/login'   => fn() => adminLogin(),
             '/api/admin/watches' => fn() => createAdminWatch(),
             '/api/contact'       => fn() => contact(),
-
         ],
         'PUT' => [
             '#/api/admin/watches/([^/]+)#' => fn($id) => updateAdminWatch($id),

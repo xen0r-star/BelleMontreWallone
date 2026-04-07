@@ -9,8 +9,21 @@ CREATE TABLE IF NOT EXISTS user(
     dateOfBirth DATE NOT NULL,
     hashPassWord VARCHAR(255) NOT NULL,
     isAdmin BOOLEAN DEFAULT 0,
-    
+
     PRIMARY KEY (userId)
+)engine=innodb;
+
+CREATE TABLE IF NOT EXISTS refreshToken(
+    tokenId INT AUTO_INCREMENT NOT NULL,
+    userId INT NOT NULL,
+    token VARCHAR(500) NOT NULL,
+    expiresAt TIMESTAMP NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    revokedAt TIMESTAMP NULL,
+
+    PRIMARY KEY (tokenId),
+    KEY(userId),
+    KEY(expiresAt)
 )engine=innodb;
 
 CREATE TABLE IF NOT EXISTS city (
@@ -89,6 +102,9 @@ CREATE TABLE IF NOT EXISTS contact(
     PRIMARY KEY (contactId)
 )
 
+
+ALTER TABLE refreshToken 
+ADD CONSTRAINT fx_refreshToken_userId FOREIGN KEY (userId) REFERENCES user(userId);
 
 ALTER TABLE store
 ADD CONSTRAINT fk_idCity FOREIGN KEY (idCity) REFERENCES city(idCity);
