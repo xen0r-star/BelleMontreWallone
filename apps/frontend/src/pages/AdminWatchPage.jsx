@@ -5,13 +5,18 @@ import { getWatches } from '../services/api';
 
 const emptyForm = {
     brand: "",
-    reference: "",
     model: "",
-    year: "",
+    watchDesc: "",
+    watchCollection: "",
+    imageUrl: "",
+    retailPrice: "",
+    marketPrice: "",
+    isInProduction: "",
+    movement: "",
     diameter: "",
-    caseMaterial: "",
-    category: "Classique",
-    image: ""
+    materials: "",
+    watertightness: "",
+    isActif: ""
 };
 
 function getDiameterFromCase(caseValue) {
@@ -31,13 +36,17 @@ function mapCatalogWatchToAdminWatch(watch) {
     return {
         id: watch.id,
         brand: watch.brand || "",
-        reference: watch.id || "",
         model: watch.model || "",
-        year: "",
-        diameter: getDiameterFromCase(watch.case),
-        caseMaterial: watch.material || "",
-        category: watch.category || "Classique",
-        image: typeof watch.images?.[0] === "string" ? watch.images[0] : ""
+        watchDesc: watch.watchDesc || "",
+        watchCollection: watch.id || "",
+        imageUrl: typeof watch.imagesUrl?.[0] === "string" ? watch.images[0] : "",
+        retailPrice: watch.retailPrice || "",
+        marketPrice: watch.marketPrice || "",
+        isInProduction: watch.isInProduction || "",
+        movement: watch.movement || "",
+        materials: watch.materials || "",
+        diameter: watch.diameter || "",
+        watertightness: watch.watertightness || "",
     };
 }
 
@@ -144,13 +153,18 @@ export default function AdminWatchPage() {
         setEditingId(id);
         setForm({
             brand: watch.brand,
-            reference: watch.reference,
             model: watch.model,
-            year: watch.year,
+            watchDesc: watch.watchDesc,
+            watchCollection: watch.watchCollection,
+            imageUrl: watch.imageUrl,
+            retailPrice: watch.retailPrice,
+            marketPrice: watch.marketPrice,
+            isInProduction: watch.isInProduction,
+            movement: watch.movement,
             diameter: watch.diameter,
-            caseMaterial: watch.caseMaterial,
-            category: watch.category,
-            image: watch.image
+            materials: watch.materials,
+            watertightness: watch.watertightness,
+            isActif: watch.isActif
         });
     }
 
@@ -203,18 +217,24 @@ export default function AdminWatchPage() {
                                     <div className="admin-watch-card">
                                         <div className="admin-preview-media-box">
                                             <ImageWithFallback
-                                                src={form.image}
+                                                src={form.imageUrl}
                                                 alt={`${form.brand || "Marque"} ${form.model || "Modèle"}`}
                                                 fallbackText="Aucune image selectionnee"
                                             />
                                         </div>
                                         <div>
                                             <h4>{(form.brand || "Marque") + " - " + (form.model || "Modèle")}</h4>
-                                            <p className="muted small">Référence: {form.reference || "--"}</p>
-                                            <p className="small">Année: {form.year || "--"}</p>
-                                            <p className="small">Diamètre: {(form.diameter || "--") + " mm"}</p>
-                                            <p className="small">Matériaux boitier: {form.caseMaterial || "--"}</p>
-                                            <p className="small">Catégorie: {form.category || "Classique"}</p>
+                                            <p className="muted small">Description: {form.watchDesc || "--"}</p>
+                                            <p className="muted small">Collection: {form.watchCollection || "--"}</p>
+                                            <p className="small">Prix revente: {form.retailPrice || "--"}</p>
+                                            <p className="small">Prix neuf: {form.marketPrice || "--"}</p>
+                                            <p className="small">En production: {form.isInProduction || ""}</p>
+                                            <p className="small">Mouvement: {form.movement || ""}</p>
+                                            <p className="small">Diamètre: {(form.diameter || "") + " mm"}</p>
+                                            <p className="small">Matériaux boitier: {form.materials || "--"}</p>
+                                            <p className="small">Catégorie: {form.category || ""}</p>
+                                            <p className="small">Etanchéité : {form.watertightness || "--"}</p>
+                                            <p className="small">Est actif : {form.isActif || "--"}</p>
                                         </div>
                                     </div>
                                 </article>
@@ -222,17 +242,21 @@ export default function AdminWatchPage() {
                                 <article className="form-panel">
                                     <h3>Informations montre</h3>
                                     <form className="form-grid" onSubmit={handleSaveWatch}>
+
+                                        /*encore a faire*/
                                         <input name="brand" required value={form.brand} onChange={handleChange} placeholder="Marque" />
                                         <input name="reference" required value={form.reference} onChange={handleChange} placeholder="Référence" />
                                         <input name="model" required value={form.model} onChange={handleChange} placeholder="Modèle" />
                                         <input name="year" type="number" min="1900" max="2100" value={form.year} onChange={handleChange} placeholder="Année" />
                                         <input name="diameter" type="number" min="1" step="0.1" value={form.diameter} onChange={handleChange} placeholder="Diametre (mm)" />
                                         <input name="caseMaterial" value={form.caseMaterial} onChange={handleChange} placeholder="Materiaux boitier" />
-                                        <select name="category" value={form.category} onChange={handleChange}>
-                                            <option>Classique</option>
-                                            <option>Sport</option>
-                                            <option>Luxe</option>
-                                        </select>
+                                        <input name="brand" required value={form.brand} onChange={handleChange} placeholder="Marque" />
+                                        <input name="reference" required value={form.reference} onChange={handleChange} placeholder="Référence" />
+                                        <input name="model" required value={form.model} onChange={handleChange} placeholder="Modèle" />
+                                        <input name="year" type="number" min="1900" max="2100" value={form.year} onChange={handleChange} placeholder="Année" />
+                                        <input name="diameter" type="number" min="1" step="0.1" value={form.diameter} onChange={handleChange} placeholder="Diametre (mm)" />
+                                        <input name="caseMaterial" value={form.caseMaterial} onChange={handleChange} placeholder="Materiaux boitier" />
+
 
                                         <label
                                             className="drop-zone"
