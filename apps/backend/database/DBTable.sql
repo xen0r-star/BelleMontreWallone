@@ -65,14 +65,17 @@ CREATE TABLE IF NOT EXISTS shelf (
 CREATE TABLE IF NOT EXISTS watch (
     watchId INT AUTO_INCREMENT NOT NULL,
     idShelf CHAR(12) NOT NULL,
+    brand VARCHAR(255),
     model VARCHAR(255) NOT NULL,
+    watchDesc VARCHAR(255),
     watchCollection VARCHAR(255) NOT NULL,
     imageUrl VARCHAR(255) NOT NULL,
     retailPrice NUMERIC(10,2),
     marketPrice NUMERIC(10,2) NOT NULL,
     isInProduction BOOLEAN DEFAULT 1,
-    materials VARCHAR (255),
+    movement VARCHAR(255),
     diameter NUMERIC(5,2),
+    materials VARCHAR (255),
     watertightness VARCHAR(50),
     isActif boolean DEFAULT 1,
     
