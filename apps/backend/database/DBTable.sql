@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS contact(
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (contactId)
-)
+)engine=innodb;
 
 
 ALTER TABLE refreshToken 

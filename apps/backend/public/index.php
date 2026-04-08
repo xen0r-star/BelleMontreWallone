@@ -17,6 +17,7 @@ require __DIR__ . '/../src/Core/Database.php';
 require __DIR__ . '/../src/Utils/cors.php';
 require __DIR__ . '/../src/Utils/json.php';
 require __DIR__ . '/../src/Utils/jwtToken.php';
+require __DIR__ . '/../src/Utils/validation.php';
 
 require __DIR__ . '/../src/Routes/auth.routes.php';
 require __DIR__ . '/../src/Routes/admin.routes.php';
