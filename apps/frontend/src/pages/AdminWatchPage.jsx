@@ -11,12 +11,12 @@ const emptyForm = {
     imageUrl: "",
     retailPrice: "",
     marketPrice: "",
-    isInProduction: "",
+    isInProduction: false,
     movement: "",
     diameter: "",
     materials: "",
     watertightness: "",
-    isActif: ""
+    isActif: false
 };
 
 function getDiameterFromCase(caseValue) {
@@ -42,7 +42,7 @@ function mapCatalogWatchToAdminWatch(watch) {
         imageUrl: typeof watch.imagesUrl?.[0] === "string" ? watch.images[0] : "",
         retailPrice: watch.retailPrice || "",
         marketPrice: watch.marketPrice || "",
-        isInProduction: watch.isInProduction || "",
+        isInProduction: Boolean(watch.isInProduction),
         movement: watch.movement || "",
         materials: watch.materials || "",
         diameter: watch.diameter || "",
@@ -83,8 +83,8 @@ export default function AdminWatchPage() {
     }
 
     function handleChange(event) {
-        const { name, value } = event.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        const { name, value, type, checked } = event.target;
+        setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
     }
 
     function handleImageChange(event) {
@@ -159,12 +159,12 @@ export default function AdminWatchPage() {
             imageUrl: watch.imageUrl,
             retailPrice: watch.retailPrice,
             marketPrice: watch.marketPrice,
-            isInProduction: watch.isInProduction,
+            isInProduction: Boolean(watch.isInProduction),
             movement: watch.movement,
             diameter: watch.diameter,
             materials: watch.materials,
             watertightness: watch.watertightness,
-            isActif: watch.isActif
+            isActif: Boolean(watch.isActif)
         });
     }
 
@@ -228,13 +228,13 @@ export default function AdminWatchPage() {
                                             <p className="muted small">Collection: {form.watchCollection || "--"}</p>
                                             <p className="small">Prix revente: {form.retailPrice || "--"}</p>
                                             <p className="small">Prix neuf: {form.marketPrice || "--"}</p>
-                                            <p className="small">En production: {form.isInProduction || ""}</p>
+                                            <p className="small">En production: {form.isInProduction ? "Oui" : "Non"}</p>
                                             <p className="small">Mouvement: {form.movement || ""}</p>
                                             <p className="small">Diamètre: {(form.diameter || "") + " mm"}</p>
                                             <p className="small">Matériaux boitier: {form.materials || "--"}</p>
                                             <p className="small">Catégorie: {form.category || ""}</p>
                                             <p className="small">Etanchéité : {form.watertightness || "--"}</p>
-                                            <p className="small">Est actif : {form.isActif || "--"}</p>
+                                            <p className="small">Est actif : {form.isActif ? "Oui" : "Non"}</p>
                                         </div>
                                     </div>
                                 </article>
@@ -245,18 +245,23 @@ export default function AdminWatchPage() {
 
                                         /*encore a faire*/
                                         <input name="brand" required value={form.brand} onChange={handleChange} placeholder="Marque" />
-                                        <input name="reference" required value={form.reference} onChange={handleChange} placeholder="Référence" />
                                         <input name="model" required value={form.model} onChange={handleChange} placeholder="Modèle" />
-                                        <input name="year" type="number" min="1900" max="2100" value={form.year} onChange={handleChange} placeholder="Année" />
+                                        <input name="watchDesc" required value={form.watchDesc} onChange={handleChange} placeholder="Descriptio,n" />
+                                        <input name="watchCollection" value={form.watchCollection} onChange={handleChange} placeholder="Nom collection" />
+                                        <input name="retailPrice" type="number" min="1" value={form.retailPrice} onChange={handleChange} placeholder="Prix revente" />
+                                        <input name="marketPrice" type="number" min="1" value={form.retailPrice} onChange={handleChange} placeholder="Prix revente" />
+                                        <label>
+                                            <input name="isInProduction" type="checkbox" checked={Boolean(form.isInProduction)} onChange={handleChange} />
+                                            Toujours en production
+                                        </label>
+                                        <input name="movement" required value={form.movement} onChange={handleChange} placeholder="Type de mouvement" />4
                                         <input name="diameter" type="number" min="1" step="0.1" value={form.diameter} onChange={handleChange} placeholder="Diametre (mm)" />
-                                        <input name="caseMaterial" value={form.caseMaterial} onChange={handleChange} placeholder="Materiaux boitier" />
-                                        <input name="brand" required value={form.brand} onChange={handleChange} placeholder="Marque" />
-                                        <input name="reference" required value={form.reference} onChange={handleChange} placeholder="Référence" />
-                                        <input name="model" required value={form.model} onChange={handleChange} placeholder="Modèle" />
-                                        <input name="year" type="number" min="1900" max="2100" value={form.year} onChange={handleChange} placeholder="Année" />
-                                        <input name="diameter" type="number" min="1" step="0.1" value={form.diameter} onChange={handleChange} placeholder="Diametre (mm)" />
-                                        <input name="caseMaterial" value={form.caseMaterial} onChange={handleChange} placeholder="Materiaux boitier" />
-
+                                        <input name="materials" value={form.materials} onChange={handleChange} placeholder="Materiaux boitier" />
+                                        <input name="watertightness" value={form.watertightness} onChange={handleChange} placeholder="Etanchéité" />
+                                        <label>
+                                            <input name="isActif" type="checkbox" checked={Boolean(form.isActif)} onChange={handleChange} />
+                                            Montre active
+                                        </label>
 
                                         <label
                                             className="drop-zone"
