@@ -9,6 +9,7 @@ use App\Core\Response;
 use App\Utils\JwtToken;
 use PDOException;
 use function App\Utils\readJsonBody;
+use function App\Utils\readRequiredString;
 
 
 function login(): void {
@@ -344,31 +345,6 @@ function getCurrentUser(): void {
 
 
 
-function readRequiredString(array $data, string $field, array &$errors, int $maxLength): ?string {
-    if (!array_key_exists($field, $data)) {
-        $errors[$field] = 'Field is required';
-        return null;
-    }
-
-    if (!is_string($data[$field])) {
-        $errors[$field] = 'Field must be a string';
-        return null;
-    }
-
-    $value = trim($data[$field]);
-    if ($value === '') {
-        $errors[$field] = 'Field cannot be empty';
-        return null;
-    }
-
-    if (safeStringLength($value) > $maxLength) {
-        $errors[$field] = 'Maximum length exceeded';
-        return null;
-    }
-
-    return $value;
-}
-
 function normalizeDateOfBirth(?string $value): ?string {
     if ($value === null) {
         return null;
@@ -392,16 +368,6 @@ function verifyPassword(string $plainPassword, string $storedHash): bool {
 
     return hash_equals($storedHash, $plainPassword);
 }
-
-function safeStringLength(string $value): int {
-    if (function_exists('mb_strlen')) {
-        return mb_strlen($value);
-    }
-
-    return strlen($value);
-}
-
-
 
 function generateAccessToken(array $user, array $config): string {
     $payload = [
