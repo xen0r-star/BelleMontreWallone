@@ -1,14 +1,10 @@
 USE watch_store;
 
-
-
 -- Utilisateurs
-INSERT INTO user(userId, userName, mail, dateOfBirth, hashPassWord, isAdmin) VALUES
-(1, 'Dupont', 'dupont@mail.com', '1990-05-12', 'hash1', 1),
-(2, 'Martin', 'martin@mail.com', '1985-03-22', 'hash2', 0),
-(3, 'Durand', 'durand@mail.com', '2000-11-02', 'hash3', 0);
-
-
+INSERT INTO user(userId, userName, mail, dateOfBirth, hashPassWord, isAdmin, isPremium) VALUES
+(1, 'Dupont', 'dupont@mail.com', '1990-05-12', 'hash1', 1, 0),
+(2, 'Martin', 'martin@mail.com', '1985-03-22', 'hash2', 0, 0),
+(3, 'Durand', 'durand@mail.com', '2000-11-02', 'hash3', 0, 0);
 
 -- Villes
 INSERT INTO city(idCity, cityName) VALUES
@@ -34,8 +30,6 @@ INSERT INTO shelf(idShelf, idWatchCabinet, positionInCabinet) VALUES
 ('SHELF2', 'CAB1', '2'),
 ('SHELF3', 'CAB2', '1'),
 ('SHELF4', 'CAB3', '1');
-
-
 
 -- Montres
 INSERT INTO watch(idShelf, model, watchCollection, imageUrl, retailPrice, marketPrice, isInProduction, materials, diameter, watertightness) VALUES
@@ -1240,15 +1234,11 @@ INSERT INTO watch(idShelf, model, watchCollection, imageUrl, retailPrice, market
 ('SHELF3', 'Blancpain 6639-3637-55B', 'Villeret Quantieme Complet 8 Jours', 'https://cdn.watchcharts.com/removebg/e007d19f-3a52-4435-89c1-fcc808e3e0d2.png?d=600x600', NULL, 13381, 0, 'Rose gold', 42, '30m'),
 ('SHELF4', 'Blancpain 6665-3642-55B', 'Villeret Demi-Fuseau Horaire Demi-Savonette', 'https://cdn.watchcharts.com/logo/watchcharts/no_image.png', NULL, 10447, 0, 'Rose gold', 40, '30m');
 
-
-
 -- Emprunts
 INSERT INTO loan(userId, watchId, loanDate, returnLoanDate, isOutDelay) VALUES
 (1, 1, CURRENT_DATE, '2026-04-20', 0),
 (2, 2, CURRENT_DATE, '2026-04-15', 0),
 (3, 3, CURRENT_DATE, '2026-04-10', 1);
-
-
 
 -- Contacts
 INSERT INTO `contact` (`contactId`, `surname`, `name`, `email`, `tel`, `message`, `createdAt`) VALUES

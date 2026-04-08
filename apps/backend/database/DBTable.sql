@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS user(
     dateOfBirth DATE NOT NULL,
     hashPassWord VARCHAR(255) NOT NULL,
     isAdmin BOOLEAN DEFAULT 0,
+    isPremium BOOLEAN DEFAULT 0,
 
     PRIMARY KEY (userId)
 )engine=innodb;
@@ -69,6 +70,7 @@ CREATE TABLE IF NOT EXISTS watch (
     imageUrl VARCHAR(255) NOT NULL,
     retailPrice NUMERIC(10,2),
     marketPrice NUMERIC(10,2) NOT NULL,
+    isActif boolean DEFAULT 1,
 
     isInProduction BOOLEAN DEFAULT 1,
     materials VARCHAR (255),
