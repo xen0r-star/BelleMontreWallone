@@ -1,5 +1,6 @@
 services:
   backend:
+    hostname: localhost
     build:
       context: ./apps/backend
       dockerfile: Dockerfile
