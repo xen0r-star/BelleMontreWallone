@@ -70,13 +70,12 @@ CREATE TABLE IF NOT EXISTS watch (
     imageUrl VARCHAR(255) NOT NULL,
     retailPrice NUMERIC(10,2),
     marketPrice NUMERIC(10,2) NOT NULL,
-    isActif boolean DEFAULT 1,
-
     isInProduction BOOLEAN DEFAULT 1,
     materials VARCHAR (255),
     diameter NUMERIC(5,2),
     watertightness VARCHAR(50),
-
+    isActif boolean DEFAULT 1,
+    
     PRIMARY KEY (watchId),
     KEY(idShelf)
 )engine=innodb;
