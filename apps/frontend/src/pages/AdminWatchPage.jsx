@@ -293,6 +293,8 @@ export default function AdminWatchPage() {
                         </section>
                     )}
 
+
+                    //a modifier 
                     <section className="mt-section">
                         <div className="section-title-row">
                             <h2>Montres ajoutées</h2>
@@ -308,17 +310,22 @@ export default function AdminWatchPage() {
                                 <article className="watch-card" key={watch.id}>
                                     <div className="collection-media-box">
                                         <ImageWithFallback
-                                            src={watch.image}
+                                            src={watch.imageUrl}
                                             alt={`${watch.brand} ${watch.model}`}
                                         />
                                     </div>
                                     <div className="watch-meta">
                                         <h3>{watch.brand} - {watch.model}</h3>
-                                        <p className="muted small">Référence: {watch.reference}</p>
-                                        <p className="small">Année: {watch.year || "--"}</p>
+                                        <p className="muted small">Description: {watch.watchDesc || "--"}</p>
+                                        <p className="small">Collection: {watch.watchCollection || "--"}</p>
+                                        <p className="small">Prix revente: {watch.retailPrice || "--"}</p>
+                                        <p className="small">Prix neuf: {watch.marketPrice || "--"}</p>
+                                        <p className="small">En production: {watch.isInProduction ? "Oui" : "Non"}</p>
+                                        <p className="small">Mouvement: {watch.movement || "--"}</p>
                                         <p className="small">Diamètre: {(watch.diameter || "--") + " mm"}</p>
-                                        <p className="small">Matériaux: {watch.caseMaterial || "--"}</p>
-                                        <p className="small">Catégorie: {watch.category}</p>
+                                        <p className="small">Matériaux boitier: {watch.materials || "--"}</p>
+                                        <p className="small">Etancheite: {watch.watertightness || "--"}</p>
+                                        <p className="small">Est actif: {watch.isActif ? "Oui" : "Non"}</p>
                                     </div>
                                     <div className="action-cell">
                                         <button type="button" onClick={() => handleEdit(watch.id)}>Modifier</button>
