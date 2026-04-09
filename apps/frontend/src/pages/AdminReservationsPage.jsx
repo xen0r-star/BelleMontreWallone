@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-// import { getWatches } from '../services/api';
+import { fetchWatches } from "../hooks/fetchAPI";
 
 const reservations = [];
 
@@ -51,21 +51,7 @@ export default function AdminReservationsPage() {
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
 
-    useEffect(() => {
-            const fetchWatches = async () => {
-                try {
-                    const response = await getWatches();
-                    if (response && response.data) {
-                        setWatches(response.data);
-                    }
-                } catch (e) {
-                    console.error("Erreur lors du chargement des données:", e);
-                } finally {
-                    setIsLoading(false);
-                }
-            };
-            fetchWatches();
-        }, [])
+    fetchWatches(setWatches, setIsLoading);
 
     const allRows = useMemo(() => {
         if (!reservations || !watches) return [];
@@ -105,6 +91,97 @@ export default function AdminReservationsPage() {
             lateReturns: late
         };
     }, [allRows, watches]);
+
+    if (!watches || watches.length === 0 || isLoading) {
+        return (
+            <div className="page-root">
+                <SiteHeader isAdmin />
+                
+                <main className="container reservations-page">
+                    <section className="kpi-grid">
+                        <article className="kpi-card">
+                            <p className="kpi-label">Montres</p>
+                            <p className="kpi-value">/</p>
+                        </article>
+                        <article className="kpi-card">
+                            <p className="kpi-label">Reservations en attente</p>
+                            <p className="kpi-value">/</p>
+                        </article>
+                        <article className="kpi-card">
+                            <p className="kpi-label">Retours en retard</p>
+                            <p className="kpi-value">/</p>
+                        </article>
+                    </section>
+
+                    <section className="filters-card reservations-filters">
+                        <h3>Filtres</h3>
+                        <div className="filter-row">
+                            <label>
+                                Statut
+                                <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+                                    <option value="all">Tous</option>
+                                    <option value="future">En attente</option>
+                                    <option value="current">En cours</option>
+                                    <option value="late">En retard</option>
+                                </select>
+                            </label>
+                            <label>
+                                Du
+                                <input type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} />
+                            </label>
+                            <label>
+                                Au
+                                <input type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} />
+                            </label>
+                        </div>
+                    </section>
+                    <div className="section-title-row">
+                        <h2>Gestion des reservations</h2>
+                        <p className="muted">X reservation(s)</p>
+                    </div>
+                    <div className="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date réservation</th>
+                                    <th>Temps</th>
+                                    <th>Date retour</th>
+                                    <th>Statut</th>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Modèle</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        /
+                                        <br />
+                                        <span className="muted small">/</span>
+                                    </td>
+                                    <td>
+                                        / jour(s)
+                                    </td>
+                                    <td>
+                                        /
+                                    </td>
+                                    <td>
+                                        /
+                                    </td>
+                                    <td>/</td>
+                                    <td>/</td>
+                                    <td>
+                                        "N/A"
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </main>
+                <SiteFooter />
+            </div>
+        );
+    }
 
     return (
         <div className="page-root">

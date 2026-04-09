@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-// import { getWatches } from '../services/api';
+import { fetchWatches } from "../hooks/fetchAPI";
 
 const emptyForm = {
     brand: "",
@@ -21,65 +21,6 @@ const emptyForm = {
 
 const MOVEMENT_OPTIONS = ["automatique", "mecanique", "quartz"];
 
-function normalizeMovement(value) {
-    if (typeof value !== "string") {
-        return "";
-    }
-
-    const normalized = value.toLowerCase().trim();
-    if (normalized.includes("auto")) {
-        return "automatique";
-    }
-    if (normalized.includes("mec")) {
-        return "mecanique";
-    }
-    if (normalized.includes("quartz")) {
-        return "quartz";
-    }
-
-    return "";
-}
-
-function getDiameterFromCase(caseValue) {
-    if (typeof caseValue !== "string") {
-        return "";
-    }
-
-    const match = caseValue.match(/(\d+(?:[.,]\d+)?)\s*mm/i);
-    if (!match) {
-        return "";
-    }
-
-    return match[1].replace(",", ".");
-}
-
-function mapCatalogWatchToAdminWatch(watch) {
-    const imageUrl =
-        typeof watch.imageUrl === "string"
-            ? watch.imageUrl
-            : typeof watch.images?.[0] === "string"
-                ? watch.images[0]
-                : typeof watch.imagesUrl?.[0] === "string"
-                    ? watch.imagesUrl[0]
-                    : "";
-
-    return {
-        id: watch.id,
-        brand: watch.brand || "",
-        model: watch.model || "",
-        watchDesc: watch.watchDesc || "",
-        watchCollection: watch.id || "",
-        imageUrl,
-        retailPrice: watch.retailPrice || "",
-        marketPrice: watch.marketPrice || "",
-        isInProduction: Boolean(watch.isInProduction),
-        movement: normalizeMovement(watch.movement),
-        materials: watch.materials || "",
-        diameter: watch.diameter || "",
-        watertightness: watch.watertightness || "",
-    };
-}
-
 export default function AdminWatchPage() {
     const [showBuilder, setShowBuilder] = useState(false);
     const [form, setForm] = useState(emptyForm);
@@ -89,21 +30,74 @@ export default function AdminWatchPage() {
     const [toast, setToast] = useState("");
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
-    useEffect(() => {
-        const fetchWatches = async () => {
-            try {
-                const response = await getWatches();
-                if (response && response.data) {
-                    setWatches((response.data).map(mapCatalogWatchToAdminWatch));
-                }
-            } catch (e) {
-                console.error("Erreur lors du chargement des données:", e);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchWatches();
-    }, [])
+    fetchWatches(setWatches, setIsLoading);
+    if (!watches || watches.length === 0 || isLoading) {
+        return (
+            <div className="page-root">
+                <SiteHeader isAdmin />
+                <main className="container admin-page-layout">
+                    <section>
+                        <h1>Panel Admin</h1>
+                            <p className="muted">
+                                Gestion des montres.
+                            </p>
+
+                            <article
+                                className="add-watch-card"
+                                role="button"
+                                tabIndex={0}
+                            >
+                                <span className="plus-circle">+</span>
+                                <h2>Nouvelle montre</h2>
+                                <p>
+                                    Cliquez-ici pour ajouter une montre avec ses informations et son
+                                    image.
+                                </p>
+                            </article>
+
+                            <section className="mt-section">
+                                <div className="section-title-row">
+                                    <h2>Montres ajoutées</h2>
+                                    <p className="muted">Modification et suppression disponibles</p>
+                                </div>
+                                <div className="cards-grid admin-watches-grid">
+                                    {Array.from({ length: 3 }).map((_, index) => (
+                                        <article className="watch-card" key={index}>
+                                            <div className="collection-media-box">
+                                                <ImageWithFallback
+                                                    src="../public/icons/bmw_icon.png"
+                                                    alt="/"
+                                                />
+                                            </div>
+                                            <div className="watch-meta">
+                                                <h3>/ - /</h3>
+                                                <p className="muted small">Description: --</p>
+                                                <p className="small">Collection: --</p>
+                                                <p className="small">Prix revente:--</p>
+                                                <p className="small">Prix neuf: --</p>
+                                                <p className="small">En production: --</p>
+                                                <p className="small">Mouvement: --</p>
+                                                <p className="small">Diamètre: --</p>
+                                                <p className="small">Matériaux boitier: --</p>
+                                                <p className="small">Etancheite: --</p>
+                                                <p className="small">Est actif: --</p>
+                                            </div>
+                                            <div className="action-cell">
+                                                <button type="button" >Modifier</button>
+                                                <button type="button" >
+                                                    Supprimer
+                                                </button>
+                                            </div>
+                                        </article>
+                                    ))}
+                                </div>
+                            </section>
+                    </section>
+                </main>
+                <SiteFooter />
+            </div>
+        );
+    }
 
     function pushToast(message) {
         setToast(message);
@@ -415,7 +409,6 @@ export default function AdminWatchPage() {
 function ImageWithFallback({ src, alt, fallbackText = "Aucune image" }) {
     const [hasError, setHasError] = useState(false);
     const imageSrc = typeof src === "string" ? src.trim() : "";
-
     useEffect(() => {
         setHasError(false);
     }, [imageSrc]);

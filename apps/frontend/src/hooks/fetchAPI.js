@@ -21,7 +21,6 @@ export function fetchWatches(setWatches, setIsLoading) {
                 } else {
                     throw new Error(`Erreur requête HTTP : aucune data`);
                 }
-                
             } catch (e) {
                 console.error("Erreur lors du chargement des données:", e);
             } finally {

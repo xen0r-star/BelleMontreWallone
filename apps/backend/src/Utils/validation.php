@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
-function readRequiredString(array $data, string $field, array &$errors, int $maxLength): ?string {
+function readRequiredString(array $data, string $field, array &$errors, int $maxLength, bool $isOptional = false): ?string {
     if (!array_key_exists($field, $data)) {
+        if ($isOptional) {
+            return null;
+        }
+        
         $errors[$field] = 'Field is required';
         return null;
     }

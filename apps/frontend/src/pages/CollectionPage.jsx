@@ -53,7 +53,7 @@ export default function CollectionPage() {
     const [diameter, setDiameter] = useState("");
     const [sortBy, setSortBy] = useState("featured");
 
-    // L'appel API a déjà un useEffect à l'intérieur de sa déclaration (fetchAPI.js)
+    console.log("caca : " + isLoading);
     fetchWatches(setWatches, setIsLoading);
 
     // Listes dynamiques basées sur les données reçues du backend
@@ -150,7 +150,7 @@ export default function CollectionPage() {
 
                     <div className="filter-section">
                         <p className="muted">Trier</p>
-                        <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+                        <select value="{sortBy}">
                             <option value="featured">Sélection maison</option>
                             <option value="priceAsc">Prix croissant</option>
                             <option value="priceDesc">Prix décroissant</option>
@@ -204,6 +204,74 @@ export default function CollectionPage() {
                             ))}
                         </div>
                     </div>
+
+                    <button
+                        type="button"
+                        className="btn btn-ghost"
+                    >
+                        Réinitialiser
+                    </button>
+
+                    <Link className="btn cta-collection-login">
+                        Connexion
+                    </Link>
+                </aside>
+
+                <section>
+                    <div className="section-title-row">
+                        <h1>Collection</h1>
+                        <p className="muted">X modèle(s)</p>
+                    </div>
+                    <div className="cards-grid">
+                        {filteredWatches.map((watch) => (
+                            <article className="watch-card" key={watch.watchId}>
+                                <Link className="image-link">
+                                    <div className="collection-media-box">
+                                        <WatchImage watch="" />
+                                    </div>
+                                </Link>
+                                <div className="watch-meta">
+                                    <p className="muted small">/</p>
+                                    <h3>/</h3>
+                                    <p>/</p>
+                                </div>
+                                <div className="watch-actions">
+                                    <Link className="btn">
+                                        Voir le détail
+                                    </Link>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                </section>
+            </main>
+            
+            <SiteFooter />
+        </div>
+    );
+
+    function toggleCategory(category) {
+        setActiveCategories((prev) =>
+            prev.includes(category)
+                ? prev.filter((item) => item !== category)
+                : [...prev, category]
+        );
+    }
+
+    function toggleMaterial(material) {
+        setActiveMaterials((prev) =>
+            prev.includes(material)
+                ? prev.filter((item) => item !== material)
+                : [...prev, material]
+        );
+    }
+    return (
+        <div className="page-root">
+            <SiteHeader />
+
+            <main className="container collection-layout">
+                <aside className="filters-card">
+                    <h2>Recherche de produit</h2>
 
                     <div className="filter-section">
                         <p className="muted">Marque</p>

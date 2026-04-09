@@ -7,14 +7,6 @@ namespace App\Routes;
 use App\Core\Response;
 
 
-function adminLogin(): void {
-    Response::json([
-        'success' => true,
-    ]);
-    return;
-}
-
-
 function getAdminReservations(): void {
     Response::json([
         'success' => true,

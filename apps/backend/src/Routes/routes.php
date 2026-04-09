@@ -13,6 +13,7 @@ function dispatch(string $method, string $path): void {
             '/api/health'             => fn() => Response::json(['success' => true, 'message' => 'API is healthy.']),
             
             '/api/watches'            => fn() => getWatches(),
+            '/api/watches/filter'     => fn() => listSortValuesWatches(),
             '#/api/watches/([^/]+)#'  => fn($id) => getWatchById($id),
 
             '/api/auth/me'            => fn() => getCurrentUser(),
@@ -27,7 +28,6 @@ function dispatch(string $method, string $path): void {
             '/api/auth/register' => fn() => register(),
             '/api/auth/refresh'  => fn() => refresh(),
 
-            '/api/admin/login'   => fn() => adminLogin(),
             '/api/admin/watches' => fn() => createAdminWatch(),
             '/api/contact'       => fn() => contact(),
         ],
