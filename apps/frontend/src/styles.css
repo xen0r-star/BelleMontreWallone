@@ -427,7 +427,7 @@ h3,
 .filters-card {
     padding: 1rem;
     position: sticky;
-    top: 90px;
+    top: calc(96px + 2rem);
     align-self: start;
     display: grid;
     gap: 1rem;
