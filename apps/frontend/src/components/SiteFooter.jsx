@@ -16,13 +16,11 @@ export default function SiteFooter() {
                     <h4>Navigation</h4>
                     <Link to="/collection">Collection</Link>
                     <a href="#brand">La Marque</a>
-                    <a href="#journal">Journal</a>
                 </div>
 
                 <div>
                     <h4>Assistance</h4>
-                    <Link to="/besoin-daide">Conciergerie</Link>
-                    <Link to="/besoin-daide">FAQ</Link>
+                    <Link to="/besoin-daide">Aide</Link>
                     <Link to="/besoin-daide">Contact</Link>
                 </div>
 
@@ -39,7 +37,7 @@ export default function SiteFooter() {
             </div>
 
             <div className="hx-footer-bottom">
-                <p>© 2024 Minimalisme Noble. Tous droits réservés.</p>
+                <p>© 2026 Belle Montre Wallone. Tous droits réservés.</p>
                 <div>
                     <a href="#legal">Mentions Légales</a>
                     <a href="#privacy">Confidentialité</a>

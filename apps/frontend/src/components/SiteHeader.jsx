@@ -21,9 +21,11 @@ export default function SiteHeader({ isAdmin = false }) {
 
                     <div className="hx-nav-right">
                         <NavLink to="/besoin-daide">Aide</NavLink>
-                        <NavLink to="/connexion">
-                            Connexion
-                        </NavLink>
+                        {!isAdmin && (
+                            <NavLink to="/connexion">
+                                Connexion
+                            </NavLink>
+                        )}
                         {isAdmin &&
                             adminLinks.map((link) => (
                                 <NavLink key={link.to} to={link.to}>

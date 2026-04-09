@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { reservationSeed } from "../data/watches";
 import { getWatches } from '../services/api';
+
+const reservations = [];
 
 function toDateTime(date, time) {
     return new Date(`${date}T${time}:00`);
@@ -46,7 +47,6 @@ export default function AdminReservationsPage() {
     const [watches, setWatches] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const reservations = reservationSeed;
     const [statusFilter, setStatusFilter] = useState("all");
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
@@ -154,50 +154,54 @@ export default function AdminReservationsPage() {
                     <p className="muted">{rows.length} reservation(s)</p>
                 </div>
 
-                <div className="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date réservation</th>
-                                <th>Temps</th>
-                                <th>Date retour</th>
-                                <th>Statut</th>
-                                <th>Nom</th>
-                                <th>Prénom</th>
-                                <th>Modèle</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rows.map((row) => (
-                                <tr key={row.id}>
-                                    <td>
-                                        {formatDateFr(row.reservationDate)}
-                                        <br />
-                                        <span className="muted small">{row.reservationTime}</span>
-                                    </td>
-                                    <td>
-                                        {row.durationDays} jour(s)
-                                    </td>
-                                    <td>
-                                        {formatDateFr(row.returnDate)}
-                                    </td>
-                                    <td>
-                                        <span className={row.status.className}>{row.status.label}</span>
-                                    </td>
-                                    <td>{row.lastName}</td>
-                                    <td>{row.firstName}</td>
-                                    <td>
-                                        {row.watch ? (
-                                            <Link to={`/montre/${row.watch.id}`}>{row.watch.model}</Link>
-                                        ) : (
-                                            "N/A"
-                                        )}
-                                    </td>
+                {rows.length === 0 ? (
+                    <div className="empty-box">Aucune reservation pour le moment.</div>
+                ) : (
+                    <div className="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date réservation</th>
+                                    <th>Temps</th>
+                                    <th>Date retour</th>
+                                    <th>Statut</th>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Modèle</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                {rows.map((row) => (
+                                    <tr key={row.id}>
+                                        <td>
+                                            {formatDateFr(row.reservationDate)}
+                                            <br />
+                                            <span className="muted small">{row.reservationTime}</span>
+                                        </td>
+                                        <td>
+                                            {row.durationDays} jour(s)
+                                        </td>
+                                        <td>
+                                            {formatDateFr(row.returnDate)}
+                                        </td>
+                                        <td>
+                                            <span className={row.status.className}>{row.status.label}</span>
+                                        </td>
+                                        <td>{row.lastName}</td>
+                                        <td>{row.firstName}</td>
+                                        <td>
+                                            {row.watch ? (
+                                                <Link to={`/montre/${row.watch.id}`}>{row.watch.model}</Link>
+                                            ) : (
+                                                "N/A"
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </main>
 
             <SiteFooter />
