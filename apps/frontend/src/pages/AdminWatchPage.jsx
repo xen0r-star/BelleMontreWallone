@@ -19,6 +19,27 @@ const emptyForm = {
     isActif: false
 };
 
+const MOVEMENT_OPTIONS = ["automatique", "mecanique", "quartz"];
+
+function normalizeMovement(value) {
+    if (typeof value !== "string") {
+        return "";
+    }
+
+    const normalized = value.toLowerCase().trim();
+    if (normalized.includes("auto")) {
+        return "automatique";
+    }
+    if (normalized.includes("mec")) {
+        return "mecanique";
+    }
+    if (normalized.includes("quartz")) {
+        return "quartz";
+    }
+
+    return "";
+}
+
 function getDiameterFromCase(caseValue) {
     if (typeof caseValue !== "string") {
         return "";
@@ -33,17 +54,26 @@ function getDiameterFromCase(caseValue) {
 }
 
 function mapCatalogWatchToAdminWatch(watch) {
+    const imageUrl =
+        typeof watch.imageUrl === "string"
+            ? watch.imageUrl
+            : typeof watch.images?.[0] === "string"
+                ? watch.images[0]
+                : typeof watch.imagesUrl?.[0] === "string"
+                    ? watch.imagesUrl[0]
+                    : "";
+
     return {
         id: watch.id,
         brand: watch.brand || "",
         model: watch.model || "",
         watchDesc: watch.watchDesc || "",
         watchCollection: watch.id || "",
-        imageUrl: typeof watch.imagesUrl?.[0] === "string" ? watch.images[0] : "",
+        imageUrl,
         retailPrice: watch.retailPrice || "",
         marketPrice: watch.marketPrice || "",
         isInProduction: Boolean(watch.isInProduction),
-        movement: watch.movement || "",
+        movement: normalizeMovement(watch.movement),
         materials: watch.materials || "",
         diameter: watch.diameter || "",
         watertightness: watch.watertightness || "",
@@ -95,7 +125,7 @@ export default function AdminWatchPage() {
 
         const reader = new FileReader();
         reader.onload = () => {
-            setForm((prev) => ({ ...prev, image: String(reader.result || "") }));
+            setForm((prev) => ({ ...prev, imageUrl: String(reader.result || "") }));
         };
         reader.readAsDataURL(file);
     }
@@ -109,7 +139,7 @@ export default function AdminWatchPage() {
 
         const reader = new FileReader();
         reader.onload = () => {
-            setForm((prev) => ({ ...prev, image: String(reader.result || "") }));
+            setForm((prev) => ({ ...prev, imageUrl: String(reader.result || "") }));
         };
         reader.readAsDataURL(file);
     }
@@ -122,7 +152,7 @@ export default function AdminWatchPage() {
     function handleSaveWatch(event) {
         event.preventDefault();
 
-        if (!form.brand || !form.reference || !form.model) {
+        if (!form.brand || !form.model || !form.watchDesc || !form.movement) {
             return;
         }
 
@@ -226,14 +256,14 @@ export default function AdminWatchPage() {
                                             <h4>{(form.brand || "Marque") + " - " + (form.model || "Modèle")}</h4>
                                             <p className="muted small">Description: {form.watchDesc || "--"}</p>
                                             <p className="muted small">Collection: {form.watchCollection || "--"}</p>
-                                            <p className="small">Prix revente: {form.retailPrice || "--"}</p>
-                                            <p className="small">Prix neuf: {form.marketPrice || "--"}</p>
+                                            <p className="small">Prix revente: {(form.retailPrice || "--") + " €"}</p>
+                                            <p className="small">Prix neuf: {(form.marketPrice || "--") + " €"}</p>
                                             <p className="small">En production: {form.isInProduction ? "Oui" : "Non"}</p>
                                             <p className="small">Mouvement: {form.movement || ""}</p>
                                             <p className="small">Diamètre: {(form.diameter || "") + " mm"}</p>
                                             <p className="small">Matériaux boitier: {form.materials || "--"}</p>
                                             <p className="small">Catégorie: {form.category || ""}</p>
-                                            <p className="small">Etanchéité : {form.watertightness || "--"}</p>
+                                            <p className="small">Etanchéité : {(form.watertightness || "--") + " m"}</p>
                                             <p className="small">Est actif : {form.isActif ? "Oui" : "Non"}</p>
                                         </div>
                                     </div>
@@ -243,22 +273,28 @@ export default function AdminWatchPage() {
                                     <h3>Informations montre</h3>
                                     <form className="form-grid" onSubmit={handleSaveWatch}>
 
-                                        /*encore a faire*/
                                         <input name="brand" required value={form.brand} onChange={handleChange} placeholder="Marque" />
                                         <input name="model" required value={form.model} onChange={handleChange} placeholder="Modèle" />
-                                        <input name="watchDesc" required value={form.watchDesc} onChange={handleChange} placeholder="Descriptio,n" />
+                                        <input name="watchDesc" required value={form.watchDesc} onChange={handleChange} placeholder="Description" />
                                         <input name="watchCollection" value={form.watchCollection} onChange={handleChange} placeholder="Nom collection" />
-                                        <input name="retailPrice" type="number" min="1" value={form.retailPrice} onChange={handleChange} placeholder="Prix revente" />
-                                        <input name="marketPrice" type="number" min="1" value={form.retailPrice} onChange={handleChange} placeholder="Prix revente" />
-                                        <label>
+                                        <input name="retailPrice" type="double" min="1" value={form.retailPrice} onChange={handleChange} placeholder="Prix revente" />
+                                        <input name="marketPrice" type="double" min="1" value={form.marketPrice} onChange={handleChange} placeholder="Prix neuf" />
+                                        <label className="form-checkbox">
                                             <input name="isInProduction" type="checkbox" checked={Boolean(form.isInProduction)} onChange={handleChange} />
                                             Toujours en production
                                         </label>
-                                        <input name="movement" required value={form.movement} onChange={handleChange} placeholder="Type de mouvement" />4
+                                        <select name="movement" required value={form.movement} onChange={handleChange}>
+                                            <option value="">Choisir un mouvement</option>
+                                            {MOVEMENT_OPTIONS.map((movementOption) => (
+                                                <option key={movementOption} value={movementOption}>
+                                                    {movementOption.charAt(0).toUpperCase() + movementOption.slice(1)}
+                                                </option>
+                                            ))}
+                                        </select>
                                         <input name="diameter" type="number" min="1" step="0.1" value={form.diameter} onChange={handleChange} placeholder="Diametre (mm)" />
                                         <input name="materials" value={form.materials} onChange={handleChange} placeholder="Materiaux boitier" />
                                         <input name="watertightness" value={form.watertightness} onChange={handleChange} placeholder="Etanchéité" />
-                                        <label>
+                                        <label className="form-checkbox">
                                             <input name="isActif" type="checkbox" checked={Boolean(form.isActif)} onChange={handleChange} />
                                             Montre active
                                         </label>
@@ -293,8 +329,6 @@ export default function AdminWatchPage() {
                         </section>
                     )}
 
-
-                    //a modifier 
                     <section className="mt-section">
                         <div className="section-title-row">
                             <h2>Montres ajoutées</h2>
@@ -318,13 +352,13 @@ export default function AdminWatchPage() {
                                         <h3>{watch.brand} - {watch.model}</h3>
                                         <p className="muted small">Description: {watch.watchDesc || "--"}</p>
                                         <p className="small">Collection: {watch.watchCollection || "--"}</p>
-                                        <p className="small">Prix revente: {watch.retailPrice || "--"}</p>
-                                        <p className="small">Prix neuf: {watch.marketPrice || "--"}</p>
+                                        <p className="small">Prix revente: {(watch.retailPrice || "--") + " €"}</p>
+                                        <p className="small">Prix neuf: {(watch.marketPrice || "--") + " €"}</p>
                                         <p className="small">En production: {watch.isInProduction ? "Oui" : "Non"}</p>
                                         <p className="small">Mouvement: {watch.movement || "--"}</p>
                                         <p className="small">Diamètre: {(watch.diameter || "--") + " mm"}</p>
                                         <p className="small">Matériaux boitier: {watch.materials || "--"}</p>
-                                        <p className="small">Etancheite: {watch.watertightness || "--"}</p>
+                                        <p className="small">Etancheite: {(watch.watertightness || "--") + " m"}</p>
                                         <p className="small">Est actif: {watch.isActif ? "Oui" : "Non"}</p>
                                     </div>
                                     <div className="action-cell">
@@ -380,8 +414,11 @@ export default function AdminWatchPage() {
 
 function ImageWithFallback({ src, alt, fallbackText = "Aucune image" }) {
     const [hasError, setHasError] = useState(false);
-    const [isLoaded, setIsLoaded] = useState(false);
     const imageSrc = typeof src === "string" ? src.trim() : "";
+
+    useEffect(() => {
+        setHasError(false);
+    }, [imageSrc]);
 
     if (!imageSrc || hasError) {
         return <NoImage text={fallbackText} />;
@@ -389,11 +426,9 @@ function ImageWithFallback({ src, alt, fallbackText = "Aucune image" }) {
 
     return (
         <div className="image-shell">
-            {!isLoaded && <div className="skeleton skeleton-image" aria-hidden="true" />}
             <img
                 src={imageSrc}
                 alt={alt}
-                onLoad={() => setIsLoaded(true)}
                 onError={() => setHasError(true)}
             />
         </div>
