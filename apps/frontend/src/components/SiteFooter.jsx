@@ -5,7 +5,6 @@ export default function SiteFooter() {
         <footer className="hx-footer" id="brand">
             <div className="hx-footer-grid">
                 <div>
-                    <h3>Minimalisme Noble</h3>
                     <h3><img src="/icons/bmw_icon.png"></img>Belle Montre Wallonne</h3>
                     <p>
                         L'exclusivité horlogère pensée pour les connaisseurs. Une sélection
@@ -38,7 +37,7 @@ export default function SiteFooter() {
             </div>
 
             <div className="hx-footer-bottom">
-                <p>© 2026 Belle Montre Wallone. Tous droits réservés.</p>
+                <p>© 2026 Belle Montre Wallone, BMW. Tous droits réservés.</p>
                 <div>
                     <a href="#legal">Mentions Légales</a>
                     <a href="#privacy">Confidentialité</a>
