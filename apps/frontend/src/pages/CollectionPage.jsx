@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
-import { getWatches } from '../services/api';
-
+import { fetchWatches } from "../hooks/fetchAPI";
 
 const categories = ["Chronographe", "Plongee", "Dress", "Complication"];
 const materials = ["Acier", "Or Rose", "Titane"];
@@ -52,24 +51,11 @@ export default function CollectionPage() {
     const [activeMaterials, setActiveMaterials] = useState([]);
     const [sortBy, setSortBy] = useState("featured");
 
-    useEffect(() => {
-        const fetchWatches = async () => {
-            try {
-                const response = await getWatches();
-                if (response && response.data) {
-                    setWatches(response.data);
-                }
-            } catch (e) {
-                console.error("Erreur lors du chargement des données:", e);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchWatches();
-    }, [])
-
+    console.log("caca : " + isLoading);
+    fetchWatches(setWatches, setIsLoading);
+    
     const filteredWatches = useMemo(() => {
-        if (!watches) return [];
+        if (!watches || watches.length === 0) return [];
 
         const filtered = watches.filter((watch) => {
             const categoryOk =
@@ -93,7 +79,98 @@ export default function CollectionPage() {
         return sorted;
     }, [watches, activeCategories, activeMaterials, sortBy]);
 
-    if (isLoading) return <p>Chargement de la collection...</p>;
+    if (isLoading) return (
+        <div className="page-root">
+            <SiteHeader />
+
+            <main className="container collection-layout">
+                <aside className="filters-card">
+                    <h2>Recherche de produit</h2>
+
+                    <div className="filter-section">
+                        <p className="muted">Trier</p>
+                        <select value="{sortBy}">
+                            <option value="featured">Sélection maison</option>
+                            <option value="priceAsc">Prix croissant</option>
+                            <option value="priceDesc">Prix decroissant</option>
+                            <option value="nameAsc">Nom A-Z</option>
+                        </select>
+                    </div>
+
+                    <div className="filter-section">
+                        <p className="muted">Catégorie</p>
+                        <div className="chips-row">
+                            {categories.map((category) => (
+                                <button
+                                    key={category}
+                                    type="button"
+                                    className={`filter-chip ${activeCategories.includes(category) ? "active" : ""}`}
+                                >
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="filter-section">
+                        <p className="muted">Matière</p>
+                        <div className="chips-row">
+                            {materials.map((material) => (
+                                <button
+                                    key={material}
+                                    type="button"
+                                    className={`filter-chip ${activeMaterials.includes(material) ? "active" : ""}`}
+                                >
+                                    {material}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        className="btn btn-ghost"
+                    >
+                        Réinitialiser
+                    </button>
+
+                    <Link className="btn cta-collection-login">
+                        Connexion
+                    </Link>
+                </aside>
+
+                <section>
+                    <div className="section-title-row">
+                        <h1>Collection</h1>
+                        <p className="muted">X modèle(s)</p>
+                    </div>
+                    <div className="cards-grid">
+                        {filteredWatches.map((watch) => (
+                            <article className="watch-card" key={watch.watchId}>
+                                <Link className="image-link">
+                                    <div className="collection-media-box">
+                                        <WatchImage watch="" />
+                                    </div>
+                                </Link>
+                                <div className="watch-meta">
+                                    <p className="muted small">/</p>
+                                    <h3>/</h3>
+                                    <p>/</p>
+                                </div>
+                                <div className="watch-actions">
+                                    <Link className="btn">
+                                        Voir le détail
+                                    </Link>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                </section>
+            </main>
+            
+            <SiteFooter />
+        </div>
+    );
 
     function toggleCategory(category) {
         setActiveCategories((prev) =>
@@ -110,7 +187,6 @@ export default function CollectionPage() {
                 : [...prev, material]
         );
     }
-
     return (
         <div className="page-root">
             <SiteHeader />

@@ -1,10 +1,10 @@
 /* GET /api/health */
 
 /* GET /api/watches */
-select * frow watch;
+select * from watch;
 
 /* GET /api/watches/:id */
-select * frow watch where watchId = 1;
+select * from watch where watchId = 1;
 
 /* ---- */
 

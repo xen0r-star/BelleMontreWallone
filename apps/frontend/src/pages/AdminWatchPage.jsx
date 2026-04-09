@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { getWatches } from '../services/api';
+// import { getWatches } from '../services/api';
 
 const emptyForm = {
     brand: "",

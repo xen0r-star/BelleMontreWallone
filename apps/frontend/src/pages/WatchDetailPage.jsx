@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
-import { fetchWatches } from "../services/hooks/fetchAPI";
+import { fetchWatches } from "../hooks/fetchAPI";
 
 function ImageWithSkeleton({ src, alt, className }) {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -27,10 +27,83 @@ export default function WatchDetailPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sent, setSent] = useState(false);
     const { id } = useParams();
+    
     fetchWatches(setWatches, setIsLoading);
-
     if (!watches || watches.length === 0 || isLoading) {
-        return/*  <p>Chargement de la montre...</p> */;
+        return (<div className="page-root">
+            <SiteHeader />
+            
+            <main className="container detail-layout">
+                <section>
+                    <ImageWithSkeleton
+                        src="../public/icons/bmw_icon.png"
+                        alt="/"
+                        className="hero-image"
+                    />
+                </section>
+
+                <section className="detail-panel">
+                    <p className="kicker">/</p>
+
+                    <h1>/</h1>
+                    <div className="price">Prix de vente : /<hr/>Prix conseillé : /</div>
+                    <p className="muted">Description : /</p>
+
+                    <ul className="spec-list">
+                        <li>
+                            <span>Mouvement</span>
+                            <span>/</span>
+                        </li>
+                        <li>
+                            <span>Diamètre</span>
+                            <span>/</span>
+                        </li>
+                        <li>
+                            <span>Matériel</span>
+                            <span>/</span>
+                        </li>
+                        <li>
+                            <span>Étanchéité</span>
+                            <span>/</span>
+                        </li>
+                    </ul>
+
+                    <button type="button" className="btn">
+                        Demander une réservation
+                    </button>
+                </section>
+            </main>
+
+            {isModalOpen && (
+                <div className="modal-backdrop" role="dialog" aria-modal="true">
+                    <div className="modal-panel modal-panel--reservation">
+                        <button
+                            type="button"
+                            className="close-modal"
+                        >
+                            Fermer
+                        </button>
+
+                        <h2>Reservation - {watch.model}</h2>
+                        {!sent ? (
+                            <form className="form-grid">
+                                <input required placeholder="Nom" />
+                                <input required placeholder="Prenom" />
+                                <input required type="email" placeholder="Email" />
+                                <input placeholder="Telephone" />
+                                <textarea rows="4" placeholder="Message" />
+                                <button className="btn" type="submit">Envoyer</button>
+                            </form>
+
+                        ) : (
+                            <p className="success-msg">Demande envoyee. Un conseiller te contactera sous 24h.</p>
+                        )}
+                    </div>
+                </div>
+            )}
+
+            <SiteFooter />
+        </div>);
     }
 
     const watch = watches.find(item => Number(item.watchId) === Number(id));
@@ -72,7 +145,7 @@ export default function WatchDetailPage() {
                     <p className="kicker">{watch.brand || "/"}</p>
 
                     <h1>{watch.model}</h1>
-                    <p className="price">Prix de vente : {formatPrice(watch.retailPrice)}</p><hr/><p>Prix conseillé : {formatPrice(watch.marketPrice)}</p>
+                    <div className="price">Prix de vente : {formatPrice(watch.retailPrice)}<hr/>Prix conseillé : {formatPrice(watch.marketPrice)}</div>
                     <p className="muted">{watch.watchDesc ? ("Description : " + watch.watchDesc) : "Aucune description trouvé."}</p>
 
                     <ul className="spec-list">
