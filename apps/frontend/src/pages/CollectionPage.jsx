@@ -41,7 +41,7 @@ function ImageWithFallback({ src, alt }) {
 }
 
 function WatchImage({ watch }) {
-    return <ImageWithFallback src={watch.images?.[0]} alt={watch.model} />;
+    return <ImageWithFallback src={watch.imageUrl} alt={watch.model} />;
 }
 
 export default function CollectionPage() {
@@ -73,9 +73,9 @@ export default function CollectionPage() {
 
         const filtered = watches.filter((watch) => {
             const categoryOk =
-                activeCategories.length === 0 || activeCategories.includes(watch.category);
+                activeCategories.length === 0 || activeCategories.includes(watch.watchCollection);
             const materialOk =
-                activeMaterials.length === 0 || activeMaterials.includes(watch.material);
+                activeMaterials.length === 0 || activeMaterials.includes(watch.materials);
 
             return categoryOk && materialOk;
         });
@@ -185,19 +185,19 @@ export default function CollectionPage() {
                     </div>
                     <div className="cards-grid">
                         {filteredWatches.map((watch) => (
-                            <article className="watch-card" key={watch.id}>
-                                <Link to={`/montre/${watch.id}`} className="image-link">
+                            <article className="watch-card" key={watch.watchId}>
+                                <Link to={`/montre/${watch.watchId}`} className="image-link">
                                     <div className="collection-media-box">
                                         <WatchImage watch={watch} />
                                     </div>
                                 </Link>
                                 <div className="watch-meta">
-                                    <p className="muted small">{watch.brand}</p>
+                                    <p className="muted small">{watch.brand || "/"}</p>
                                     <h3>{watch.model}</h3>
-                                    <p>{formatPrice(watch.price)}</p>
+                                    <p>{formatPrice(watch.retailPrice)}</p>
                                 </div>
                                 <div className="watch-actions">
-                                    <Link className="btn" to={`/montre/${watch.id}`}>
+                                    <Link className="btn" to={`/montre/${watch.watchId}`}>
                                         Voir le détail
                                     </Link>
                                 </div>

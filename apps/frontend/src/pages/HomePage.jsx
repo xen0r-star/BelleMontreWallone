@@ -27,7 +27,7 @@ export default function HomePage() {
                     </div>
 
                     <div className="hx-nav-center">
-                        <Link to="/">Minimalisme Noble</Link>
+                        <Link to="/">Belle Montre Wallonne</Link>
                     </div>
 
                     <div className="hx-nav-right">

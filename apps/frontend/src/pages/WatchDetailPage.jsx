@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
-import { getWatches } from '../services/api';
+import { fetchWatches } from "../services/hooks/fetchAPI";
 
 function ImageWithSkeleton({ src, alt, className }) {
     const [isLoaded, setIsLoaded] = useState(false);
 
     return (
-        <div className={`image-shell ${className || ""}`}>
+        <div className={`image-shell-coll ${className || ""}`}>
             {!isLoaded && <div className="skeleton skeleton-image" aria-hidden="true" />}
             <img
                 src={src}
@@ -24,31 +24,17 @@ function ImageWithSkeleton({ src, alt, className }) {
 export default function WatchDetailPage() {
     const [watches, setWatches] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { id } = useParams();
-
-    useEffect(() => {
-        const fetchWatches = async () => {
-            try {
-                const response = await getWatches();
-                if (response && response.data) {
-                    setWatches(response.data);
-                }
-            } catch (e) {
-                console.error("Erreur lors du chargement des données:", e);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchWatches();
-    }, [])
-
-    const watch = watches.find((item) => item.id === id);
-
-    const [imageIndex, setImageIndex] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sent, setSent] = useState(false);
+    const { id } = useParams();
+    fetchWatches(setWatches, setIsLoading);
 
-    if (isLoading) return <p>Chargement de la montre...</p>;
+    if (!watches || watches.length === 0 || isLoading) {
+        return/*  <p>Chargement de la montre...</p> */;
+    }
+
+    const watch = watches.find(item => Number(item.watchId) === Number(id));
+    
     if (!watch) {
         return (
             <div className="page-root">
@@ -76,51 +62,35 @@ export default function WatchDetailPage() {
             <main className="container detail-layout">
                 <section>
                     <ImageWithSkeleton
-                        src={watch.images[imageIndex]}
+                        src={watch.imageUrl}
                         alt={watch.model}
                         className="hero-image"
                     />
-                    <div className="thumb-row">
-                        {watch.images.map((image, index) => (
-                            <button
-                                key={image}
-                                type="button"
-                                className={`thumb ${index === imageIndex ? "active" : ""}`}
-                                onClick={() => setImageIndex(index)}
-                            >
-                                <ImageWithSkeleton src={image} alt={`${watch.model} ${index + 1}`} />
-                            </button>
-                        ))}
-                    </div>
                 </section>
 
                 <section className="detail-panel">
-                    <p className="kicker">{watch.brand}</p>
+                    <p className="kicker">{watch.brand || "/"}</p>
 
                     <h1>{watch.model}</h1>
-                    <p className="price">{formatPrice(watch.price)}</p>
-                    <p className="muted">{watch.description}</p>
+                    <p className="price">Prix de vente : {formatPrice(watch.retailPrice)}</p><hr/><p>Prix conseillé : {formatPrice(watch.marketPrice)}</p>
+                    <p className="muted">{watch.watchDesc ? ("Description : " + watch.watchDesc) : "Aucune description trouvé."}</p>
 
                     <ul className="spec-list">
                         <li>
                             <span>Mouvement</span>
-                            <span>{watch.movement}</span>
+                            <span>{watch.movement || "/"}</span>
                         </li>
                         <li>
-                            <span>Calibre</span>
-                            <span>{watch.caliber}</span>
+                            <span>Diamètre</span>
+                            <span>{watch.diameter + "mm" || "/"}</span>
                         </li>
                         <li>
-                            <span>Boitier</span>
-                            <span>{watch.case}</span>
-                        </li>
-                        <li>
-                            <span>Réserve</span>
-                            <span>{watch.reserve}</span>
+                            <span>Matériel</span>
+                            <span>{watch.materials || "/"}</span>
                         </li>
                         <li>
                             <span>Étanchéité</span>
-                            <span>{watch.waterResistance}</span>
+                            <span>{watch.watertightness || "/"}</span>
                         </li>
                     </ul>
 

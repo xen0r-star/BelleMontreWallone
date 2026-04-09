@@ -6,6 +6,7 @@ export default function SiteFooter() {
             <div className="hx-footer-grid">
                 <div>
                     <h3>Minimalisme Noble</h3>
+                    <h3><img src="/icons/bmw_icon.png"></img>Belle Montre Wallonne</h3>
                     <p>
                         L'exclusivité horlogère pensée pour les connaisseurs. Une sélection
                         rigoureuse de garde-temps exceptionnels.
