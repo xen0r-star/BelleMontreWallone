@@ -51,7 +51,6 @@ export default function CollectionPage() {
     const [activeMaterials, setActiveMaterials] = useState([]);
     const [sortBy, setSortBy] = useState("featured");
 
-    console.log("caca : " + isLoading);
     fetchWatches(setWatches, setIsLoading);
     
     const filteredWatches = useMemo(() => {
@@ -89,7 +88,7 @@ export default function CollectionPage() {
 
                     <div className="filter-section">
                         <p className="muted">Trier</p>
-                        <select value="{sortBy}">
+                        <select defaultValue="">
                             <option value="featured">Sélection maison</option>
                             <option value="priceAsc">Prix croissant</option>
                             <option value="priceDesc">Prix decroissant</option>
@@ -149,7 +148,9 @@ export default function CollectionPage() {
                             <article className="watch-card" key={watch.watchId}>
                                 <Link className="image-link">
                                     <div className="collection-media-box">
-                                        <WatchImage watch="" />
+                                        <div className="image-shell">
+                                            <img src="../public/icons/bmw_icon.png" alt="/"></img>
+                                        </div>
                                     </div>
                                 </Link>
                                 <div className="watch-meta">
