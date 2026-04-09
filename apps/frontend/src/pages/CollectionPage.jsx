@@ -5,9 +5,6 @@ import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
 import { fetchWatches } from "../hooks/fetchAPI";
 
-const categories = ["Chronographe", "Plongee", "Dress", "Complication"];
-const materials = ["Acier", "Or Rose", "Titane"];
-
 function NoImagePlaceholder() {
     return (
         <div className="no-image" aria-label="Image indisponible">
@@ -47,146 +44,102 @@ export default function CollectionPage() {
     const [watches, setWatches] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [activeCategories, setActiveCategories] = useState([]);
+    // Nouveaux états pour les filtres
+    const [activeBrands, setActiveBrands] = useState([]);
     const [activeMaterials, setActiveMaterials] = useState([]);
+    const [activeMovements, setActiveMovements] = useState([]);
+    const [minPrice, setMinPrice] = useState("");
+    const [maxPrice, setMaxPrice] = useState("");
+    const [diameter, setDiameter] = useState("");
     const [sortBy, setSortBy] = useState("featured");
 
-    console.log("caca : " + isLoading);
+    // L'appel API a déjà un useEffect à l'intérieur de sa déclaration (fetchAPI.js)
     fetchWatches(setWatches, setIsLoading);
-    
+
+    // Listes dynamiques basées sur les données reçues du backend
+    const availableBrands = useMemo(() => {
+        const brands = watches.map(w => w.brand).filter(Boolean);
+        return [...new Set(brands)].sort();
+    }, [watches]);
+
+    const availableMaterials = useMemo(() => {
+        const mats = watches.map(w => w.materials).filter(Boolean);
+        return [...new Set(mats)].sort();
+    }, [watches]);
+
+    // Mouvements dynamiques basés sur les données reçues du backend
+    const availableMovements = useMemo(() => {
+        const movements = watches.map(w => w.movement).filter(Boolean);
+        return [...new Set(movements)].sort();
+    }, [watches]);
+
     const filteredWatches = useMemo(() => {
         if (!watches || watches.length === 0) return [];
 
         const filtered = watches.filter((watch) => {
-            const categoryOk =
-                activeCategories.length === 0 || activeCategories.includes(watch.watchCollection);
-            const materialOk =
-                activeMaterials.length === 0 || activeMaterials.includes(watch.materials);
+            const brandOk = activeBrands.length === 0 || activeBrands.includes(watch.brand);
+            const materialOk = activeMaterials.length === 0 || activeMaterials.includes(watch.materials);
+            const movementOk = activeMovements.length === 0 || activeMovements.includes(watch.movement);
 
-            return categoryOk && materialOk;
+            // Filtre par prix
+            const minPriceOk = minPrice === "" || (watch.retailPrice && watch.retailPrice >= Number(minPrice));
+            const maxPriceOk = maxPrice === "" || (watch.retailPrice && watch.retailPrice <= Number(maxPrice));
+            
+            // Filtre par diamètre
+            const diameterOk = diameter === "" || (watch.diameter && Number(watch.diameter) === Number(diameter));
+
+            return brandOk && materialOk && movementOk && minPriceOk && maxPriceOk && diameterOk;
         });
 
         const sorted = [...filtered];
         if (sortBy === "priceAsc") {
-            sorted.sort((a, b) => a.price - b.price);
+            sorted.sort((a, b) => a.retailPrice - b.retailPrice);
         }
         if (sortBy === "priceDesc") {
-            sorted.sort((a, b) => b.price - a.price);
+            sorted.sort((a, b) => b.retailPrice - a.retailPrice);
         }
         if (sortBy === "nameAsc") {
             sorted.sort((a, b) => a.model.localeCompare(b.model, "fr"));
         }
         return sorted;
-    }, [watches, activeCategories, activeMaterials, sortBy]);
+    }, [watches, activeBrands, activeMaterials, activeMovements, minPrice, maxPrice, diameter, sortBy]);
 
-    if (isLoading) return (
-        <div className="page-root">
-            <SiteHeader />
-
-            <main className="container collection-layout">
-                <aside className="filters-card">
-                    <h2>Recherche de produit</h2>
-
-                    <div className="filter-section">
-                        <p className="muted">Trier</p>
-                        <select value="{sortBy}">
-                            <option value="featured">Sélection maison</option>
-                            <option value="priceAsc">Prix croissant</option>
-                            <option value="priceDesc">Prix decroissant</option>
-                            <option value="nameAsc">Nom A-Z</option>
-                        </select>
-                    </div>
-
-                    <div className="filter-section">
-                        <p className="muted">Catégorie</p>
-                        <div className="chips-row">
-                            {categories.map((category) => (
-                                <button
-                                    key={category}
-                                    type="button"
-                                    className={`filter-chip ${activeCategories.includes(category) ? "active" : ""}`}
-                                >
-                                    {category}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="filter-section">
-                        <p className="muted">Matière</p>
-                        <div className="chips-row">
-                            {materials.map((material) => (
-                                <button
-                                    key={material}
-                                    type="button"
-                                    className={`filter-chip ${activeMaterials.includes(material) ? "active" : ""}`}
-                                >
-                                    {material}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    <button
-                        type="button"
-                        className="btn btn-ghost"
-                    >
-                        Réinitialiser
-                    </button>
-
-                    <Link className="btn cta-collection-login">
-                        Connexion
-                    </Link>
-                </aside>
-
-                <section>
-                    <div className="section-title-row">
-                        <h1>Collection</h1>
-                        <p className="muted">X modèle(s)</p>
-                    </div>
-                    <div className="cards-grid">
-                        {filteredWatches.map((watch) => (
-                            <article className="watch-card" key={watch.watchId}>
-                                <Link className="image-link">
-                                    <div className="collection-media-box">
-                                        <WatchImage watch="" />
-                                    </div>
-                                </Link>
-                                <div className="watch-meta">
-                                    <p className="muted small">/</p>
-                                    <h3>/</h3>
-                                    <p>/</p>
-                                </div>
-                                <div className="watch-actions">
-                                    <Link className="btn">
-                                        Voir le détail
-                                    </Link>
-                                </div>
-                            </article>
-                        ))}
-                    </div>
-                </section>
-            </main>
-            
-            <SiteFooter />
-        </div>
-    );
-
-    function toggleCategory(category) {
-        setActiveCategories((prev) =>
-            prev.includes(category)
-                ? prev.filter((item) => item !== category)
-                : [...prev, category]
-        );
+    // Fonctions utilitaires pour le toggle des filtres
+    function toggleBrand(brand) {
+        setActiveBrands((prev) => prev.includes(brand) ? prev.filter((item) => item !== brand) : [...prev, brand]);
     }
 
     function toggleMaterial(material) {
-        setActiveMaterials((prev) =>
-            prev.includes(material)
-                ? prev.filter((item) => item !== material)
-                : [...prev, material]
+        setActiveMaterials((prev) => prev.includes(material) ? prev.filter((item) => item !== material) : [...prev, material]);
+    }
+
+    function toggleMovement(movement) {
+        setActiveMovements((prev) => prev.includes(movement) ? prev.filter((item) => item !== movement) : [...prev, movement]);
+    }
+
+    function resetFilters() {
+        setActiveBrands([]);
+        setActiveMaterials([]);
+        setActiveMovements([]);
+        setMinPrice("");
+        setMaxPrice("");
+        setDiameter("");
+        setSortBy("featured");
+    }
+
+    // Affichage lors du chargement
+    if (isLoading) {
+        return (
+            <div className="page-root">
+                <SiteHeader />
+                <main className="container collection-layout">
+                    <p>Chargement des montres...</p>
+                </main>
+                <SiteFooter />
+            </div>
         );
     }
+
     return (
         <div className="page-root">
             <SiteHeader />
@@ -200,22 +153,69 @@ export default function CollectionPage() {
                         <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
                             <option value="featured">Sélection maison</option>
                             <option value="priceAsc">Prix croissant</option>
-                            <option value="priceDesc">Prix decroissant</option>
+                            <option value="priceDesc">Prix décroissant</option>
                             <option value="nameAsc">Nom A-Z</option>
                         </select>
                     </div>
 
                     <div className="filter-section">
-                        <p className="muted">Catégorie</p>
+                        <p className="muted">Prix Retail (€)</p>
+                        <div style={{ display: "flex", gap: "10px" }}>
+                            <input 
+                                type="number" 
+                                placeholder="Min" 
+                                value={minPrice} 
+                                onChange={(e) => setMinPrice(e.target.value)} 
+                                style={{ width: "100%", padding: "5px" }}
+                            />
+                            <input 
+                                type="number" 
+                                placeholder="Max" 
+                                value={maxPrice} 
+                                onChange={(e) => setMaxPrice(e.target.value)} 
+                                style={{ width: "100%", padding: "5px" }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="filter-section">
+                        <p className="muted">Diamètre (mm)</p>
+                        <input 
+                            type="number" 
+                            placeholder="Ex: 40" 
+                            value={diameter} 
+                            onChange={(e) => setDiameter(e.target.value)} 
+                            style={{ width: "100%", padding: "5px" }}
+                        />
+                    </div>
+
+                    <div className="filter-section">
+                        <p className="muted">Mouvement</p>
                         <div className="chips-row">
-                            {categories.map((category) => (
+                            {availableMovements.map((mvmt) => (
                                 <button
-                                    key={category}
+                                    key={mvmt}
                                     type="button"
-                                    className={`filter-chip ${activeCategories.includes(category) ? "active" : ""}`}
-                                    onClick={() => toggleCategory(category)}
+                                    className={`filter-chip ${activeMovements.includes(mvmt) ? "active" : ""}`}
+                                    onClick={() => toggleMovement(mvmt)}
                                 >
-                                    {category}
+                                    {mvmt}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="filter-section">
+                        <p className="muted">Marque</p>
+                        <div className="chips-row">
+                            {availableBrands.map((brand) => (
+                                <button
+                                    key={brand}
+                                    type="button"
+                                    className={`filter-chip ${activeBrands.includes(brand) ? "active" : ""}`}
+                                    onClick={() => toggleBrand(brand)}
+                                >
+                                    {brand}
                                 </button>
                             ))}
                         </div>
@@ -224,7 +224,7 @@ export default function CollectionPage() {
                     <div className="filter-section">
                         <p className="muted">Matière</p>
                         <div className="chips-row">
-                            {materials.map((material) => (
+                            {availableMaterials.map((material) => (
                                 <button
                                     key={material}
                                     type="button"
@@ -240,11 +240,7 @@ export default function CollectionPage() {
                     <button
                         type="button"
                         className="btn btn-ghost"
-                        onClick={() => {
-                            setActiveCategories([]);
-                            setActiveMaterials([]);
-                            setSortBy("featured");
-                        }}
+                        onClick={resetFilters}
                     >
                         Réinitialiser
                     </button>
@@ -287,3 +283,4 @@ export default function CollectionPage() {
         </div>
     );
 }
+
