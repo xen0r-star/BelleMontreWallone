@@ -969,6 +969,29 @@ select {
     height: 100%;
 }
 
+.preview-card .admin-watch-card h4 {
+    margin: 0 0 0.65rem;
+    font-size: 1.3rem;
+    line-height: 1.2;
+}
+
+.preview-card .admin-watch-card .small {
+    font-size: 1rem;
+    line-height: 1.35;
+    margin: 0.28rem 0;
+}
+
+.admin-preview-media-box .no-image {
+    gap: 0.6rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+.admin-preview-media-box .no-image p {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
 .reservations-page {
     margin-top: 2rem;
     margin-bottom: 3rem;

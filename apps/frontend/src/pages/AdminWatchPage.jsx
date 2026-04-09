@@ -438,7 +438,7 @@ function ImageWithFallback({ src, alt, fallbackText = "Aucune image" }) {
 function NoImage({ text = "Aucune image" }) {
     return (
         <div className="no-image" aria-label="Aucune image disponible">
-            <span className="material-symbols-outlined">Aucune image disponible</span>
+            <span className="material-symbols-outlined" aria-hidden="true">image_not_supported</span>
             <p>{text}</p>
         </div>
     );
