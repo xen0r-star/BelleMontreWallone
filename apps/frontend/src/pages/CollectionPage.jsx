@@ -142,11 +142,9 @@ export default function CollectionPage() {
     return (
         <div className="page-root">
             <SiteHeader />
-
             <main className="container collection-layout">
                 <aside className="filters-card">
                     <h2>Recherche de produit</h2>
-
                     <div className="filter-section">
                         <p className="muted">Marque</p>
                         <div className="chips-row">
@@ -162,7 +160,6 @@ export default function CollectionPage() {
                             ))}
                         </div>
                     </div>
-
                     <div className="filter-section">
                         <p className="muted">Matière</p>
                         <div className="chips-row">
@@ -178,7 +175,6 @@ export default function CollectionPage() {
                             ))}
                         </div>
                     </div>
-
                     <div className="filter-section">
                         <p className="muted">Trier</p>
                         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
@@ -188,7 +184,6 @@ export default function CollectionPage() {
                             <option value="nameAsc">Nom A-Z</option>
                         </select>
                     </div>
-
                     <div className="filter-section">
                         <p className="muted">Prix Retail (€)</p>
                         <div style={{ display: "flex", gap: "10px" }}>
@@ -208,7 +203,6 @@ export default function CollectionPage() {
                             />
                         </div>
                     </div>
-
                     <div className="filter-section">
                         <p className="muted">Diamètre (mm)</p>
                         <input 
@@ -219,7 +213,6 @@ export default function CollectionPage() {
                             style={{ width: "100%", padding: "5px" }}
                         />
                     </div>
-
                     <div className="filter-section">
                         <p className="muted">Mouvement</p>
                         <div className="chips-row">
@@ -235,7 +228,6 @@ export default function CollectionPage() {
                             ))}
                         </div>
                     </div>
-
                     <button
                         type="button"
                         className="btn btn-ghost"
@@ -243,12 +235,10 @@ export default function CollectionPage() {
                     >
                         Réinitialiser
                     </button>
-
                     <Link className="btn cta-collection-login" to="/connexion">
                         Connexion
                     </Link>
                 </aside>
-
                 <section>
                     <div className="section-title-row">
                         <h1>Collection</h1>
@@ -277,7 +267,6 @@ export default function CollectionPage() {
                     </div>
                 </section>
             </main>
-            
             <SiteFooter />
         </div>
     );
