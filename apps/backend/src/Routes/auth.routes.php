@@ -9,7 +9,7 @@ use App\Core\Response;
 use App\Utils\JwtToken;
 use PDOException;
 use function App\Utils\readJsonBody;
-use function App\Utils\readRequiredString;
+use App\Utils\Validation;
 
 
 function login(): void {
@@ -17,8 +17,8 @@ function login(): void {
     if ($data === null) return;
 
     $errors = [];
-    $userName = readRequiredString($data, 'userName', $errors, 50);
-    $password = readRequiredString($data, 'password', $errors, 255);
+    $userName = Validation::String($data, 'userName', $errors, 50);
+    $password = Validation::String($data, 'password', $errors, 255);
 
     if (!empty($errors)) {
         Response::json([
@@ -87,10 +87,10 @@ function register(): void {
     if ($data === null) return;
 
     $errors = [];
-    $userName = readRequiredString($data, 'userName', $errors, 50);
-    $email = readRequiredString($data, 'email', $errors, 90);
-    $password = readRequiredString($data, 'password', $errors, 255);
-    $dateOfBirth = readRequiredString($data, 'dateOfBirth', $errors, 10);
+    $userName =    Validation::String($data, 'userName', $errors, 50);
+    $email =       Validation::String($data, 'email', $errors, 90);
+    $password =    Validation::String($data, 'password', $errors, 255);
+    $dateOfBirth = Validation::String($data, 'dateOfBirth', $errors, 10);
 
     if ($email !== null && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = 'Invalid email format';

@@ -19,7 +19,6 @@ function dispatch(string $method, string $path): void {
             '/api/auth/me'            => fn() => getCurrentUser(),
 
             '/api/admin/reservations' => fn() => getAdminReservations(),
-            '/api/admin/watches'      => fn() => getAdminWatches(),
         ],
         'POST' => [
             '/api/reservations'  => fn() => createReservation(),

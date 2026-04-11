@@ -1235,9 +1235,9 @@ INSERT INTO watch (idShelf, brand, model, watchDesc, watchCollection, imageUrl, 
 ('SHELF4', 'Blancpain', '6665-3642-55B', 'Montre classique de nos collections.', 'Villeret Demi-Fuseau Horaire Demi-Savonette', 'https://cdn.watchcharts.com/logo/watchcharts/no_image.png', NULL, 10447.00, 0, 'Mecanique à quartz', 40.00, 'Rose gold', '30m', 1);
 
 -- Emprunts
-INSERT INTO loan(userId, watchId, loanDate, returnLoanDate, isOutDelay) VALUES
-(2, 2, CURRENT_DATE, '2026-04-15', 0),
-(3, 3, CURRENT_DATE, '2026-04-10', 1);
+INSERT INTO loan(userId, watchId, loanDate, returnLoanDate) VALUES
+(2, 2, CURRENT_DATE, '2026-04-15'),
+(3, 3, CURRENT_DATE, '2026-04-10');
 
 -- Contacts
 INSERT INTO `contact` (`contactId`, `surname`, `name`, `email`, `tel`, `message`, `createdAt`) VALUES

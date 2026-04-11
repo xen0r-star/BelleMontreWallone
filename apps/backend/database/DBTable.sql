@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS watch (
     watchCollection VARCHAR(255) NOT NULL,
     imageUrl VARCHAR(255) NOT NULL,
     retailPrice NUMERIC(10,2),
-    marketPrice NUMERIC(10,2) NOT NULL,
+    marketPrice NUMERIC(10,2),
     isInProduction BOOLEAN DEFAULT 1,
     movement VARCHAR(255),
     diameter NUMERIC(5,2),
@@ -88,7 +88,6 @@ CREATE TABLE IF NOT EXISTS loan(
     watchId INT NOT NULL,
     loanDate DATE DEFAULT (CURRENT_DATE),
     returnLoanDate DATE NOT NULL,
-    isOutDelay BOOLEAN,
 
     PRIMARY KEY (userId, watchId)
 )engine=innodb;
