@@ -388,7 +388,7 @@ function generateAndStoreRefreshToken(object $db, int $userId, array $config): ?
     $expiresAt = date('Y-m-d H:i:s', time() + (int) $config['refresh_token_expires']);
 
     try {
-        $statement = $db->prepare('INSERT INTO refresh_token (userId, token, expiresAt) VALUES (:userId, :token, :expiresAt)');
+        $statement = $db->prepare('INSERT INTO refreshToken(userId, token, expiresAt) VALUES (:userId, :token, :expiresAt)');
         if ($statement === false) {
             return null;
         }
