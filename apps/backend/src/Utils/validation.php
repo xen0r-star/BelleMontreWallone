@@ -36,6 +36,25 @@ final class Validation {
     }
 
 
+    public static function Integer(array $data, string $field, array &$errors, bool $isOptional = false): ?int {
+        if (!array_key_exists($field, $data)) {
+            if ($isOptional) {
+                return null;
+            }
+
+            $errors[$field] = 'Field is required';
+            return null;
+        }
+
+        if (!is_int($data[$field])) {
+            $errors[$field] = 'Field must be an integer';
+            return null;
+        }
+
+        return $data[$field];
+    }
+
+
     public static function Numeric(array $data, string $field, array &$errors, bool $isOptional = false): ?float {
         if (!array_key_exists($field, $data)) {
             if ($isOptional) {
