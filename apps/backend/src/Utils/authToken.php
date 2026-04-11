@@ -11,7 +11,7 @@ use PDOException;
 
 
 function getAuthToken(bool $isAdmin = false): ?array {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    $authHeader = $_SERVER['HTTP_X_API_KEY'] ?? '';
     if (!preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
         Response::json([
             'error' => 'UNAUTHORIZED',

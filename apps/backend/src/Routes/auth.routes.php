@@ -308,8 +308,9 @@ function getCurrentUser(): void {
         if ($statement === false) {
             throw new PDOException('Unable to prepare user lookup statement');
         }
-
-        $statement->execute(['userId' => (int) $token['sub']]);
+        // echo json_encode((int) $token);
+        // exit;
+        $statement->execute(['userId' => (int) $token]);
         $user = $statement->fetch();
 
         if (!$user) {
@@ -370,8 +371,8 @@ function generateAndStoreRefreshToken(object $db, int $userId, array $config): ?
     $tokenValue = bin2hex(random_bytes(32));
     $expiresAt = date('Y-m-d H:i:s', time() + (int) $config['refresh_token_expires']);
 
-    try {
-        $statement = $db->prepare('INSERT INTO refreshToken(userId, token, expiresAt) VALUES (:userId, :token, :expiresAt)');
+    try {   
+        $statement = $db->prepare('INSERT INTO refreshToken (userId, token, expiresAt) VALUES (:userId, :token, :expiresAt)');
         if ($statement === false) {
             return null;
         }
