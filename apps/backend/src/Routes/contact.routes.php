@@ -7,7 +7,7 @@ namespace App\Routes;
 use App\Core\Response;
 use App\Core\Database;
 use function App\Utils\readJsonBody;
-use function App\Utils\readRequiredString;
+use App\Utils\Validation;
 
 use PDOException;
 
@@ -18,11 +18,11 @@ function contact(): void {
 
     $errors = [];
 
-    $surname = readRequiredString($data, 'surname', $errors, 100);
-    $name = readRequiredString($data, 'name', $errors, 100);
-    $email = readRequiredString($data, 'email', $errors, 255);
-    $tel = readRequiredString($data, 'tel', $errors, 20);
-    $message = readRequiredString($data, 'message', $errors, 2000);
+    $surname = Validation::String($data, 'surname', $errors, 100);
+    $name =    Validation::String($data, 'name', $errors, 100);
+    $email =   Validation::String($data, 'email', $errors, 255);
+    $tel =     Validation::String($data, 'tel', $errors, 20);
+    $message = Validation::String($data, 'message', $errors, 2000);
 
     if (!empty($errors)) {
         Response::json([
