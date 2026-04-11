@@ -1,10 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { fetchWatches } from "../hooks/fetchAPI";
-
-const reservations = [];
+import { fetchWatches, fetchReservations } from "../hooks/fetchAPI";
 
 function toDateTime(date, time) {
     return new Date(`${date}T${time}:00`);
@@ -45,6 +43,7 @@ function computeDurationDays(reservationDate, returnDate) {
 
 export default function AdminReservationsPage() {
     const [watches, setWatches] = useState([]);
+    const [reservations, setReservations] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const [statusFilter, setStatusFilter] = useState("all");
@@ -52,6 +51,7 @@ export default function AdminReservationsPage() {
     const [toDate, setToDate] = useState("");
 
     fetchWatches(setWatches, setIsLoading);
+    fetchReservations(setReservations, setIsLoading);
 
     const allRows = useMemo(() => {
         if (!reservations || !watches) return [];
@@ -80,7 +80,7 @@ export default function AdminReservationsPage() {
     }, [allRows, statusFilter, fromDate, toDate]);
 
     const kpis = useMemo(() => {
-        if (!watches) return [];
+        if (!watches || reservations) return [];
 
         const waiting = allRows.filter((row) => row.status.className.includes("future")).length;
         const late = allRows.filter((row) => row.status.className.includes("late")).length;
@@ -92,11 +92,10 @@ export default function AdminReservationsPage() {
         };
     }, [allRows, watches]);
 
-    if (!watches || watches.length === 0 || isLoading) {
+    if (!watches || watches.length === 0 || !reservations || reservations.length === 0 || isLoading) {
         return (
             <div className="page-root">
                 <SiteHeader isAdmin />
-                
                 <main className="container reservations-page">
                     <section className="kpi-grid">
                         <article className="kpi-card">
@@ -112,7 +111,6 @@ export default function AdminReservationsPage() {
                             <p className="kpi-value">/</p>
                         </article>
                     </section>
-
                     <section className="filters-card reservations-filters">
                         <h3>Filtres</h3>
                         <div className="filter-row">

@@ -50,3 +50,38 @@ export async function fetchWatches(setWatches, setIsLoading) {
         fetchWatches();
     }, [])
 }
+
+export async function fetchReservations(setReservations, setIsLoading) {    
+    useEffect(() => {
+        setIsLoading(true);
+        const fetchReservations = async () => {
+            const result = await checkAPIStat();
+            if(!result) {
+                setIsLoading(false);
+                return console.error("API pas disponible pour le frontend.");
+            }
+            try {
+                const response = await fetch(`${API_URL}/admin/reservations`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type' : 'application/json'
+                    }
+                });
+                console.log(response.ok);
+                if (!response.ok) throw new Error(`Erreur requête HTTP : ${response.status}`);
+                const { data } = await response.json();
+                console.log(data);
+                if (data) {
+                    setReservations(data);
+                } else {
+                    throw new Error(`Erreur requête HTTP : aucune data`);
+                }
+            } catch (e) {
+                console.error("Erreur lors du chargement des données:", e);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchReservations();
+    }, [])
+}

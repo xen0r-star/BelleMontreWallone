@@ -729,6 +729,10 @@ select {
     font-family: inherit;
 }
 
+textarea {
+    resize: none;
+}
+
 .success-msg {
     border: 1px solid #7ca584;
     background: #edf9ef;

@@ -126,7 +126,6 @@ export default function CollectionPage() {
         setSortBy("featured");
     }
 
-    // Affichage lors du chargement
     if (isLoading) {
         return (
             <div className="page-root">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
@@ -34,74 +34,8 @@ export default function WatchDetailPage() {
             <SiteHeader />
             
             <main className="container detail-layout">
-                <section>
-                    <ImageWithSkeleton
-                        src="../public/icons/bmw_icon.png"
-                        alt="/"
-                        className="hero-image"
-                    />
-                </section>
-
-                <section className="detail-panel">
-                    <p className="kicker">/</p>
-
-                    <h1>/</h1>
-                    <div className="price">Prix de vente : /<hr/>Prix conseillé : /</div>
-                    <p className="muted">Description : /</p>
-
-                    <ul className="spec-list">
-                        <li>
-                            <span>Mouvement</span>
-                            <span>/</span>
-                        </li>
-                        <li>
-                            <span>Diamètre</span>
-                            <span>/</span>
-                        </li>
-                        <li>
-                            <span>Matériel</span>
-                            <span>/</span>
-                        </li>
-                        <li>
-                            <span>Étanchéité</span>
-                            <span>/</span>
-                        </li>
-                    </ul>
-
-                    <button type="button" className="btn">
-                        Demander une réservation
-                    </button>
-                </section>
+                <p>Chargement de la montre...</p>
             </main>
-
-            {isModalOpen && (
-                <div className="modal-backdrop" role="dialog" aria-modal="true">
-                    <div className="modal-panel modal-panel--reservation">
-                        <button
-                            type="button"
-                            className="close-modal"
-                        >
-                            Fermer
-                        </button>
-
-                        <h2>Reservation - {watch.model}</h2>
-                        {!sent ? (
-                            <form className="form-grid">
-                                <input required placeholder="Nom" />
-                                <input required placeholder="Prenom" />
-                                <input required type="email" placeholder="Email" />
-                                <input placeholder="Telephone" />
-                                <textarea rows="4" placeholder="Message" />
-                                <button className="btn" type="submit">Envoyer</button>
-                            </form>
-
-                        ) : (
-                            <p className="success-msg">Demande envoyee. Un conseiller te contactera sous 24h.</p>
-                        )}
-                    </div>
-                </div>
-            )}
-
             <SiteFooter />
         </div>);
     }
@@ -187,19 +121,19 @@ export default function WatchDetailPage() {
                             Fermer
                         </button>
 
-                        <h2>Reservation - {watch.model}</h2>
+                        <h2>Réservation - {watch.model}</h2>
                         {!sent ? (
                             <form className="form-grid" onSubmit={handleSubmit}>
-                                <input required placeholder="Nom" />
-                                <input required placeholder="Prenom" />
-                                <input required type="email" placeholder="Email" />
-                                <input placeholder="Telephone" />
-                                <textarea rows="4" placeholder="Message" />
+                                <input required placeholder="Nom :" />
+                                <input required placeholder="Prenom :" />
+                                <input required type="email" placeholder="Email :" />
+                                <input type="tel" placeholder="Telephone : [Format: +xx xxx xx xx xx]" pattern="[0-9]{2} [0-9]{3} [0-9]{2} [0-9]{2} [0-9]{2}"/>
+                                <textarea rows="7" placeholder="Message :" />
                                 <button className="btn" type="submit">Envoyer</button>
                             </form>
 
                         ) : (
-                            <p className="success-msg">Demande envoyee. Un conseiller te contactera sous 24h.</p>
+                            <p className="success-msg">Demande envoyée. Un de nos conseiller te contactera sous un délai de 24h.</p>
                         )}
                     </div>
                 </div>
