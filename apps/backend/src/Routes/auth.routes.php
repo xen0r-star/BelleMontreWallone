@@ -7,9 +7,10 @@ namespace App\Routes;
 use App\Core\Database;
 use App\Core\Response;
 use App\Utils\JwtToken;
-use PDOException;
-use function App\Utils\readJsonBody;
 use App\Utils\Validation;
+use function App\Utils\readJsonBody;
+use function App\Utils\getAuthToken;
+use PDOException;
 
 
 function login(): void {
@@ -28,6 +29,7 @@ function login(): void {
         ], 422);
         return;
     }
+
 
     $db = Database::connection();
 
@@ -113,6 +115,7 @@ function register(): void {
         ], 422);
         return;
     }
+
 
     $db = Database::connection();
 
@@ -220,6 +223,7 @@ function refresh(): void {
         return;
     }
 
+    
     $config = require __DIR__ . '/../Config/config.php';
     $db = Database::connection();
 
@@ -293,14 +297,8 @@ function refresh(): void {
 
 function getCurrentUser(): void {
     $token = getAuthToken();
+    if ($token === null) return;
 
-    if ($token === null) {
-        Response::json([
-            'error' => 'UNAUTHORIZED',
-            'message' => 'Missing or invalid access token',
-        ], 401);
-        return;
-    }
 
     $db = Database::connection();
 
@@ -404,16 +402,4 @@ function generateAndStoreRefreshToken(object $db, int $userId, array $config): ?
     } catch (PDOException) {
         return null;
     }
-}
-
-function getAuthToken(): ?array {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    if (!preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
-        return null;
-    }
-
-    $config = require __DIR__ . '/../Config/config.php';
-    $token = JwtToken::decode($matches[1], (string) $config['jwt_secret']);
-
-    return $token;
 }
