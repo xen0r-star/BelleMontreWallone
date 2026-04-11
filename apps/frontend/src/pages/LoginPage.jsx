@@ -2,15 +2,33 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import { clientAuth } from "../hooks/auth";
 
 export default function LoginPage() {
     const [message, setMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
 
-    function handleSubmit(event) {
-        event.preventDefault();
-        setMessage("Connexion validee. Bienvenue dans votre espace.");
+    clientAuth(setMessage, setIsLoading)
+    if (isLoading) {
+        return (
+            <div className="page-root">
+                <SiteHeader />
+                <main className="container auth-layout">
+                    <section className="auth-card">
+                        <p className="kicker">Espace Client</p>
+                        <h1>Connexion</h1>
+                        <p className="muted">
+                            Renseigne ton identifiant pour acceder a ton espace personnel.
+                        </p>
+                        <p className="auth-switch">
+                            Pas encore de compte ? <Link to="/inscription">Inscription</Link>
+                        </p>
+                    </section>
+                </main>
+                <SiteFooter />
+            </div>
+        );
     }
-
     return (
         <div className="page-root">
             <SiteHeader />
@@ -23,7 +41,7 @@ export default function LoginPage() {
                         Renseigne ton identifiant pour acceder a ton espace personnel.
                     </p>
 
-                    <form className="form-grid" onSubmit={handleSubmit}>
+                    <form className="form-grid" onSubmit={clientAuth}>
                         <label>
                             Username
                             <input name="username" required placeholder="username" />

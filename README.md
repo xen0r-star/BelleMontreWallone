@@ -1,215 +1,211 @@
-# ProjetTI - Application web de gestion de montres
+<div align="center">
 
-Projet académique réalisé dans le cadre du cours de technologies mobiles.
+# ⌚ Belle Montre Wallone — Boutique de Montres en Ligne
 
-## Table des matières
+**SPA e-commerce avec système de réservation, API PHP native & stack conteneurisée**
 
-- [Langages et technologies](#langages-et-technologies)
-- [Auteurs](#auteurs)
-- [Objectifs du projet](#objectifs-du-projet)
-- [Fonctionnalités principales](#fonctionnalites-principales)
-- [Stack technique](#stack-technique)
-- [Architecture globale (Mermaid)](#architecture-globale-mermaid)
-- [Structure du repository](#structure-du-repository)
-- [Prérequis](#prerequis)
-- [Installation et démarrage](#installation-et-demarrage)
-- [Scripts disponibles](#scripts-disponibles)
-- [Configuration](#configuration)
-- [Base de données](#base-de-donnees)
-- [Captures d'écran de l'application](#captures-decran-de-lapplication)
-- [Contribution](#contribution)
-- [Licence](#licence)
-
-## Langages et technologies
-
-![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![React](https://img.shields.io/badge/React-18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Apache](https://img.shields.io/badge/Apache-Web%20Server-D22128?style=for-the-badge&logo=apache&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-JS-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-Native-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-9.5-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![phpMyAdmin](https://img.shields.io/badge/phpMyAdmin-Admin%20DB-6C78AF?style=for-the-badge&logo=phpmyadmin&logoColor=white)
+![JWT](https://img.shields.io/badge/Auth-JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
 
-## Auteurs
+</div>
 
-- xen0r-star
-- TomusLeVrai
-- Tigrouuuu
-- pingu
+---
 
-## Objectifs du projet
+## 📋 Table des Matières
 
-ProjetTI vise à proposer une application web complète autour d'un catalogue de montres:
+- [Aperçu](#-aperçu)
+- [Fonctionnalités](#-fonctionnalités)
+- [Stack Technologique](#️-stack-technologique)
+- [Architecture du Projet](#-architecture-du-projet)
+- [Prérequis](#-prérequis)
+- [Getting Started](#-getting-started)
+- [Variables d'Environnement](#️-variables-denvironnement)
+- [Endpoints API](#-endpoints-api)
 
-- consultation des produits côté client;
-- gestion des réservations et des contacts;
-- espace d'administration pour les opérations back-office;
-- architecture full-stack moderne avec séparation frontend/backend.
+---
 
-## Fonctionnalités principales
+## 🔍 Aperçu
 
-- Frontend React avec navigation multi-pages (React Router).
-- API backend PHP pour l'authentification et les opérations métiers.
-- Gestion des données via MySQL.
-- Outils d'administration de la base via phpMyAdmin.
+Belle Montre Wallone est un monorepo découplé frontend/backend pour une boutique de montres en ligne. Le frontend est une SPA React servie par Vite. Le backend est une API REST construite en PHP natif avec un système de routing custom, une architecture MVC allégée et une authentification JWT. L'ensemble tourne dans des conteneurs Docker orchestrés via `docker-compose`.
 
-## Stack technique
+---
 
-- Backend: PHP 8.2, Apache, PDO MySQL
-- Frontend: React 18, React Router, Vite
-- Base de données: MySQL
-- Conteneurisation: Docker Compose
+## ✨ Fonctionnalités
 
-## Architecture globale (Mermaid)
+### 🌐 Interface Publique & Utilisateurs
 
-```mermaid
-flowchart LR
-		U[Utilisateur] --> F[Frontend React - Vite<br/>localhost:5173]
-		F -->|HTTP/JSON| B[Backend PHP - Apache<br/>localhost:8080]
-		B -->|PDO| D[(MySQL<br/>watch_store)]
-		A[Admin] --> P[phpMyAdmin<br/>localhost:8081]
-		P --> D
+- 🏠 **Home** — Landing page de la boutique
+- 🗂️ **Collection** — Catalogue complet des montres disponibles
+- 🔎 **Détail Montre** — Fiche produit complète par référence
+- 📝 **Inscription / Connexion** — Authentification utilisateur avec session JWT
+- 📅 **Réservation** — Les utilisateurs authentifiés peuvent réserver une montre
+- 💬 **Aide & Contact** — Page de support client
 
-		subgraph Docker
-			B
-			D
-			P
-		end
+### 🔐 Interface Administration (JWT + API Key)
+
+- 🛠️ **Gestion du Catalogue** — CRUD complet sur les montres (ajout, édition, suppression)
+- 📋 **Gestion des Réservations** — Suivi et administration des réservations clients
+
+---
+
+## 🛠️ Stack Technologique
+
+| Couche | Technologie | Rôle |
+|---|---|---|
+| **Frontend** | React 18 + JSX | Composants UI, state management |
+| **Bundler** | Vite JS | Dev server HMR, build optimisé |
+| **Routing client** | React Router DOM v6 | Navigation SPA |
+| **Styles** | CSS natif (`styles.css`) | Styling global |
+| **Backend** | PHP natif | API REST, front controller pattern |
+| **Base de données** | MySQL 9.5 | Persistance des données |
+| **Auth** | JWT | Sécurisation des routes protégées |
+| **DevOps** | Docker & Docker Compose | Conteneurisation et orchestration |
+| **Admin DB** | PhpMyAdmin | Interface visuelle MySQL |
+
+---
+
+## 📁 Architecture du Projet
+
+```
+projet-ti/
+│
+├── frontend/                   # SPA React
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── CollectionPage.jsx
+│   │   │   ├── WatchDetailPage.jsx
+│   │   │   ├── RegisterPage.jsx
+│   │   │   ├── LoginPage.jsx
+│   │   │   ├── HelpPage.jsx
+│   │   │   ├── AdminWatchPage.jsx
+│   │   │   └── AdminReservationsPage.jsx
+│   │   ├── App.jsx
+│   │   └── styles.css
+│   ├── index.html
+│   ├── vite.config.js
+│   └── package.json
+│
+├── backend/                    # API REST PHP natif
+│   ├── index.php               # Front Controller
+│   ├── Routes/                 # Définition des routes
+│   │   ├── watch.routes.php
+│   │   ├── reservation.routes.php
+│   │   ├── auth.routes.php
+│   │   └── contact.routes.php
+│   ├── Core/                   # Noyau applicatif (Router, DB, Auth)
+│   └── Utils/                  # Helpers (JWT, response formatter...)
+│
+└── docker-compose.yml          # Orchestration : backend + db + phpmyadmin
 ```
 
-## Structure du repository
+---
 
-```text
-.
-|- docker-compose.yml
-|- package.json
-|- README.md
-|- LICENSE
-|- config/
-|  |- php.ini
-|- apps/
-|  |- backend/
-|  |  |- Dockerfile
-|  |  |- public/
-|  |  |- src/
-|  |  |  |- Config/
-|  |  |  |- Core/
-|  |  |  |- Routes/
-|  |  |  |- Utils/
-|  |  |- database/
-|  |- frontend/
-|     |- package.json
-|     |- src/
-|     |  |- components/
-|     |  |- pages/
-|     |  |- services/
-|     |- public/
-|- docs/
-	 |- screenshots/
-```
+## ✅ Prérequis
 
-## Prerequis
+- [Docker](https://www.docker.com/get-started) ≥ 24.x
+- [Docker Compose](https://docs.docker.com/compose/) v2+
+- [Node.js](https://nodejs.org/) ≥ 18.x + npm (pour le frontend en dev local)
 
-- Docker et Docker Compose
-- Node.js 18+ et npm
+---
 
-## Installation et demarrage
+## 🚀 Getting Started
 
-### 1. Cloner le repository
+### 1. Cloner le repo
 
 ```bash
-git clone <url-du-repo>
-cd ProjetTI
+git clone https://github.com/ton-user/projet-ti.git
+cd projet-ti
 ```
 
-### 2. Installer les dependances frontend
+### 2. Configurer les variables d'environnement
+
+Copier et ajuster le fichier d'environnement avant de lancer quoi que ce soit :
 
 ```bash
+cp .env.example .env
+# Éditer .env avec tes valeurs (JWT_SECRET, ADMIN_API_KEY, etc.)
+```
+
+### 3. Lancer le backend (Docker)
+
+```bash
+docker-compose up -d
+```
+
+| Service | URL |
+|---|---|
+| API Backend | `http://localhost:8080` |
+| PhpMyAdmin | `http://localhost:8081` |
+| MySQL | `localhost:3306` |
+
+> Les conteneurs `backend`, `db` et `phpmyadmin` démarrent en mode détaché. Les variables d'environnement sont injectées directement depuis `docker-compose.yml`.
+
+### 4. Lancer le frontend (Dev)
+
+```bash
+cd frontend
 npm install
+npm run dev
 ```
 
-### 3. Lancer la stack Docker (backend + db + phpMyAdmin)
+Le dev server Vite démarre sur **`http://localhost:5173`** avec HMR activé.
 
-```bash
-docker compose up -d --build
+---
+
+## ⚙️ Variables d'Environnement
+
+Ces variables sont injectées dans les conteneurs via `docker-compose.yml`.
+
+```env
+# Application
+APP_ENV=development
+
+# CORS
+CORS_ALLOWED_ORIGINS=http://localhost:5173
+
+# Base de données
+MYSQL_DATABASE=projet_ti
+MYSQL_USER=db_user
+MYSQL_PASSWORD=db_password
+MYSQL_ROOT_PASSWORD=root_password
+
+# Sécurité & Auth
+JWT_SECRET=your_jwt_secret_key
+ADMIN_USER=admin
+ADMIN_PASSWORD=admin_password
+ADMIN_API_KEY=your_api_key_here
 ```
 
-### 4. Lancer le frontend en developpement
+> ⚠️ Ne jamais committer `.env` avec des valeurs réelles. Ajouter `.env` au `.gitignore`.
 
-```bash
-npm run frontend:dev
-```
+---
 
-## Acces aux services
+## 📡 Endpoints API
 
-- Frontend: http://localhost:5173
-- API backend: http://localhost:8080
-- phpMyAdmin: http://localhost:8081
+> Base URL : `http://localhost:8080`
 
-## Scripts disponibles
+| Méthode | Route | Auth | Description |
+|---|---|---|---|
+| `POST` | `/auth/register` | — | Inscription utilisateur |
+| `POST` | `/auth/login` | — | Connexion, retourne JWT |
+| `GET` | `/watches` | — | Liste du catalogue |
+| `GET` | `/watches/:id` | — | Détails d'une montre |
+| `POST` | `/watches` | JWT + API Key | Ajouter une montre (admin) |
+| `PUT` | `/watches/:id` | JWT + API Key | Modifier une montre (admin) |
+| `DELETE` | `/watches/:id` | JWT + API Key | Supprimer une montre (admin) |
+| `POST` | `/reservations` | JWT | Créer une réservation |
+| `GET` | `/reservations` | JWT + API Key | Lister toutes les réservations (admin) |
+| `POST` | `/contact` | — | Envoyer un message de contact |
 
-Depuis la racine du projet:
+---
 
-- `npm run frontend:dev`: démarre le frontend en mode développement
-- `npm run frontend:build`: génère le build de production
-- `npm run frontend:preview`: prévisualise le build de production
+<div align="center">
 
-## Configuration
+*Belle Montre Wallone — Architecture modulaire, stack moderne, zéro dépendance superflue.*
 
-Le fichier `docker-compose.yml` définit des variables d'environnement par défaut, notamment:
-
-- `APP_ENV`
-- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`
-- `ADMIN_USER`, `ADMIN_PASSWORD`, `ADMIN_API_KEY`
-- `JWT_SECRET`
-- `CORS_ALLOWED_ORIGINS`
-
-Pour un usage en production:
-
-- remplacez toutes les valeurs sensibles;
-- évitez de conserver des identifiants en clair;
-- privilégiez des secrets injectés via variables d'environnement sécurisées.
-
-## Base de donnees
-
-Les scripts SQL sont disponibles dans `apps/backend/database`:
-
-- `DBTable.sql`: création des tables
-- `DBInsert.sql`: insertion des données initiales
-
-Si les tables ne sont pas créées automatiquement au démarrage des conteneurs, importez ces scripts manuellement via phpMyAdmin.
-
-## Captures d'ecran de l'application
-
-Un espace est prévu pour les captures dans `docs/screenshots`.
-
-Exemples recommandés:
-
-- page d'accueil
-- page collection
-- page détail d'une montre
-- page de connexion / inscription
-- pages d'administration
-
-Vous pouvez ajouter vos images puis compléter cette section:
-
-```markdown
-![Accueil](docs/screenshots/home.png)
-![Collection](docs/screenshots/collection.png)
-![Détail montre](docs/screenshots/watch-detail.png)
-![Connexion](docs/screenshots/login.png)
-![Admin réservations](docs/screenshots/admin-reservations.png)
-```
-
-## Contribution
-
-Ce projet est académique. Pour contribuer:
-
-- créez une branche par fonctionnalité;
-- ouvrez une pull request claire avec description des changements;
-- vérifiez que le frontend build et que la stack Docker démarre correctement.
-
-## Licence
-
-Ce projet est distribué selon les termes définis dans le fichier `LICENSE`.
+</div>

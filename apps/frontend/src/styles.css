@@ -408,6 +408,7 @@ h3,
 .collection-layout {
     display: grid;
     grid-template-columns: 260px 1fr;
+    align-items: start;
     gap: 1.5rem;
     margin-top: 2rem;
     margin-bottom: 3rem;
@@ -427,10 +428,30 @@ h3,
 .filters-card {
     padding: 1rem;
     position: sticky;
-    top: 90px;
+    top: calc(96px + 2rem);
     align-self: start;
     display: grid;
     gap: 1rem;
+    overflow-y: auto;
+    max-height: calc(100vh - (96px + 2rem + 1rem));
+    width: 100%;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgb(0, 0, 0);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(165, 165, 165);
+    border: 3px solid rgb(171, 171, 171);    
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(165, 165, 165, 0.54);
 }
 
 .filter-section {
@@ -706,6 +727,10 @@ select {
     color: var(--text);
     padding: 0.65rem 0.7rem;
     font-family: inherit;
+}
+
+textarea {
+    resize: none;
 }
 
 .success-msg {
