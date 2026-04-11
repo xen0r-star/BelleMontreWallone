@@ -10,6 +10,7 @@ use App\Utils\JwtToken;
 use App\Utils\Validation;
 use function App\Utils\readJsonBody;
 use function App\Utils\getAuthToken;
+use function App\Utils\normalizeDateOfBirth;
 use PDOException;
 
 
@@ -342,22 +343,6 @@ function getCurrentUser(): void {
 
 
 
-
-function normalizeDateOfBirth(?string $value): ?string {
-    if ($value === null) {
-        return null;
-    }
-
-    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) === 1) {
-        return $value;
-    }
-
-    if (preg_match('/^(\d{2})-(\d{2})-(\d{4})$/', $value, $matches) === 1) {
-        return sprintf('%s-%s-%s', $matches[3], $matches[2], $matches[1]);
-    }
-
-    return null;
-}
 
 function verifyPassword(string $plainPassword, string $storedHash): bool {
     if (password_verify($plainPassword, $storedHash)) {
