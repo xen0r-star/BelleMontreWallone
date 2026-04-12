@@ -70,23 +70,23 @@ function login(): void {
         return;
     }
 
+
+
     setcookie('access_token', $accessToken, [
-            'expires' => time() + 900,
-            'path' => '/',
-            'secure' => false,
-            'httponly' => true,
-            'samesite' => 'lax'
-        ]       
-    );
+        'expires' => time() + 900,
+        'path' => '/',
+        'secure' => false,
+        'httponly' => true,
+        'samesite' => 'lax'
+    ]);
 
     setcookie('refresh_token', $refreshTokenRecord, [
-            'expires' => time() + 604800,
-            'path' => '/',
-            'secure' => false,
-            'httponly' => true,
-            'samesite' => 'lax'
-        ]       
-    );
+        'expires' => time() + 604800,
+        'path' => '/',
+        'secure' => false,
+        'httponly' => true,
+        'samesite' => 'lax'
+    ]);
 
     Response::json([
         'success' => true,
@@ -203,6 +203,24 @@ function register(): void {
         return;
     }
 
+
+
+    setcookie('access_token', $accessToken, [
+        'expires' => time() + 900,
+        'path' => '/',
+        'secure' => false,
+        'httponly' => true,
+        'samesite' => 'lax'
+    ]);
+
+    setcookie('refresh_token', $refreshTokenRecord, [
+        'expires' => time() + 604800,
+        'path' => '/',
+        'secure' => false,
+        'httponly' => true,
+        'samesite' => 'lax'
+    ]);
+
     Response::json([
         'success' => true,
         'user' => [
@@ -211,9 +229,7 @@ function register(): void {
             'mail' => (string) $email,
             'dateOfBirth' => (string) $normalizedDateOfBirth,
             'isAdmin' => false,
-        ],
-        'accessToken' => $accessToken,
-        'refreshToken' => $refreshTokenRecord,
+        ]
     ], 201);
     return;
 }
@@ -296,9 +312,17 @@ function refresh(): void {
 
         $newAccessToken = generateAccessToken($user, $config);
 
+
+        setcookie('access_token', $newAccessToken, [
+            'expires' => time() + 900,
+            'path' => '/',
+            'secure' => false,
+            'httponly' => true,
+            'samesite' => 'lax'
+        ]);
+
         Response::json([
-            'success' => true,
-            'accessToken' => $newAccessToken,
+            'success' => true
         ]);
         return;
 
