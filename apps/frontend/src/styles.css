@@ -740,6 +740,13 @@ textarea {
     padding: 0.75rem;
 }
 
+.nsuccess-msg {
+    border: 1px solid #d16d6d;
+    background: #ffc9c9;
+    color: #b22626;
+    padding: 0.75rem;
+}
+
 .help-layout {
     margin-top: 3rem;
     margin-bottom: 4rem;

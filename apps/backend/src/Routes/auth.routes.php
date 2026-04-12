@@ -70,6 +70,24 @@ function login(): void {
         return;
     }
 
+    setcookie('access_token', $accessToken, [
+            'expires' => time() + 900,
+            'path' => '/',
+            'secure' => false,
+            'httponly' => true,
+            'samesite' => 'lax'
+        ]       
+    );
+
+    setcookie('refresh_token', $refreshTokenRecord, [
+            'expires' => time() + 604800,
+            'path' => '/',
+            'secure' => false,
+            'httponly' => true,
+            'samesite' => 'lax'
+        ]       
+    );
+
     Response::json([
         'success' => true,
         'user' => [
@@ -77,9 +95,7 @@ function login(): void {
             'userName' => (string) $user['userName'],
             'mail' => (string) $user['mail'],
             'isAdmin' => (bool) $user['isAdmin'],
-        ],
-        'accessToken' => $accessToken,
-        'refreshToken' => $refreshTokenRecord,
+        ]
     ]);
     return;
 }
@@ -300,7 +316,6 @@ function getCurrentUser(): void {
     $token = getAuthToken();
     if ($token === null) return;
 
-
     $db = Database::connection();
 
     try {
@@ -308,8 +323,8 @@ function getCurrentUser(): void {
         if ($statement === false) {
             throw new PDOException('Unable to prepare user lookup statement');
         }
-        // echo json_encode((int) $token);
-        // exit;
+
+    
         $statement->execute(['userId' => (int) $token]);
         $user = $statement->fetch();
 
@@ -331,7 +346,6 @@ function getCurrentUser(): void {
             ],
         ]);
         return;
-
     } catch (PDOException) {
         Response::json([
             'error' => 'INTERNAL_SERVER_ERROR',
@@ -340,8 +354,6 @@ function getCurrentUser(): void {
         return;
     }
 }
-
-
 
 
 

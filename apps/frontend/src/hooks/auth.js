@@ -3,65 +3,65 @@ const API_URL = import.meta.env.VITE_API_URL;
 import { useEffect } from "react";
 import { checkAPIStat } from "./fetchAPI";
 
-async function handleLogin(access_token) {
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function handleLogin() {
     const response = await fetch(`${API_URL}/auth/me`, {
         method: 'GET',
-        headers: {
-            'X-API-KEY': `Bearer ${access_token}`,
-            'Content-Type' : 'application/json'
-        }
+        credentials: 'include'
     });
     if (!response.ok) throw new Error(`Erreur requête HTTP : ${response.status}`);
+
     const data  = await response.json();
-    console.log(data)
+
     if (!data) {
         setIsLoading(false);
         return console.error("Erreur lors de l'authentification lors de la récupération des informations utilisateurs.");
     } else {
-        console.log("réussi")
+        console.log("Connexion réussi")
+        // Finir le reste
     }
 }
 
-export async function clientAuth(setMessage, setIsLoading) {    
-    useEffect(() => {
-        setIsLoading(true);
-        const clientAuth = async () => {
-            const result = await checkAPIStat();
-            if(!result) {
-                setIsLoading(false);
-                return console.error("API pas disponible pour le frontend.");
-            }
-            try {
-                console.log("Try du auth");
-                const response = await fetch(`${API_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type' : 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "userName": "Dupont",
-                        "password": "hash1"
-                    })
-                });
-                if (!response.ok) throw new Error(`Erreur requête HTTP : ${response.status}`);
-                const data  = await response.json();
-                if (!data.refreshToken || !data.accessToken) {
-                    setIsLoading(false);
-                    return console.error("Erreur lors de l'authentification lors de la récupération des tokens.");
-                } else {
-                    const expiration = 60 * 15;
-                    const expirationDay = 60 * 60 * 24 * 7;
-                    document.cookie = `access_token=${data.accessToken};path=/; max-age=${expiration}; Secure; SameSite=Strict`;
-                    document.cookie = `refresh_token=${data.refreshToken};path=/; max-age=${expirationDay}; Secure; SameSite=Strict`;
-                    await handleLogin(data.accessToken);
-                }
-            } catch (e) {
-                console.error("Erreur lors du chargement des données:", e);
-            } finally {
-                setIsLoading(false);
-                setMessage("Connexion validee. Bienvenue dans votre espace.")
-            }
-        };
-        clientAuth();
-    }, [])
+export async function clientAuth(setMessage, setIsLoading, setVerification) {    
+    setIsLoading(true);
+    const result = await checkAPIStat();
+    if(!result) {
+        setIsLoading(false);
+        return console.error("API pas disponible pour le frontend.");
+    }
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ // A finir
+                "userName": "Dupont",
+                "password": "hash1"
+            })
+        });
+        
+        if (!response.ok) {
+            await sleep(5000);
+            setVerification(false);
+            setMessage("Vos identifiants sont incorrects. Veuillez-réessayer !")
+            setIsLoading(false);
+            throw new Error(`Erreur requête HTTP : ${response.status}`);
+        }
+        const data  = await response.json();
+        if (!data) {
+            return console.error("Erreur lors de l'authentification lors de la récupération des informations utilisateur.");
+        } else {
+            await handleLogin();
+        }
+    } catch (e) {
+        console.error("Erreur lors de la connexion :", e);
+    } finally {
+        await sleep(5000);
+        setVerification(true);
+        setMessage("Connexion validée. Bienvenue dans votre espace.")
+        setIsLoading(false);
+    }
 }
