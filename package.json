@@ -9,5 +9,8 @@
     "frontend:dev": "npm run dev --workspace @projetti/frontend",
     "frontend:build": "npm run build --workspace @projetti/frontend",
     "frontend:preview": "npm run preview --workspace @projetti/frontend"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2"
   }
 }
