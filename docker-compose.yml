@@ -9,6 +9,7 @@ services:
         limits:
           memory: 512m
     container_name: projetTI-backend
+    restart: always
     environment:
       APP_ENV: development
       DB_HOST: db
