@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteFooter from "../components/SiteFooter";
 
+// Place ton objet de styles Tailwind ici (ex: const style = { ... })
+const style = {
+    
+};
+
 export default function HomePage() {
     const [isScrolled, setIsScrolled] = useState(false);
 

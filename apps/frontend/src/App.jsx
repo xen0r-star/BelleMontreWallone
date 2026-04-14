@@ -10,6 +10,11 @@ import AdminWatchPage from "./pages/AdminWatchPage";
 import AdminReservationsPage from "./pages/AdminReservationsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
+// Place ton objet de styles Tailwind ici (ex: const style = { ... })
+const style = {
+    
+};
+
 export default function App() {
     const location = useLocation();
     const [displayLocation, setDisplayLocation] = useState(location);

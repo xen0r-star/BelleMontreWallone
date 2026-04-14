@@ -5,6 +5,11 @@ import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
 import { fetchWatches } from "../hooks/fetchAPI";
 
+// Place ton objet de styles Tailwind ici (ex: const style = { ... })
+const style = {
+    
+};
+
 function ImageWithSkeleton({ src, alt, className }) {
     const [isLoaded, setIsLoaded] = useState(false);
 

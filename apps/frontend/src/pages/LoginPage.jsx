@@ -4,6 +4,11 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { clientAuth } from "../hooks/auth";
 
+// Place ton objet de styles Tailwind ici (ex: const style = { ... })
+const style = {
+    
+};
+
 export default function LoginPage() {
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(true);

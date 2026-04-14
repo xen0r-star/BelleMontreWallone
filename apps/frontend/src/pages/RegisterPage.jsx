@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
+// Place ton objet de styles Tailwind ici (ex: const style = { ... })
+const style = {
+    
+};
+
 export default function RegisterPage() {
     const [message, setMessage] = useState("");
 

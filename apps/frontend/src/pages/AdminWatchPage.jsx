@@ -3,6 +3,11 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { fetchWatches } from "../hooks/fetchAPI";
 
+// Place ton objet de styles Tailwind ici (ex: const style = { ... }) avant les constantes et le composant.
+const style = {
+    
+};
+
 const emptyForm = {
     brand: "",
     model: "",

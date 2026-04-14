@@ -2,6 +2,11 @@ import { useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
+// Place ton objet de styles Tailwind ici (ex: const style = { ... })
+const style = {
+    
+};
+
 const faqs = [
     {
         q: "Comment se déroule la réservation ?",

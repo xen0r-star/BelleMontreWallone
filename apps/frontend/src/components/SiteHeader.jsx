@@ -1,33 +1,26 @@
 import { Link, NavLink } from "react-router-dom";
 
+// Place ton objet de styles Tailwind ici (ex: const style = { ... })
+
 const adminLinks = [
     { to: "/admin/gestion-montre", label: "Gestion Montres" },
     { to: "/admin/reservations", label: "Suivi Reservations" }
 ];
 
-
-
-
 const style = {
-   
     header: "fixed top-0 left-0 w-full z-50 bg-[#1c1d21] border-b border-[#2a2f35] transition-colors duration-[180ms]",
     container: "max-w-[1440px] mx-auto px-6 h-[74px] md:h-[96px] flex items-center justify-between",
     navWrapper: "hidden lg:flex w-1/3 items-center gap-[30px]",
-    
-   
     navLink: `
             text-[#faf8f5] text-[11px] tracking-[0.05em] uppercase font-medium relative transition-opacity duration-200
             hover:opacity-85 after:content-[''] after:absolute after:left-0 after:-bottom-[6px] after:w-full after:h-px 
             after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-200 hover:after:scale-x-100
             `,
-    
     logoWrapper: "w-full lg:w-1/3 flex justify-center",
-    
     logoText: `
             text-[#faf8f5] font-['Cormorant_Garamond',serif] text-[28px] md:text-[34px] tracking-[0.02em] font-medium 
             transition-transform duration-200 hover:-translate-y-[1px]
             `,
-    
     adminBadge: `
             border border-[color-mix(in_srgb,var(--admin-green)_25%,#fff)] bg-[color-mix(in_srgb,var(--admin-green)_8%,#fff)] 
             text-[var(--admin-green)] py-[0.25rem] px-[0.55rem] uppercase tracking-[0.08em] text-[0.65rem]

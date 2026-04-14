@@ -4,6 +4,11 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { fetchWatches, fetchReservations } from "../hooks/fetchAPI";
 
+// Place ton objet de styles Tailwind ici (ex: const style = { ... }) avant les fonctions/composant.
+const style = {
+    
+};
+
 function toDateTime(date, time) {
     return new Date(`${date}T${time}:00`);
 }
