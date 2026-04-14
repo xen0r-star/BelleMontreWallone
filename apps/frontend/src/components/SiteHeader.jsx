@@ -10,8 +10,6 @@ const adminLinks = [
 
 const style = {
    
-    header: "fixed top-0 left-0 w-full z-50 bg-[#1c1d21] border-b border-[#2a2f35] transition-colors duration-[180ms]",
-    container: "max-w-[1440px] mx-auto px-6 h-[74px] md:h-[96px] flex items-center justify-between",
     navWrapper: "hidden lg:flex w-1/3 items-center gap-[30px]",
     
    
@@ -21,34 +19,25 @@ const style = {
             after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-200 hover:after:scale-x-100
             `,
     
-    logoWrapper: "w-full lg:w-1/3 flex justify-center",
-    
-    logoText: `
-            text-[#faf8f5] font-['Cormorant_Garamond',serif] text-[28px] md:text-[34px] tracking-[0.02em] font-medium 
-            transition-transform duration-200 hover:-translate-y-[1px]
-            `,
-    
-    adminBadge: `
-            border border-[color-mix(in_srgb,var(--admin-green)_25%,#fff)] bg-[color-mix(in_srgb,var(--admin-green)_8%,#fff)] 
-            text-[var(--admin-green)] py-[0.25rem] px-[0.55rem] uppercase tracking-[0.08em] text-[0.65rem]
-            `,
-    spacer: "h-[74px] md:h-[96px]",
 };
 
 export default function SiteHeader({ isAdmin = false }) {
     return (
         <>
-            <header className={style.header}>
-                <div className={style.container}>
+            <header className="fixed top-0 left-0 w-full z-50 bg-[#1c1d21] border-b border-[#2a2f35] transition-colors duration-[180ms]">
+                <div className="max-w-[1440px] mx-auto px-6 h-[74px] md:h-[96px] flex items-center justify-between">
                     <div className={style.navWrapper}>
                         <NavLink className={style.navLink} to="/collection">
                             Collection
                         </NavLink>
-                        {isAdmin && <span className={style.adminBadge}>Compte Admin</span>}
+                        {isAdmin && <span className="border border-[color-mix(in_srgb,var(--admin-green)_25%,#fff)] bg-[color-mix(in_srgb,var(--admin-green)_8%,#fff)] 
+                                                        text-[var(--admin-green)] py-[0.25rem] px-[0.55rem] uppercase tracking-[0.08em] text-[0.65rem]">
+                            Compte Admin
+                        </span>}
                     </div>
 
-                    <div className={style.logoWrapper}>
-                        <Link to="/" className={style.logoText}>
+                    <div className="w-full lg:w-1/3 flex justify-center">
+                        <Link to="/" className="text-[#faf8f5] font-['Cormorant_Garamond',serif] text-[28px] md:text-[34px] tracking-[0.02em] font-medium transition-transform duration-200 hover:-translate-y-[1px]">
                             Belle Montre Wallonne
                         </Link>
                     </div>
@@ -58,7 +47,7 @@ export default function SiteHeader({ isAdmin = false }) {
                             Aide
                         </NavLink>
                         {!isAdmin && (
-                            <NavLink className={`text-white ${style.navLink}`} to="/connexion">
+                            <NavLink className={style.navLink} to="/connexion">
                                 Connexion
                             </NavLink>
                         )}
@@ -73,7 +62,7 @@ export default function SiteHeader({ isAdmin = false }) {
                 </div>
             </header>
 
-            <div className={style.spacer} aria-hidden="true" />
+            <div className="h-[74px] md:h-[96px]" aria-hidden="true" />
         </>
     );
 }
