@@ -37,7 +37,9 @@ export default function SiteHeader({ isAdmin = false }) {
                         <NavLink className={style.navLink} to="/collection">
                             Collection
                         </NavLink>
-                        {isAdmin && <span className={style.adminBadge}>Compte Admin</span>}
+                        {isAdmin && <span className={style.adminBadge}>
+                            Compte Admin
+                        </span>}
                     </div>
 
                     <div className={style.logoWrapper}>
@@ -51,7 +53,7 @@ export default function SiteHeader({ isAdmin = false }) {
                             Aide
                         </NavLink>
                         {!isAdmin && (
-                            <NavLink className={`text-white ${style.navLink}`} to="/connexion">
+                            <NavLink className={style.navLink} to="/connexion">
                                 Connexion
                             </NavLink>
                         )}
