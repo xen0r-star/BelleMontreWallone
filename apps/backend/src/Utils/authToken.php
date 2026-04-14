@@ -15,9 +15,9 @@ function getAuthToken(bool $isAdmin = false): ?array {
     $authHeader = $_COOKIE['access_token'] ?? '';
     if (!$authHeader) {
         Response::json([
-            'error' => 'UNAUTHORIZED',
+            'authentification' => 'UNAUTHORIZED',
             'message' => 'Missing or invalid access token',
-        ], 401);
+        ], 200);
         return null;
     }
 

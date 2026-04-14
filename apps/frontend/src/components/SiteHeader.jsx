@@ -23,7 +23,7 @@ export default function SiteHeader({ isAdmin = false }) {
                         <NavLink to="/besoin-daide">Aide</NavLink>
                         {!isAdmin && (
                             <NavLink to="/connexion">
-                                Connexion
+                                Compte
                             </NavLink>
                         )}
                         {isAdmin &&

@@ -1,15 +1,15 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-import { useEffect } from "react";
 import { checkAPIStat } from "./fetchAPI";
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function handleLogin() {
+export async function checkAuth(setUser, setVerification) {
     const response = await fetch(`${API_URL}/auth/me`, {
         method: 'GET',
         credentials: 'include'
     });
+    if (response.status === 401) return setUser(null);
     if (!response.ok) throw new Error(`Erreur requête HTTP : ${response.status}`);
 
     const data  = await response.json();
@@ -18,12 +18,12 @@ async function handleLogin() {
         setIsLoading(false);
         return console.error("Erreur lors de l'authentification lors de la récupération des informations utilisateurs.");
     } else {
-        console.log("Connexion réussi")
-        // Finir le reste
+        setUser(data.user)
+        setVerification(true);
     }
 }
 
-export async function clientAuth(setMessage, setIsLoading, setVerification) {    
+export async function clientAuth(setMessage, setIsLoading, setVerification, setUser) {    
     setIsLoading(true);
     const result = await checkAPIStat();
     if(!result) {
@@ -39,29 +39,62 @@ export async function clientAuth(setMessage, setIsLoading, setVerification) {
             credentials: 'include',
             body: JSON.stringify({ // A finir
                 "userName": "Dupont",
-                "password": "hash1"
+                "password": "$2y$13$TYjrxpTfrvq5/jYggPlPheahDSkWyx57Rz1adeF2JmT206pLFvBxm"
             })
         });
         
         if (!response.ok) {
-            await sleep(5000);
             setVerification(false);
+            await sleep(3000);
             setMessage("Vos identifiants sont incorrects. Veuillez-réessayer !")
-            setIsLoading(false);
             throw new Error(`Erreur requête HTTP : ${response.status}`);
+        } else {
+            setVerification(true);
+            await sleep(1000);
+            setMessage("Connexion validée. Bienvenue dans votre espace.")
         }
         const data  = await response.json();
         if (!data) {
             return console.error("Erreur lors de l'authentification lors de la récupération des informations utilisateur.");
         } else {
-            await handleLogin();
+            await checkAuth(setUser);
         }
     } catch (e) {
         console.error("Erreur lors de la connexion :", e);
     } finally {
-        await sleep(5000);
-        setVerification(true);
-        setMessage("Connexion validée. Bienvenue dans votre espace.")
+        setIsLoading(false);
+    }
+}
+
+export async function clientLogout(setMessage, setIsLoading, setVerification, setUser) {
+    setIsLoading(true);
+    const result = await checkAPIStat();
+    if(!result) {
+        setIsLoading(false);
+        return console.error("API pas disponible pour le frontend.");
+    }
+    try {
+        const response = await fetch(`${API_URL}/auth/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            credentials: 'include'
+        });
+        if (!response.ok) {
+            setVerification(false);
+            await sleep(3000);
+            setMessage("Impossible de vous déconnecter. Veuillez-réessayer !")
+            throw new Error(`Erreur requête HTTP : ${response.status}`);
+        } else {
+            setVerification(true);
+            setUser(null);
+            await sleep(1000);
+            setMessage("Déconnexion réussi. A bientôt chez BMW !")
+        }
+    } catch (e) {
+        console.error("Erreur lors de la déconnexion :", e);
+    } finally {
         setIsLoading(false);
     }
 }

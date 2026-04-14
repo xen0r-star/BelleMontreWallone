@@ -24,6 +24,7 @@ function dispatch(string $method, string $path): void {
             '/api/reservations'  => fn() => createReservation(),
 
             '/api/auth/login'    => fn() => login(),
+            '/api/auth/logout'    => fn() => logout(),
             '/api/auth/register' => fn() => register(),
             '/api/auth/refresh'  => fn() => refresh(),
 

@@ -70,8 +70,6 @@ function login(): void {
         return;
     }
 
-
-
     setcookie('access_token', $accessToken, [
         'expires' => time() + 900,
         'path' => '/',
@@ -100,6 +98,51 @@ function login(): void {
     return;
 }
 
+function logout(): void {
+    $refreshToken = $_COOKIE['refresh_token'] ?? '';
+    if (!$refreshToken) {
+        Response::json([
+            'authentification' => 'UNAUTHORIZED',
+            'message' => 'No session found',
+        ], 200);
+        return;
+    }
+
+    $db = Database::connection();
+
+    try {
+        $statement = $db->prepare('DELETE FROM refreshToken WHERE token = ?');
+        $statement->execute([$refreshToken]);
+    } catch (PDOException) {
+        Response::json([
+            'error' => 'INTERNAL_SERVER_ERROR',
+            'message' => 'An internal server error occurred',
+        ], 500);
+        return;
+    }
+
+    setcookie('access_token', '', [
+        'expires' => time() - 2500,
+        'path' => '/',
+        'secure' => false,
+        'httponly' => true,
+        'samesite' => 'lax'
+    ]);
+
+    setcookie('refresh_token', '', [
+        'expires' => time() - 2500,
+        'path' => '/',
+        'secure' => false,
+        'httponly' => true,
+        'samesite' => 'lax'
+    ]);
+
+    Response::json([
+        'success' => true,
+        'message' => 'Account logout : OK'
+    ]);
+    return;
+}
 
 function register(): void {
     $data = readJsonBody(8192);
@@ -348,7 +391,6 @@ function getCurrentUser(): void {
             throw new PDOException('Unable to prepare user lookup statement');
         }
 
-    
         $statement->execute(['userId' => (int) $token]);
         $user = $statement->fetch();
 

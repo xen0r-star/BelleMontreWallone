@@ -1,27 +1,61 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { clientAuth } from "../hooks/auth";
+import { clientAuth, clientLogout, checkAuth } from "../hooks/auth";
 
 export default function LoginPage() {
     const [message, setMessage] = useState("");
-    const [verification, setVerification] = useState(false);
+    const [user, setUser] = useState(null);
+    const [verif, setVerif] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
+    useEffect(() => {
+        const checkAuth = async () => {
+            await checkAuth(setUser, setVerif);
+        };
+        checkAuth();
+    }, []);
+    
+    
+    const handleLogin = async (e) => {
+        setMessage('');
         e.preventDefault();
-
-        // Data entrée à récupérer
-        // A finir
-
-        await clientAuth(setMessage, setIsLoading, setVerification);
+        // Data entrée à récupérer (UserName / Password)
+        await clientAuth(setMessage, setIsLoading, setVerif, setUser);
     };
+
+    const handleLogout = async (e) => {
+        setMessage('');
+        e.preventDefault();
+        await clientLogout(setMessage, setIsLoading, setVerif, setUser);
+    };
+
+    if (verif && user) {
+        return <div className="page-root">
+            <SiteHeader />
+            <main className="container auth-layout">
+                <section className="auth-card">
+                    <p className="kicker">Espace Client</p>
+                    <h1>Votre compte</h1>
+                    <div className="muted">
+                        Bienvenue sur ton espace personnel {user.userName} !
+                        <hr/>Informations du compte :<br/>Mail : {user.mail}<br/>Nom : {user.userName}<br/>Administrateur du site : {user.isAdmin ? "Oui" : "Non"}<hr/>
+                    </div>
+                    <button className="logout-btn" onClick={handleLogout}>
+                        Se déconnecter
+                    </button>                    
+                        
+                    {message && <p className={verif ? "success-msg" : "nsuccess-msg"}>{message}</p>}
+                </section>
+            </main>
+            <SiteFooter />
+        </div>
+    }
 
     return (
         <div className="page-root">
             <SiteHeader />
-
             <main className="container auth-layout">
                 <section className="auth-card">
                     <p className="kicker">Espace Client</p>
@@ -29,13 +63,11 @@ export default function LoginPage() {
                     <p className="muted">
                         Renseigne ton identifiant pour acceder a ton espace personnel.
                     </p>
-
-                    <form className="form-grid" onSubmit={handleSubmit}>
+                    <form className="form-grid" onSubmit={handleLogin}>
                         <label>
                             Username
                             <input name="username" required placeholder="username" />
                         </label>
-
                         <label>
                             Password
                             <input
@@ -45,20 +77,16 @@ export default function LoginPage() {
                                 placeholder="password"
                             />
                         </label>
-
                         <button className="btn" type="submit">
                             {isLoading ? "Chargement..." : "Se connecter"}
                         </button>
                     </form>
-
                     <p className="auth-switch">
                         Pas encore de compte ? <Link to="/inscription">Inscription</Link>
                     </p>
-
-                    {message && <p className={verification ? "success-msg" : "nsuccess-msg"}>{message}</p>}
+                    {message && <p className={verif ? "success-msg" : "nsuccess-msg"}>{message}</p>}
                 </section>
             </main>
-            
             <SiteFooter />
         </div>
     );
