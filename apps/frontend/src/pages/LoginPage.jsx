@@ -11,10 +11,10 @@ export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const checkAuth = async () => {
+        const checkUser = async () => {
             await checkAuth(setUser, setVerif);
         };
-        checkAuth();
+        checkUser();
     }, []);
     
     
