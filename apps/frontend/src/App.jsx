@@ -45,7 +45,7 @@ export default function App() {
     }, [transitionStage, location]);
 
     return (
-        <div className={`route-shell ${transitionStage}`}>
+        <div className={`min-h-screen transition-opacity duration-[220ms] ease-in-out ${transitionStage === "fade-in" ? "opacity-100" : "opacity-0"}`}>
             <Routes location={displayLocation}>
                 {/* Public & Auth */}
                 <Route path="/" element={<HomePage />} />
