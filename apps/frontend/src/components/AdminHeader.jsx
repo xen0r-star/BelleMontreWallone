@@ -1,7 +1,5 @@
 import { NavLink } from "react-router-dom";
 
-// Place ton objet de styles Tailwind ici (ex: const style = { ... })
-
 const style = {
     header: "bg-[#17191e] border-b border-[#2a2f35]",
     container: "max-w-[1440px] mx-auto px-6",

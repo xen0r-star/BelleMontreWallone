@@ -1,7 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
 
-// Place ton objet de styles Tailwind ici (ex: const style = { ... })
-
 const adminLinks = [
     { to: "/admin/gestion-montre", label: "Gestion Montres" },
     { to: "/admin/reservations", label: "Suivi Reservations" }
