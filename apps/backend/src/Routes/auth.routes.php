@@ -113,6 +113,7 @@ function logout(): void {
     try {
         $statement = $db->prepare('DELETE FROM refreshToken WHERE token = ?');
         $statement->execute([$refreshToken]);
+
     } catch (PDOException) {
         Response::json([
             'error' => 'INTERNAL_SERVER_ERROR',
@@ -139,7 +140,7 @@ function logout(): void {
 
     Response::json([
         'success' => true,
-        'message' => 'Account logout : OK'
+        'message' => 'Logged out successfully',
     ]);
     return;
 }
