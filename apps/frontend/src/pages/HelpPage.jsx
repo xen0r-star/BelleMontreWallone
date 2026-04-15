@@ -1,6 +1,7 @@
 import { useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import { clientContact } from "../hooks/auth";
 
 const style = {
     page: "min-h-screen bg-[#f4efe7] text-[#1c1d21]",

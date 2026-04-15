@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import { clientAuthReg, clientLogout, checkAuth } from "../hooks/auth";
+
 
 const style = {
     page: `min-h-screen bg-[#f4efe7] text-[#1c1d21]`,
@@ -17,16 +19,71 @@ const style = {
     btn: `mt-2 inline-flex items-center justify-center rounded-full border border-[#1c1d21] bg-[#1c1d21] px-6 py-3 text-[0.78rem] uppercase tracking-[0.12em] font-semibold text-[#faf5ed] transition-colors duration-200 hover:bg-transparent hover:text-[#1c1d21]`,
     authSwitch: `mt-6 text-[0.9rem] text-[#5f6672]`,
     authLink: `font-semibold text-[#1c1d21] underline underline-offset-4 decoration-[#1c1d21]/40 hover:decoration-[#1c1d21]`,
-    success: `mt-6 rounded-[22px] border border-[#c8d4c2] bg-[#eef5ea] px-5 py-4 text-[0.95rem] text-[#355044]`,
+    success: `mt-6 rounded-[22px] border border-[#7ca584] bg-[#edf9ef] px-5 py-4 text-[0.95rem] text-[#275030]`,
+    nsuccess: `mt-6 rounded-[22px] border border-[#d16d6d] bg-[#ffc9c9] px-5 py-4 text-[0.95rem] text-[#b22626]`,
 };
 
 export default function RegisterPage() {
     const [message, setMessage] = useState("");
+    const [user, setUser] = useState(null);
+    const [verif, setVerif] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    function handleSubmit(event) {
-        event.preventDefault();
-        setMessage("Inscription enregistree. Tu peux maintenant te connecter.");
-    }
+    useEffect(() => {
+        const checkUser = async () => {
+            await checkAuth(setUser, setVerif, setIsLoading);
+        };
+        checkUser();
+    }, []);
+
+     async function handleRegister(e) {
+            setMessage('');
+            e.preventDefault();
+            // Data entrée à récupérer (UserName / Password)
+            await clientAuthReg(setMessage, setIsLoading, setVerif, setUser);
+        };
+    
+        async function handleLogout(e) {
+            setMessage('');
+            e.preventDefault();
+            await clientLogout(setMessage, setIsLoading, setVerif, setUser);
+        };
+
+    if (isLoading) {
+            return <div className="page-root">
+                <SiteHeader />
+                <main className="container auth-layout">
+                    <section className="auth-card">
+                        <p className="kicker">Espace Client</p>
+                        <h1>Inscription</h1>
+                        Chargement en cours...
+                    </section>
+                </main>
+                <SiteFooter />
+            </div>
+        }
+
+    if (verif && user) {
+            return <div className="page-root">
+                <SiteHeader />
+                <main className="container auth-layout">
+                    <section className="auth-card">
+                        <p className="kicker">Espace Client</p>
+                        <h1>Votre compte</h1>
+                        <div className="muted">
+                            Bienvenue sur ton espace personnel {user.userName} !
+                            <hr/>Informations du compte :<br/>Mail : {user.mail}<br/>Nom : {user.userName}<br/>Administrateur du site : {user.isAdmin ? "Oui" : "Non"}<hr/>
+                        </div>
+                        <button className="logout-btn" onClick={handleLogout}>
+                            Se déconnecter
+                        </button>                    
+                            
+                        {message && <p className={verif ? "success-msg" : "nsuccess-msg"}>{message}</p>}
+                    </section>
+                </main>
+                <SiteFooter />
+            </div>
+        }
 
     return (
         <div className={style.page}>
@@ -35,26 +92,25 @@ export default function RegisterPage() {
             <main className={`${style.container} ${style.main}`}>
                 <section className={style.card}>
                     <p className={style.kicker}>Espace Client</p>
-
-                    <h1 className={style.title}>Inscription</h1>
+                      <h1 className={style.title}>Inscription</h1>
                     <p className={style.muted}>
-                        Cree ton compte pour acceder aux reservations et au suivi de ton espace.
+                        Crée ton compte pour accéder aux réservations et au suivi de ton espace.
                     </p>
 
-                    <form className={style.form} onSubmit={handleSubmit}>
+                    <form className={style.form} onSubmit={handleRegister}>
                         <label className={style.label}>
-                            Username
-                            <input className={style.input} name="username" required placeholder="username" />
+                            Nom
+                            <input className={style.input} name="username" required placeholder="nom" />
                         </label>
 
                         <label className={style.label}>
-                            Password
+                            Mot de passe
                             <input
                                 className={style.input}
                                 name="password"
                                 type="password"
                                 required
-                                placeholder="password"
+                                placeholder="mot de passe"
                             />
                         </label>
 
@@ -77,7 +133,7 @@ export default function RegisterPage() {
                         Deja un compte ? <Link to="/connexion" className={style.authLink}>Connexion</Link>
                     </p>
 
-                    {message && <p className={style.success}>{message}</p>}
+                    {message && <p className={verif ? "style.success" : "style.nsuccess"}>{message}</p>}
                 </section>
             </main>
             

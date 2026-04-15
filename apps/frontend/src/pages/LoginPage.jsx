@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { clientAuth } from "../hooks/auth";
+import { clientAuth, clientLogout, checkAuth } from "../hooks/auth";
 
 const style = {
     page: "min-h-screen bg-[radial-gradient(circle_at_top,#f6efe5_0%,#f0e8db_45%,#ece4d7_100%)] text-[#1c1d21]",
@@ -25,22 +25,70 @@ export default function LoginPage() {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [user, setUser] = useState(null);
+    const [verif, setVerif] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    async function handleSubmit(event) {
-        event.preventDefault();
-        setIsSubmitting(true);
-        setMessage("");
+    useEffect(() => {
+        const checkUser = async () => {
+            await checkAuth(setUser, setVerif, setIsLoading);
+        };
+        checkUser();
+    }, []);
+    
+    
+    async function handleLogin(e) {
+        setMessage('');
+        e.preventDefault();
+        // Data entrée à récupérer (UserName / Password)
+        await clientAuth(setMessage, setIsLoading, setVerif, setUser);
+    };
 
-        const result = await clientAuth({ userName, password });
-        setMessage(result.message);
-        setIsSubmitting(false);
+    async function handleLogout(e) {
+        setMessage('');
+        e.preventDefault();
+        await clientLogout(setMessage, setIsLoading, setVerif, setUser);
+    };
+
+    if (isLoading) {
+        return <div className="page-root">
+            <SiteHeader />
+            <main className="container auth-layout">
+                <section className="auth-card">
+                    <p className="kicker">Espace Client</p>
+                    <h1>Connexion</h1>
+                    Chargement en cours...
+                </section>
+            </main>
+            <SiteFooter />
+        </div>
+    }
+
+    if (verif && user) {
+        return <div className="page-root">
+            <SiteHeader />
+            <main className="container auth-layout">
+                <section className="auth-card">
+                    <p className="kicker">Espace Client</p>
+                    <h1>Votre compte</h1>
+                    <div className="muted">
+                        Bienvenue sur ton espace personnel {user.userName} !
+                        <hr/>Informations du compte :<br/>Mail : {user.mail}<br/>Nom : {user.userName}<br/>Administrateur du site : {user.isAdmin ? "Oui" : "Non"}<hr/>
+                    </div>
+                    <button className="logout-btn" onClick={handleLogout}>
+                        Se déconnecter
+                    </button>                    
+                        
+                    {message && <p className={verif ? "success-msg" : "nsuccess-msg"}>{message}</p>}
+                </section>
+            </main>
+            <SiteFooter />
+        </div>
     }
 
     return (
         <div className={style.page}>
             <SiteHeader />
-
             <main className={style.container}>
                 <section className={style.card}>
                     <p className={style.kicker}>Espace client</p>
@@ -49,7 +97,7 @@ export default function LoginPage() {
                         Renseigne ton identifiant pour acceder a ton espace personnel.
                     </p>
 
-                    <form className={style.form} onSubmit={handleSubmit}>
+                    <form className={style.form} onSubmit={handleLogin}>
                         <label className={style.label}>
                             Username
                             <input
@@ -73,8 +121,8 @@ export default function LoginPage() {
                                 onChange={(event) => setPassword(event.target.value)}
                             />
                         </label>
-                        <button className={style.btn} type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? "Connexion..." : "Se connecter"}
+                        <button className={style.btn} type="submit">
+                            {isLoading ? "Chargement..." : "Se connecter"}
                         </button>
                     </form>
 
@@ -82,11 +130,7 @@ export default function LoginPage() {
                         Pas encore de compte ? <Link to="/inscription" className={style.authLink}>Inscription</Link>
                     </p>
 
-                    {message && (
-                        <p className={message.toLowerCase().includes("valid") ? style.success : style.error}>
-                            {message}
-                        </p>
-                    )}
+                    {message && <p className={verif ? "style.success" : "style.error"}>{message}</p>}
                 </section>
             </main>
 

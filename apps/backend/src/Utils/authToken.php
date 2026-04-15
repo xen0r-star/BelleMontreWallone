@@ -11,18 +11,19 @@ use PDOException;
 
 
 function getAuthToken(bool $isAdmin = false): ?array {
-    $authHeader = $_SERVER['HTTP_X_API_KEY'] ?? '';
-    if (!preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
+    // Reprendre une partie du commit `https://github.com/xen0r-star/BelleMontreWallone/tree/d9601e9742dda54fd492d56e700d2c78bab35890` si besoin de refaire l'auth avec le bearer
+    $authHeader = $_COOKIE['access_token'] ?? '';
+    if (!$authHeader) {
         Response::json([
-            'error' => 'UNAUTHORIZED',
+            'authentification' => 'UNAUTHORIZED',
             'message' => 'Missing or invalid access token',
-        ], 401);
+        ], 200);
         return null;
     }
 
     
     $config = require __DIR__ . '/../Config/config.php';
-    $token = JwtToken::decode($matches[1], (string) $config['jwt_secret']);
+    $token = JwtToken::decode($authHeader, (string) $config['jwt_secret']);
 
     if ($token === null) {
         Response::json([

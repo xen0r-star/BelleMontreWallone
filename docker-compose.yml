@@ -9,6 +9,7 @@ services:
         limits:
           memory: 512m
     container_name: projetTI-backend
+    restart: always
     environment:
       APP_ENV: development
       DB_HOST: db
@@ -44,7 +45,8 @@ services:
       MYSQL_PASSWORD: watch_password
     volumes:
       - db_data:/var/lib/mysql
-      - ./apps/backend/database/init:/docker-entrypoint-initdb.d
+      - ./apps/backend/database/DBTable.sql:/docker-entrypoint-initdb.d/01.sql
+      - ./apps/backend/database/DBInsert.sql:/docker-entrypoint-initdb.d/02.sql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:5
