@@ -31,22 +31,22 @@ export default function HomePage() {
     }, []);
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#faf8f5] text-[#1c1d21]">
-            <nav className={`fixed top-0 left-0 w-full z-50 border-b transition-colors duration-[180ms] ease-in-out ${isScrolled ? "bg-[#1c1d21] border-[#2a2f35]" : "bg-transparent border-white/10"}`}>
-                <div className="max-w-[1440px] mx-auto px-6 h-[74px] md:h-[96px] flex items-center justify-between">
-                    <div className="hidden lg:flex w-1/3 items-center gap-[30px]">
+        <div className="flex min-h-screen flex-col bg-[#faf8f5] text-[#1c1d21]">
+            <nav className={`fixed left-0 top-0 z-50 w-full border-b transition-colors duration-180 ease-in-out ${isScrolled ? "border-[#2a2f35] bg-[#1c1d21]" : "border-white/10 bg-transparent"}`}>
+                <div className="mx-auto flex h-20 max-w-screen-2xl items-center justify-between px-6 md:h-24">
+                    <div className="hidden w-1/3 items-center gap-8 lg:flex">
                         <Link to="/collection" className={style.navLink}>
                             Collection
                         </Link>
                     </div>
 
-                    <div className="flex w-full lg:w-1/3 justify-center">
-                        <Link to="/" className="text-[#faf8f5] font-['Cormorant_Garamond',serif] text-[28px] md:text-[34px] tracking-[0.02em] font-medium transition-transform duration-[220ms] hover:-translate-y-[1px]">
+                    <div className="flex w-full justify-center lg:w-1/3">
+                        <Link to="/" className="font-['Cormorant_Garamond',serif] text-[28px] font-medium tracking-[0.02em] text-[#faf8f5] transition-transform duration-200 hover:-translate-y-px md:text-[34px]">
                             Belle Montre Wallonne
                         </Link>
                     </div>
 
-                    <div className="hidden lg:flex w-1/3 justify-end items-center gap-[30px]">
+                    <div className="hidden w-1/3 items-center justify-end gap-8 lg:flex">
                         <Link to="/besoin-daide" className={style.navLink}>
                             Aide
                         </Link>
@@ -65,21 +65,21 @@ export default function HomePage() {
                 }}
             >
                 <div className="relative z-10 text-center px-4 flex flex-col items-center">
-                    <h1 className="font-['Cormorant_Garamond',serif] text-[clamp(52px,6vw,82px)] text-[#faf8f5] font-normal leading-[1.05] tracking-[0.01em] mb-[28px]">
+                    <h1 className="font-['Cormorant_Garamond',serif] text-[clamp(52px,6vw,82px)] text-[#faf8f5] font-normal leading-[1.05] tracking-[0.01em] mb-7">
                         Le Temps, Sublime.
                     </h1>
-                    <a className="inline-flex items-center justify-center border border-[#faf8f5] text-[#faf8f5] px-[32px] py-[15px] uppercase tracking-[0.1em] text-[11px] font-medium bg-transparent transition-colors hover:bg-white/10" href="#discover">
+                    <a className="inline-flex items-center justify-center border border-[#faf8f5] text-[#faf8f5] px-8 py-4 uppercase tracking-widest text-[11px] font-medium bg-transparent transition-colors hover:bg-white/10" href="#discover">
                         Découvrir
                     </a>
                 </div>
 
-                <div className="absolute bottom-[42px] left-1/2 -translate-x-1/2 text-[#faf8f5]">
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-[#faf8f5]">
                     <span className="material-symbols-outlined text-[19px]">expand_all</span>
                 </div>
             </section>
 
             <div className="bg-[#faf8f5]" id="discover">
-                <section className="max-w-[1440px] mx-auto min-h-[auto] md:min-h-[819px] flex flex-col lg:flex-row items-stretch">
+                <section className="mx-auto flex min-h-0 max-w-screen-2xl flex-col items-stretch lg:flex-row md:min-h-screen">
                     <article className={style.editorialArticle}>
                         <span className={style.editorialLabel}>Héritage</span>
                         <h2 className={style.editorialTitle}>L'Art de la Précision Absolue</h2>
@@ -89,7 +89,7 @@ export default function HomePage() {
                             Héritages conçus pour traverser les générations avec une élégance
                             Discrète.
                         </p>
-                        <Link to="/collection" className="inline-flex items-center justify-center bg-[#2a2f35] text-[#faf8f5] px-[32px] py-[15px] uppercase tracking-[0.1em] text-[11px] font-medium w-fit transition-all duration-[260ms] ease-in-out hover:bg-[#1f2328] hover:-translate-y-[2px] hover:shadow-[0_12px_22px_rgba(28,29,33,0.18)]">
+                        <Link to="/collection" className="inline-flex w-fit items-center justify-center bg-[#2a2f35] px-8 py-4 text-[11px] font-medium uppercase tracking-widest text-[#faf8f5] transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:bg-[#1f2328] hover:shadow-[0_12px_22px_rgba(28,29,33,0.18)]">
                             Explorez la Collection
                         </Link>
                     </article>
@@ -104,10 +104,10 @@ export default function HomePage() {
                     />
                 </section>
 
-                <div className="max-w-[1440px] h-[1px] bg-[#efebe4] mx-auto" />
+                <div className="mx-auto h-px max-w-screen-2xl bg-[#efebe4]" />
 
                 {/* Ajout de lg:flex-row-reverse pour alterner l'image */}
-                <section className="max-w-[1440px] mx-auto min-h-[auto] md:min-h-[819px] flex flex-col lg:flex-row-reverse items-stretch">
+                <section className="mx-auto flex min-h-0 max-w-screen-2xl flex-col items-stretch lg:flex-row-reverse md:min-h-screen">
                     <div
                         className={style.editorialImage}
                         style={{
@@ -126,9 +126,9 @@ export default function HomePage() {
                             sélection de matériaux nobles. Le veritable luxe se ressent, il ne
                             s'affiche pas.
                         </p>
-                        <a className="group inline-flex items-center gap-[8px] text-[#1c1d21] uppercase tracking-[0.1em] text-[11px] font-medium transition-colors hover:text-[#2a2f35] duration-[240ms] ease-in-out" href="#brand">
+                        <a className="group inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-[#1c1d21] transition-colors duration-200 ease-in-out hover:text-[#2a2f35]" href="#brand">
                             Découvrir Notre Marque
-                            <span className="material-symbols-outlined text-[18px] transition-transform duration-[320ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-[6px]">arrow_forward</span>
+                            <span className="material-symbols-outlined text-[18px] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5">arrow_forward</span>
                         </a>
                     </article>
                 </section>

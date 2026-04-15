@@ -6,24 +6,14 @@ const adminLinks = [
 ];
 
 const style = {
-    header: "fixed top-0 left-0 w-full z-50 bg-[#1c1d21] border-b border-[#2a2f35] transition-colors duration-[180ms]",
-    container: "max-w-[1440px] mx-auto px-6 h-[74px] md:h-[96px] flex items-center justify-between",
-    navWrapper: "hidden lg:flex w-1/3 items-center gap-[30px]",
-    navLink: `
-            text-[#faf8f5] text-[11px] tracking-[0.05em] uppercase font-medium relative transition-opacity duration-200
-            hover:opacity-85 after:content-[''] after:absolute after:left-0 after:-bottom-[6px] after:w-full after:h-px 
-            after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-200 hover:after:scale-x-100
-            `,
-    logoWrapper: "w-full lg:w-1/3 flex justify-center",
-    logoText: `
-            text-[#faf8f5] font-['Cormorant_Garamond',serif] text-[28px] md:text-[34px] tracking-[0.02em] font-medium 
-            transition-transform duration-200 hover:-translate-y-[1px]
-            `,
-    adminBadge: `
-            border border-[color-mix(in_srgb,var(--admin-green)_25%,#fff)] bg-[color-mix(in_srgb,var(--admin-green)_8%,#fff)] 
-            text-[var(--admin-green)] py-[0.25rem] px-[0.55rem] uppercase tracking-[0.08em] text-[0.65rem]
-            `,
-    spacer: "h-[74px] md:h-[96px]",
+    header: "fixed top-0 left-0 z-50 w-full border-b border-[#2a2f35] bg-[#1c1d21]/95 backdrop-blur-md",
+    container: "mx-auto flex h-[74px] max-w-[1440px] items-center justify-between px-6 md:h-24",
+    navWrapper: "hidden w-1/3 items-center gap-[30px] lg:flex",
+    navLink: "relative text-[11px] font-medium uppercase tracking-[0.05em] text-[#faf8f5] transition-opacity duration-200 hover:opacity-85 after:absolute after:-bottom-[6px] after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-200 hover:after:scale-x-100",
+    logoWrapper: "flex w-full justify-center lg:w-1/3",
+    logoText: "font-['Cormorant_Garamond',serif] text-[28px] font-medium tracking-[0.02em] text-[#faf8f5] transition-transform duration-200 hover:-translate-y-px md:text-[34px]",
+    adminBadge: "border border-[color-mix(in_srgb,var(--admin-green)_25%,#fff)] bg-[color-mix(in_srgb,var(--admin-green)_8%,#fff)] px-[0.55rem] py-[0.25rem] text-[0.65rem] uppercase tracking-[0.08em] text-[var(--admin-green)]",
+    spacer: "h-[74px] md:h-24",
 };
 
 export default function SiteHeader({ isAdmin = false }) {
@@ -46,7 +36,7 @@ export default function SiteHeader({ isAdmin = false }) {
                         </Link>
                     </div>
 
-                    <div className= {`${style.navWrapper} justify-end`}>
+                    <div className={`${style.navWrapper} justify-end`}>
                         <NavLink className={style.navLink} to="/besoin-daide">
                             Aide
                         </NavLink>

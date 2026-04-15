@@ -12,7 +12,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 
 // Place ton objet de styles Tailwind ici (ex: const style = { ... })
 const style = {
-    routeShell : `min-h-screen transition-opacity duration-[220ms] ease-in-out`
+    routeShell : "min-h-screen transition-opacity duration-200 ease-in-out"
 };
 
 export default function App() {

@@ -3,9 +3,50 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { fetchWatches } from "../hooks/fetchAPI";
 
-// Place ton objet de styles Tailwind ici (ex: const style = { ... }) avant les constantes et le composant.
 const style = {
-    
+    page: "min-h-screen bg-[radial-gradient(circle_at_top,#f6efe5_0%,#f0e8db_45%,#ece4d7_100%)] text-[#1c1d21]",
+    container: "mx-auto w-full max-w-[1440px] px-6 py-8 lg:py-12",
+    pageTitle: "font-['Cormorant_Garamond',serif] text-[2.6rem] leading-none md:text-[4rem]",
+    muted: "text-[0.96rem] leading-relaxed text-[#5f6672]",
+    loadingGrid: "grid gap-5",
+    addWatchCard: "mt-4 grid cursor-pointer justify-items-center gap-4 rounded-[28px] border-2 border-dashed border-[color-mix(in_srgb,var(--admin-green)_35%,#fff)] bg-[color-mix(in_srgb,var(--admin-green)_5%,#fff)] p-6 text-center shadow-[0_18px_50px_rgba(28,29,33,0.05)]",
+    plusCircle: "grid h-[62px] w-[62px] place-items-center rounded-full bg-[color-mix(in_srgb,var(--admin-green)_20%,#fff)] text-[2.2rem] text-[var(--admin-green)]",
+    section: "mt-6 grid gap-4",
+    sectionRow: "flex items-end justify-between gap-4",
+    sectionTitle: "font-['Cormorant_Garamond',serif] text-[1.9rem] leading-none",
+    sectionMuted: "text-[0.92rem] text-[#5f6672]",
+    grid: "grid gap-4 xl:grid-cols-3",
+    card: "grid gap-4 rounded-[26px] border border-[#d8cdbd] bg-[rgba(255,250,243,0.92)] p-4 shadow-[0_16px_40px_rgba(28,29,33,0.05)]",
+    mediaBox: "h-[260px] w-full overflow-hidden rounded-[18px] border border-[#e1d7c8] bg-[#f4f3f1]",
+    imageShell: "relative h-full w-full",
+    image: "h-full w-full object-contain",
+    noImage: "grid h-full w-full place-content-center justify-items-center gap-2 border border-dashed border-[#ddd6cc] bg-[color-mix(in_srgb,var(--bg)_88%,#fff)] text-[#8c8d8e]",
+    noImageIcon: "text-4xl",
+    watchMeta: "grid gap-1 px-1",
+    watchTitle: "font-['Cormorant_Garamond',serif] text-[1.6rem] leading-none text-[#1c1d21]",
+    small: "text-[0.84rem] text-[#5f6672]",
+    actionCell: "flex flex-wrap gap-2 pt-1",
+    actionButton: "inline-flex items-center justify-center rounded-full border border-[#d8cdbd] bg-white px-3 py-2 text-[0.72rem] uppercase tracking-[0.1em] text-[#1c1d21] transition-colors hover:border-[#1c1d21]",
+    actionDanger: "inline-flex items-center justify-center rounded-full border border-[#e1b9b9] bg-[#f8eded] px-3 py-2 text-[0.72rem] uppercase tracking-[0.1em] text-[#8f3737] transition-colors hover:border-[#c77a7a]",
+    builder: "mt-4 rounded-[28px] border border-[#d8cdbd] bg-[rgba(255,250,243,0.92)] p-4 shadow-[0_18px_50px_rgba(28,29,33,0.05)]",
+    builderGrid: "grid gap-4 lg:grid-cols-2",
+    previewCard: "grid gap-4 rounded-[24px] border border-[#e1d7c8] bg-[#fffaf3] p-4",
+    previewMediaBox: "h-[520px] w-full overflow-hidden rounded-[18px] border border-[#e1d7c8] bg-[#f4f3f1]",
+    formPanel: "grid gap-4 rounded-[24px] border border-[#e1d7c8] bg-white p-4",
+    formGrid: "grid gap-3",
+    formRow: "grid gap-3 sm:grid-cols-2",
+    input: "h-12 rounded-full border border-[#d8cdbd] bg-white px-4 text-[0.95rem] text-[#1c1d21] outline-none transition-colors focus:border-[#1c1d21]",
+    select: "h-12 rounded-full border border-[#d8cdbd] bg-white px-4 text-[0.95rem] text-[#1c1d21] outline-none transition-colors focus:border-[#1c1d21]",
+    checkbox: "inline-flex items-center gap-2 text-[0.92rem] text-[#5f6672]",
+    checkboxInput: "h-4 w-4",
+    dropZone: "grid cursor-pointer place-items-center rounded-[22px] border-2 border-dashed border-[color-mix(in_srgb,var(--admin-green)_28%,#fff)] bg-[color-mix(in_srgb,var(--bg)_92%,#fff)] px-4 py-5 text-center text-[0.92rem] text-[#5f6672]",
+    builderActions: "flex flex-wrap gap-3",
+    primaryButton: "inline-flex items-center justify-center rounded-full border border-[#1c1d21] bg-[#1c1d21] px-5 py-3 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-[#faf5ed] transition-colors duration-200 hover:bg-transparent hover:text-[#1c1d21]",
+    secondaryButton: "inline-flex items-center justify-center rounded-full border border-[#d8cdbd] bg-white px-5 py-3 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-[#1c1d21] transition-colors duration-200 hover:border-[#1c1d21]",
+    emptyBox: "rounded-[24px] border border-dashed border-[#d8cdbd] bg-white px-5 py-8 text-center text-[#5f6672]",
+    modalBackdrop: "fixed inset-0 z-[99] grid place-items-center bg-black/45 p-4",
+    modal: "w-full max-w-[520px] rounded-[28px] border border-[#d8cdbd] bg-[rgba(255,250,243,0.98)] p-6 shadow-[0_18px_50px_rgba(28,29,33,0.12)]",
+    toast: "fixed bottom-5 right-5 z-[120] rounded-full border border-[#7ca584] bg-[#edf9ef] px-4 py-3 text-[#275030] shadow-[0_12px_24px_rgba(20,24,35,0.14)]",
 };
 
 const emptyForm = {
@@ -35,24 +76,47 @@ export default function AdminWatchPage() {
     const [toast, setToast] = useState("");
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
-    fetchWatches(setWatches, setIsLoading);
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadWatches() {
+            setIsLoading(true);
+            const data = await fetchWatches();
+
+            if (isMounted) {
+                setWatches(data);
+                setIsLoading(false);
+            }
+        }
+
+        loadWatches();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    function getWatchKey(watch) {
+        return watch.id ?? watch.watchId;
+    }
+
     if (!watches || watches.length === 0 || isLoading) {
         return (
-            <div className="page-root">
+            <div className={style.page}>
                 <SiteHeader isAdmin />
-                <main className="container admin-page-layout">
-                    <section>
-                        <h1>Panel Admin</h1>
-                            <p className="muted">
+                <main className={style.container}>
+                    <section className={style.loadingGrid}>
+                        <h1 className={style.pageTitle}>Panel Admin</h1>
+                            <p className={style.muted}>
                                 Gestion des montres.
                             </p>
 
                             <article
-                                className="add-watch-card"
+                                className={style.addWatchCard}
                                 role="button"
                                 tabIndex={0}
                             >
-                                <span className="plus-circle">+</span>
+                                <span className={style.plusCircle}>+</span>
                                 <h2>Nouvelle montre</h2>
                                 <p>
                                     Cliquez-ici pour ajouter une montre avec ses informations et son
@@ -60,34 +124,34 @@ export default function AdminWatchPage() {
                                 </p>
                             </article>
 
-                            <section className="mt-section">
-                                <div className="section-title-row">
-                                    <h2>Montres ajoutées</h2>
-                                    <p className="muted">Modification et suppression disponibles</p>
+                            <section className={style.section}>
+                                <div className={style.sectionRow}>
+                                    <h2 className={style.sectionTitle}>Montres ajoutées</h2>
+                                    <p className={style.sectionMuted}>Modification et suppression disponibles</p>
                                 </div>
-                                <div className="cards-grid admin-watches-grid">
+                                <div className={style.grid}>
                                     {Array.from({ length: 3 }).map((_, index) => (
-                                        <article className="watch-card" key={index}>
-                                            <div className="collection-media-box">
+                                        <article className={style.card} key={index}>
+                                            <div className={style.mediaBox}>
                                                 <ImageWithFallback
                                                     src="../public/icons/bmw_icon.png"
                                                     alt="/"
                                                 />
                                             </div>
-                                            <div className="watch-meta">
-                                                <h3>/ - /</h3>
-                                                <p className="muted small">Description: --</p>
-                                                <p className="small">Collection: --</p>
-                                                <p className="small">Prix revente:--</p>
-                                                <p className="small">Prix neuf: --</p>
-                                                <p className="small">En production: --</p>
-                                                <p className="small">Mouvement: --</p>
-                                                <p className="small">Diamètre: --</p>
-                                                <p className="small">Matériaux boitier: --</p>
-                                                <p className="small">Etancheite: --</p>
-                                                <p className="small">Est actif: --</p>
+                                            <div className={style.watchMeta}>
+                                                <h3 className={style.watchTitle}>/ - /</h3>
+                                                <p className={style.small}>Description: --</p>
+                                                <p className={style.small}>Collection: --</p>
+                                                <p className={style.small}>Prix revente:--</p>
+                                                <p className={style.small}>Prix neuf: --</p>
+                                                <p className={style.small}>En production: --</p>
+                                                <p className={style.small}>Mouvement: --</p>
+                                                <p className={style.small}>Diamètre: --</p>
+                                                <p className={style.small}>Matériaux boitier: --</p>
+                                                <p className={style.small}>Etancheite: --</p>
+                                                <p className={style.small}>Est actif: --</p>
                                             </div>
-                                            <div className="action-cell">
+                                            <div className={style.actionCell}>
                                                 <button type="button" >Modifier</button>
                                                 <button type="button" >
                                                     Supprimer
@@ -158,7 +222,7 @@ export default function AdminWatchPage() {
         if (editingId) {
             setWatches((prev) =>
                 prev.map((watch) =>
-                    watch.id === editingId ? { ...watch, ...form } : watch
+                    String(getWatchKey(watch)) === String(editingId) ? { ...watch, ...form } : watch
                 )
             );
             pushToast("Montre modifiee avec succes.");
@@ -173,7 +237,7 @@ export default function AdminWatchPage() {
 
     function handleEdit(id) {
         if (!watches) return;
-        const watch = watches.find((item) => item.id === id);
+        const watch = watches.find((item) => String(getWatchKey(item)) === String(id));
         if (!watch) {
             return;
         }
@@ -198,7 +262,7 @@ export default function AdminWatchPage() {
     }
 
     function handleDelete(id) {
-        setWatches((prev) => prev.filter((item) => item.id !== id));
+        setWatches((prev) => prev.filter((item) => String(getWatchKey(item)) !== String(id)));
         pushToast("Montre supprimee avec succes.");
 
         if (editingId === id) {
@@ -208,18 +272,18 @@ export default function AdminWatchPage() {
     }
 
     return (
-        <div className="page-root">
+        <div className={style.page}>
             <SiteHeader isAdmin />
-            <main className="container admin-page-layout">
+            <main className={style.container}>
                 <section>
-                    <h1>Panel Admin</h1>
-                    <p className="muted">
+                    <h1 className={style.pageTitle}>Panel Admin</h1>
+                    <p className={style.muted}>
                         Gestion des montres.
                     </p>
 
                     {!showBuilder && (
                         <article
-                            className="add-watch-card"
+                            className={style.addWatchCard}
                             role="button"
                             tabIndex={0}
                             onClick={() => setShowBuilder(true)}
@@ -229,7 +293,7 @@ export default function AdminWatchPage() {
                                 }
                             }}
                         >
-                            <span className="plus-circle">+</span>
+                            <span className={style.plusCircle}>+</span>
                             <h2>Nouvelle montre</h2>
                             <p>
                                 Cliquez-ici pour ajouter une montre avec ses informations et son
@@ -239,50 +303,50 @@ export default function AdminWatchPage() {
                     )}
 
                     {showBuilder && (
-                        <section className="admin-builder">
-                            <div className="admin-builder-grid">
-                                <article className="preview-card">
-                                    <h3>Prévisualisation en direct</h3>
-                                    <div className="admin-watch-card">
-                                        <div className="admin-preview-media-box">
+                        <section className={style.builder}>
+                            <div className={style.builderGrid}>
+                                <article className={style.previewCard}>
+                                    <h3 className={style.sectionTitle}>Prévisualisation en direct</h3>
+                                    <div className={style.card}>
+                                        <div className={style.previewMediaBox}>
                                             <ImageWithFallback
                                                 src={form.imageUrl}
                                                 alt={`${form.brand || "Marque"} ${form.model || "Modèle"}`}
                                                 fallbackText="Aucune image selectionnee"
                                             />
                                         </div>
-                                        <div>
-                                            <h4>{(form.brand || "Marque") + " - " + (form.model || "Modèle")}</h4>
-                                            <p className="muted small">Description: {form.watchDesc || "--"}</p>
-                                            <p className="muted small">Collection: {form.watchCollection || "--"}</p>
-                                            <p className="small">Prix revente: {(form.retailPrice || "--") + " €"}</p>
-                                            <p className="small">Prix neuf: {(form.marketPrice || "--") + " €"}</p>
-                                            <p className="small">En production: {form.isInProduction ? "Oui" : "Non"}</p>
-                                            <p className="small">Mouvement: {form.movement || ""}</p>
-                                            <p className="small">Diamètre: {(form.diameter || "") + " mm"}</p>
-                                            <p className="small">Matériaux boitier: {form.materials || "--"}</p>
-                                            <p className="small">Catégorie: {form.category || ""}</p>
-                                            <p className="small">Etanchéité : {(form.watertightness || "--") + " m"}</p>
-                                            <p className="small">Est actif : {form.isActif ? "Oui" : "Non"}</p>
+                                        <div className={style.watchMeta}>
+                                            <h4 className={style.watchTitle}>{(form.brand || "Marque") + " - " + (form.model || "Modèle")}</h4>
+                                            <p className={style.small}>Description: {form.watchDesc || "--"}</p>
+                                            <p className={style.small}>Collection: {form.watchCollection || "--"}</p>
+                                            <p className={style.small}>Prix revente: {(form.retailPrice || "--") + " €"}</p>
+                                            <p className={style.small}>Prix neuf: {(form.marketPrice || "--") + " €"}</p>
+                                            <p className={style.small}>En production: {form.isInProduction ? "Oui" : "Non"}</p>
+                                            <p className={style.small}>Mouvement: {form.movement || ""}</p>
+                                            <p className={style.small}>Diamètre: {(form.diameter || "") + " mm"}</p>
+                                            <p className={style.small}>Matériaux boitier: {form.materials || "--"}</p>
+                                            <p className={style.small}>Catégorie: {form.category || ""}</p>
+                                            <p className={style.small}>Etanchéité : {(form.watertightness || "--") + " m"}</p>
+                                            <p className={style.small}>Est actif : {form.isActif ? "Oui" : "Non"}</p>
                                         </div>
                                     </div>
                                 </article>
 
-                                <article className="form-panel">
-                                    <h3>Informations montre</h3>
-                                    <form className="form-grid" onSubmit={handleSaveWatch}>
+                                <article className={style.formPanel}>
+                                    <h3 className={style.sectionTitle}>Informations montre</h3>
+                                    <form className={style.formGrid} onSubmit={handleSaveWatch}>
 
-                                        <input name="brand" required value={form.brand} onChange={handleChange} placeholder="Marque" />
-                                        <input name="model" required value={form.model} onChange={handleChange} placeholder="Modèle" />
-                                        <input name="watchDesc" required value={form.watchDesc} onChange={handleChange} placeholder="Description" />
-                                        <input name="watchCollection" value={form.watchCollection} onChange={handleChange} placeholder="Nom collection" />
-                                        <input name="retailPrice" type="double" min="1" value={form.retailPrice} onChange={handleChange} placeholder="Prix revente" />
-                                        <input name="marketPrice" type="double" min="1" value={form.marketPrice} onChange={handleChange} placeholder="Prix neuf" />
-                                        <label className="form-checkbox">
-                                            <input name="isInProduction" type="checkbox" checked={Boolean(form.isInProduction)} onChange={handleChange} />
+                                        <input className={style.input} name="brand" required value={form.brand} onChange={handleChange} placeholder="Marque" />
+                                        <input className={style.input} name="model" required value={form.model} onChange={handleChange} placeholder="Modèle" />
+                                        <input className={style.input} name="watchDesc" required value={form.watchDesc} onChange={handleChange} placeholder="Description" />
+                                        <input className={style.input} name="watchCollection" value={form.watchCollection} onChange={handleChange} placeholder="Nom collection" />
+                                        <input className={style.input} name="retailPrice" type="double" min="1" value={form.retailPrice} onChange={handleChange} placeholder="Prix revente" />
+                                        <input className={style.input} name="marketPrice" type="double" min="1" value={form.marketPrice} onChange={handleChange} placeholder="Prix neuf" />
+                                        <label className={style.checkbox}>
+                                            <input className={style.checkboxInput} name="isInProduction" type="checkbox" checked={Boolean(form.isInProduction)} onChange={handleChange} />
                                             Toujours en production
                                         </label>
-                                        <select name="movement" required value={form.movement} onChange={handleChange}>
+                                        <select className={style.select} name="movement" required value={form.movement} onChange={handleChange}>
                                             <option value="">Choisir un mouvement</option>
                                             {MOVEMENT_OPTIONS.map((movementOption) => (
                                                 <option key={movementOption} value={movementOption}>
@@ -290,16 +354,16 @@ export default function AdminWatchPage() {
                                                 </option>
                                             ))}
                                         </select>
-                                        <input name="diameter" type="number" min="1" step="0.1" value={form.diameter} onChange={handleChange} placeholder="Diametre (mm)" />
-                                        <input name="materials" value={form.materials} onChange={handleChange} placeholder="Materiaux boitier" />
-                                        <input name="watertightness" value={form.watertightness} onChange={handleChange} placeholder="Etanchéité" />
-                                        <label className="form-checkbox">
-                                            <input name="isActif" type="checkbox" checked={Boolean(form.isActif)} onChange={handleChange} />
+                                        <input className={style.input} name="diameter" type="number" min="1" step="0.1" value={form.diameter} onChange={handleChange} placeholder="Diametre (mm)" />
+                                        <input className={style.input} name="materials" value={form.materials} onChange={handleChange} placeholder="Materiaux boitier" />
+                                        <input className={style.input} name="watertightness" value={form.watertightness} onChange={handleChange} placeholder="Etanchéité" />
+                                        <label className={style.checkbox}>
+                                            <input className={style.checkboxInput} name="isActif" type="checkbox" checked={Boolean(form.isActif)} onChange={handleChange} />
                                             Montre active
                                         </label>
 
                                         <label
-                                            className="drop-zone"
+                                            className={style.dropZone}
                                             onDragOver={(event) => event.preventDefault()}
                                             onDrop={handleDrop}
                                         >
@@ -307,12 +371,12 @@ export default function AdminWatchPage() {
                                             <input type="file" accept="image/*" onChange={handleImageChange} />
                                         </label>
 
-                                        <div className="builder-actions">
-                                            <button className="btn" type="submit">
+                                        <div className={style.builderActions}>
+                                            <button className={style.primaryButton} type="submit">
                                                 {editingId ? "Mettre a jour la montre" : "Ajouter la montre"}
                                             </button>
                                             <button
-                                                className="btn btn-ghost"
+                                                className={style.secondaryButton}
                                                 type="button"
                                                 onClick={() => {
                                                     setShowBuilder(false);
@@ -328,41 +392,41 @@ export default function AdminWatchPage() {
                         </section>
                     )}
 
-                    <section className="mt-section">
-                        <div className="section-title-row">
-                            <h2>Montres ajoutées</h2>
-                            <p className="muted">Modification et suppression disponibles</p>
+                    <section className={style.section}>
+                        <div className={style.sectionRow}>
+                            <h2 className={style.sectionTitle}>Montres ajoutées</h2>
+                            <p className={style.sectionMuted}>Modification et suppression disponibles</p>
                         </div>
 
-                        <div className="cards-grid admin-watches-grid">
+                        <div className={style.grid}>
                             {watches.length === 0 && (
-                                <div className="empty-box">Aucune montre ajoutee pour le moment.</div>
+                                <div className={style.emptyBox}>Aucune montre ajoutee pour le moment.</div>
                             )}
 
                             {watches.map((watch) => (
-                                <article className="watch-card" key={watch.id}>
-                                    <div className="collection-media-box">
+                                <article className={style.card} key={getWatchKey(watch)}>
+                                    <div className={style.mediaBox}>
                                         <ImageWithFallback
                                             src={watch.imageUrl}
                                             alt={`${watch.brand} ${watch.model}`}
                                         />
                                     </div>
-                                    <div className="watch-meta">
-                                        <h3>{watch.brand} - {watch.model}</h3>
-                                        <p className="muted small">Description: {watch.watchDesc || "--"}</p>
-                                        <p className="small">Collection: {watch.watchCollection || "--"}</p>
-                                        <p className="small">Prix revente: {(watch.retailPrice || "--") + " €"}</p>
-                                        <p className="small">Prix neuf: {(watch.marketPrice || "--") + " €"}</p>
-                                        <p className="small">En production: {watch.isInProduction ? "Oui" : "Non"}</p>
-                                        <p className="small">Mouvement: {watch.movement || "--"}</p>
-                                        <p className="small">Diamètre: {(watch.diameter || "--") + " mm"}</p>
-                                        <p className="small">Matériaux boitier: {watch.materials || "--"}</p>
-                                        <p className="small">Etancheite: {(watch.watertightness || "--") + " m"}</p>
-                                        <p className="small">Est actif: {watch.isActif ? "Oui" : "Non"}</p>
+                                    <div className={style.watchMeta}>
+                                        <h3 className={style.watchTitle}>{watch.brand} - {watch.model}</h3>
+                                        <p className={style.small}>Description: {watch.watchDesc || "--"}</p>
+                                        <p className={style.small}>Collection: {watch.watchCollection || "--"}</p>
+                                        <p className={style.small}>Prix revente: {(watch.retailPrice || "--") + " €"}</p>
+                                        <p className={style.small}>Prix neuf: {(watch.marketPrice || "--") + " €"}</p>
+                                        <p className={style.small}>En production: {watch.isInProduction ? "Oui" : "Non"}</p>
+                                        <p className={style.small}>Mouvement: {watch.movement || "--"}</p>
+                                        <p className={style.small}>Diamètre: {(watch.diameter || "--") + " mm"}</p>
+                                        <p className={style.small}>Matériaux boitier: {watch.materials || "--"}</p>
+                                        <p className={style.small}>Etancheite: {(watch.watertightness || "--") + " m"}</p>
+                                        <p className={style.small}>Est actif: {watch.isActif ? "Oui" : "Non"}</p>
                                     </div>
-                                    <div className="action-cell">
-                                        <button type="button" onClick={() => handleEdit(watch.id)}>Modifier</button>
-                                        <button type="button" onClick={() => setPendingDeleteId(watch.id)}>
+                                    <div className={style.actionCell}>
+                                        <button className={style.actionButton} type="button" onClick={() => handleEdit(watch.id)}>Modifier</button>
+                                        <button className={style.actionDanger} type="button" onClick={() => setPendingDeleteId(watch.id)}>
                                             Supprimer
                                         </button>
                                     </div>
@@ -375,16 +439,16 @@ export default function AdminWatchPage() {
             </main>
 
             {pendingDeleteId && (
-                <div className="modal-backdrop" role="dialog" aria-modal="true">
-                    <div className="modal-panel modal-panel--confirm">
+                <div className={style.modalBackdrop} role="dialog" aria-modal="true">
+                    <div className={style.modal}>
                         <h3>Confirmer la suppression</h3>
-                        <p className="muted">
+                        <p className={style.muted}>
                             Cette action supprimera definitivement la montre selectionnee.
                         </p>
-                        <div className="builder-actions">
+                        <div className={style.builderActions}>
                             <button
                                 type="button"
-                                className="btn"
+                                className={style.primaryButton}
                                 onClick={() => {
                                     handleDelete(pendingDeleteId);
                                     setPendingDeleteId(null);
@@ -394,7 +458,7 @@ export default function AdminWatchPage() {
                             </button>
                             <button
                                 type="button"
-                                className="btn btn-ghost"
+                                className={style.secondaryButton}
                                 onClick={() => setPendingDeleteId(null)}
                             >
                                 Annuler
@@ -404,7 +468,7 @@ export default function AdminWatchPage() {
                 </div>
             )}
 
-            {toast && <div className="toast toast-success">{toast}</div>}
+            {toast && <div className={style.toast}>{toast}</div>}
 
             <SiteFooter />
         </div>
@@ -423,10 +487,11 @@ function ImageWithFallback({ src, alt, fallbackText = "Aucune image" }) {
     }
 
     return (
-        <div className="image-shell">
+        <div className={style.imageShell}>
             <img
                 src={imageSrc}
                 alt={alt}
+                className={style.image}
                 onError={() => setHasError(true)}
             />
         </div>
@@ -435,8 +500,8 @@ function ImageWithFallback({ src, alt, fallbackText = "Aucune image" }) {
 
 function NoImage({ text = "Aucune image" }) {
     return (
-        <div className="no-image" aria-label="Aucune image disponible">
-            <span className="material-symbols-outlined" aria-hidden="true">image_not_supported</span>
+        <div className={style.noImage} aria-label="Aucune image disponible">
+            <span className={`material-symbols-outlined ${style.noImageIcon}`} aria-hidden="true">image_not_supported</span>
             <p>{text}</p>
         </div>
     );

@@ -2,45 +2,35 @@ import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
-// Place ton objet de styles Tailwind ici (ex: const style = { ... })
 const style = {
-    pageRoot : `min-height: 100vh display: flex flex-direction: column`,
-    notFoundLayout : `min-height: calc(100vh - 260px) display: grid 
-                        place-items: center padding-block: 2rem`,
-    notFoundCard : `width: min(760px, 100%) border: 1px solid var(--line) 
-                    background: linear-gradient(135deg, #f8f5ef 0%, #ffffff 100%)
-                    padding: clamp(1.4rem, 4vw, 2.4rem) display: grid gap: 0.75rem`,
-    kicker : `margin: 0 color: color-mix(in srgb, var(--muted) 90%, #fff)
-                text-transform: uppercase letter-spacing: 0.12em font-size: 0.8rem`,
-    muted : `color: var(--muted)`,
-    builderActions : `display: flex gap: 0.55rem flex-wrap: wrap;`,
-    linkBtn : `display: inline-flex width: fit-content border: 1px solid var(--dark) 
-                background: var(--dark) color: var(--bg) p: 0.7rem 1rem text-transform: uppercase
-                letter-spacing: 0.08em font-size: 0.75rem cursor: pointer`,
-    linkBtnGhost : `background: transparent color: var(--text)`
+    page: "min-h-screen bg-[radial-gradient(circle_at_top,#f6efe5_0%,#f0e8db_45%,#ece4d7_100%)] text-[#1c1d21]",
+    container: "mx-auto flex min-h-[calc(100vh-260px)] w-full max-w-[1440px] items-center px-6 py-10 md:py-14",
+    card: "w-full rounded-[32px] border border-[#d8cdbd] bg-[rgba(255,250,243,0.94)] p-8 shadow-[0_18px_50px_rgba(28,29,33,0.08)] md:p-12",
+    kicker: "text-[0.72rem] uppercase tracking-[0.2em] text-[#8c775f]",
+    title: "mt-4 font-['Cormorant_Garamond',serif] text-[4rem] leading-none md:text-[5.5rem]",
+    muted: "mt-4 max-w-[60ch] text-[0.98rem] leading-relaxed text-[#5f6672]",
+    actions: "mt-8 flex flex-wrap gap-3",
+    linkBtn: "inline-flex items-center justify-center rounded-full border border-[#1c1d21] bg-[#1c1d21] px-5 py-3 text-[0.78rem] uppercase tracking-[0.12em] font-semibold text-[#faf5ed] transition-colors duration-200 hover:bg-transparent hover:text-[#1c1d21]",
+    linkBtnGhost: "bg-transparent text-[#1c1d21]",
 };
 
 export default function NotFoundPage() {
     return (
-        <div className={style.pageRoot}>
+        <div className={style.page}>
             <SiteHeader />
-            
-            <main className={style.notFoundLayout}>
-                <section className={style.notFoundCard}>
+            <main className={style.container}>
+                <section className={style.card}>
                     <p className={style.kicker}>Erreur de navigation</p>
-
-                    <h1>404</h1>
+                    <h1 className={style.title}>404</h1>
                     <p className={style.muted}>
                         La page demandee n'existe pas ou a ete deplacee.
                     </p>
-
-                    <div className={style.builderActions}>
+                    <div className={style.actions}>
                         <Link to="/collection" className={style.linkBtn}>Retour a la collection</Link>
-                        <Link to="/" className={style.linkBtnGhost}>Retour a l'accueil</Link>
+                        <Link to="/" className={`${style.linkBtn} ${style.linkBtnGhost}`}>Retour a l'accueil</Link>
                     </div>
                 </section>
             </main>
-
             <SiteFooter />
         </div>
     );
