@@ -41,6 +41,7 @@ export default function App() {
 
     return (
         <div className={`route-shell ${transitionStage}`}>
+            {/* <SiteHeader /> */}
             <Routes location={displayLocation}>
                 {/* Public & Auth */}
                 <Route path="/" element={<HomePage />} />
