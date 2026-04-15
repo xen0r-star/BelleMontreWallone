@@ -1,6 +1,7 @@
 import { useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
+import { clientContact } from "../hooks/auth";
 
 const faqs = [
     {

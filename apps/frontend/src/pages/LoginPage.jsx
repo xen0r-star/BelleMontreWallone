@@ -12,24 +12,38 @@ export default function LoginPage() {
 
     useEffect(() => {
         const checkUser = async () => {
-            await checkAuth(setUser, setVerif);
+            await checkAuth(setUser, setVerif, setIsLoading);
         };
         checkUser();
     }, []);
     
     
-    const handleLogin = async (e) => {
+    async function handleLogin(e) {
         setMessage('');
         e.preventDefault();
         // Data entrée à récupérer (UserName / Password)
         await clientAuth(setMessage, setIsLoading, setVerif, setUser);
     };
 
-    const handleLogout = async (e) => {
+    async function handleLogout(e) {
         setMessage('');
         e.preventDefault();
         await clientLogout(setMessage, setIsLoading, setVerif, setUser);
     };
+
+    if (isLoading) {
+        return <div className="page-root">
+            <SiteHeader />
+            <main className="container auth-layout">
+                <section className="auth-card">
+                    <p className="kicker">Espace Client</p>
+                    <h1>Connexion</h1>
+                    Chargement en cours...
+                </section>
+            </main>
+            <SiteFooter />
+        </div>
+    }
 
     if (verif && user) {
         return <div className="page-root">

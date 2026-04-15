@@ -168,6 +168,20 @@ function register(): void {
         $errors['password'] = 'Password must contain at least 8 characters';
     }
 
+    $response = [
+        'success' => false,
+        'errors' => []
+    ];
+
+    if (!empty($errors)) {
+        // Just pass the raw errors; let the frontend handle the "strong" tags or list items
+        $response['errors'] = $errors;
+        
+        // Set the correct header BEFORE echoing anything
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit; // Stop execution to ensure no other HTML leaks out
+    }
     if (!empty($errors)) {
         Response::json([
             'error' => 'VALIDATION_ERROR',
