@@ -51,6 +51,9 @@ jobs:
           node-version: '24'
           cache: 'npm'
       
+      - name: Nettoyer cache npm
+        run: npm cache clean --force
+
       - name: Installer dépendances
         run: npm ci --include=optional
       
