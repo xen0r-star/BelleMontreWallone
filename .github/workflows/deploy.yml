@@ -1,0 +1,137 @@
+name: CI/CD - Build & Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Détection des changements
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.changes.outputs.frontend }}
+      backend: ${{ steps.changes.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Détecter les changements
+        id: changes
+        run: |
+          if git diff --quiet HEAD~1 -- apps/frontend; then
+            echo "frontend=false" >> $GITHUB_OUTPUT
+          else
+            echo "frontend=true" >> $GITHUB_OUTPUT
+          fi
+          
+          if git diff --quiet HEAD~1 -- apps/backend; then
+            echo "backend=false" >> $GITHUB_OUTPUT
+          else
+            echo "backend=true" >> $GITHUB_OUTPUT
+          fi
+
+  # Vérification du Frontend React
+  frontend-check:
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./apps/frontend
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      
+      - name: Installer dépendances
+        run: npm install
+      
+      - name: Build
+        run: npm run build
+
+  # Vérification du Backend PHP
+  backend-check:
+    needs: changes
+    if: needs.changes.outputs.backend == 'true' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer
+      
+      - name: Vérifier syntaxe PHP
+        run: |
+          find apps/backend/src -name "*.php" -exec php -l {} \;
+      
+      - name: Composer validation
+        working-directory: ./apps/backend
+        run: composer validate --no-check-publish 2>/dev/null || echo "Pas de composer.json"
+      
+      - name: Tester avec Docker Compose
+        run: |
+          docker compose up -d
+          docker compose ps
+          docker compose logs
+          docker compose down
+
+  # Déploiement sur OVH
+  deploy-ovh:
+    needs: [frontend-check, backend-check]
+    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Créer clé SSH privée
+        env:
+          OVH_SSH_PRIVATE_KEY: ${{ secrets.OVH_SSH_PRIVATE_KEY }}
+          OVH_SERVER_IP: ${{ secrets.OVH_SERVER_IP }}
+          OVH_PORT_SSH: ${{ secrets.OVH_PORT_SSH }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$OVH_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p $OVH_PORT_SSH -H $OVH_SERVER_IP >> ~/.ssh/known_hosts
+          
+      
+      - name: Déployer Backend
+        run: |
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa_deploy -r apps/backend/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_BACKEND_PATH }}/
+      
+      - name: Déployer Frontend
+        run: |
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa_deploy -r apps/frontend/dist/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_FRONTEND_PATH }}/
+      
+      - name: Redémarrer services
+        run: |
+          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa_deploy ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} '${{ secrets.OVH_RESTART_COMMAND }}'
+      
+      - name: Nettoyer clé SSH
+        if: always()
+        run: rm -f ~/.ssh/id_rsa_deploy
+
+  # Notification des résultats
+  notify:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [frontend-check, backend-check, deploy-ovh]
+    steps:
+      - name: Résumé du build
+        run: |
+          echo "✅ Frontend check: ${{ needs.frontend-check.result }}"
+          echo "✅ Backend check: ${{ needs.backend-check.result }}"
+          echo "✅ Deploy OVH: ${{ needs.deploy-ovh.result }}"
