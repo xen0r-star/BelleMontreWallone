@@ -60,6 +60,13 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Upload artifact frontend
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: apps/frontend/dist
+          if-no-files-found: error
+
   # Vérification du Backend PHP
   backend-check:
     needs: changes
@@ -99,6 +106,12 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download artifact frontend
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: apps/frontend/dist
       
       - name: Créer clé SSH privée
         env:
