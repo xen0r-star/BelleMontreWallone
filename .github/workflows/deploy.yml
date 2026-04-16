@@ -52,7 +52,7 @@ jobs:
           cache: 'npm'
       
       - name: Installer dépendances
-        run: npm install
+        run: npm ci
       
       - name: Build
         run: npm run build
