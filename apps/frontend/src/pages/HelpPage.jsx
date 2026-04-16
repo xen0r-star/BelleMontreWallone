@@ -30,38 +30,40 @@ export default function HelpPage() {
     }
 
     return (
-        <div className="page-root">
+        <div className="flex min-h-screen flex-col">
             <SiteHeader />
-            <main className="container help-layout">
-                <section className="help-hero">
-                    <p className="kicker">Accompagnement Signature</p>
+
+            <main className="mx-auto my-12 grid w-[min(1240px,calc(100%-5rem))] gap-8 max-[700px]:w-[calc(100%-1.5rem)]">
+                <section className="grid gap-4 border border-[#ddd6cc] bg-linear-to-br from-[#f7f5f1] to-white p-[clamp(1.5rem,4vw,3rem)]">
+                    <p className="m-0 text-[0.8rem] uppercase tracking-[0.12em] text-[#8c8d8e]">Accompagnement Signature</p>
                     <h1>Maison de Conseils Privés</h1>
-                    <p className="muted help-intro">
+                    <p className="max-w-z190 text-[1.03rem] leading-[1.65] text-[#8c8d8e]">
                         Une équipe dédiée aux collectionneurs vous accompagne avec discrétion
                         pour le choix d'une pièce, la réservation et l'organisation de
                         rendez-vous confidentiels.
                     </p>
                 </section>
-                <section className="help-section-card">
+
+                <section className="border border-[#ddd6cc] bg-[color-mix(in_srgb,white_88%,#faf8f5)] p-[clamp(1.2rem,3vw,2rem)]">
                     <h2>Questions fréquentes</h2>
                     {faqs.map((faq) => (
-                        <details key={faq.q} className="faq-item">
-                            <summary>{faq.q}</summary>
-                            <p>{faq.a}</p>
+                        <details key={faq.q} className="border-b border-[#ddd6cc] py-4">
+                            <summary className="cursor-pointer text-[1.02rem] font-semibold">{faq.q}</summary>
+                            <p className="mt-2 leading-[1.6] text-[color-mix(in_srgb,#1c1d21_80%,white)]">{faq.a}</p>
                         </details>
                     ))}
                 </section>
-                <section className="help-section-card">
+                <section className="border border-[#ddd6cc] bg-[color-mix(in_srgb,white_88%,#faf8f5)] p-[clamp(1.2rem,3vw,2rem)]">
                     <h2>Contactez-nous</h2>
-                    <form className="form-grid help-form" onSubmit={handleHelping}>
-                        <input required placeholder="Nom" />
-                        <input required placeholder="Prénom" />
-                        <input required type="email" placeholder="Email" />
-                        <input placeholder="Téléphone" />
-                        <textarea required rows="4" placeholder="Votre message" />
-                        <button className="btn" type="submit">Envoyer la demande</button>
+                    <form className="grid grid-cols-2 gap-4 max-[700px]:grid-cols-1" onSubmit={handleSubmit}>
+                        <input required placeholder="Nom" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
+                        <input required placeholder="Prénom" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
+                        <input required type="email" placeholder="Email" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
+                        <input placeholder="Téléphone" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
+                        <textarea required rows="4" placeholder="Votre message" className="col-span-2 w-full resize-none border border-[#ddd6cc] bg-white px-3 py-[0.65rem] max-[700px]:col-span-1" />
+                        <button className="col-span-2 inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black max-[700px]:col-span-1" type="submit">Envoyer la demande</button>
                     </form>
-                    {message && <p className={isSent ? "success-msg" : "nsuccess-msg"}>{message}</p>}
+                    {message && <p className={isSent ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#a57c7c] bg-[#edf9ef] p-3 text-[#275030]"}>{message}</p>}
                 </section>
             </main>
             <SiteFooter />

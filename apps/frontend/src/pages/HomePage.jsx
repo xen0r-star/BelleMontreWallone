@@ -19,57 +19,57 @@ export default function HomePage() {
     }, []);
 
     return (
-        <div className="page-root home-exact">
-            <nav className={`hx-nav ${isScrolled ? "hx-nav--solid" : ""}`}>
-                <div className="hx-nav-inner">
-                    <div className="hx-nav-left">
-                        <Link to="/collection">Collection</Link>
+        <div className="flex min-h-screen flex-col bg-[#faf8f5] text-[#1c1d21]">
+            <nav className={`fixed left-0 top-0 z-50 w-full border-b border-[rgba(255,255,255,0.1)] transition-colors duration-200 ${isScrolled ? "border-[#2a2f35] bg-[#1c1d21]" : "bg-transparent"}`}>
+                <div className="mx-auto flex h-24 w-full max-w-360 items-center justify-between px-6 max-lg:justify-center max-[700px]:h-18.5">
+                    <div className="flex w-1/3 items-center gap-7.5 max-lg:hidden">
+                        <Link to="/collection" className="relative text-[11px] font-medium uppercase tracking-[0.05em] text-[#faf8f5] transition-opacity duration-220 hover:opacity-[0.86] after:content-[''] after:absolute after:left-0 after:-bottom-1.5 after:w-full after:h-px after:bg-current after:origin-left after:scale-x-0 after:transition-transform after:duration-240 hover:after:scale-x-100">Collection</Link>
                     </div>
 
-                    <div className="hx-nav-center">
-                        <Link to="/">Belle Montre Wallonne</Link>
+                    <div className="flex w-1/3 justify-center max-lg:w-full">
+                        <Link to="/" className="font-serif text-[34px] font-medium text-[#faf8f5] transition-transform duration-220 hover:-translate-y-px max-[700px]:text-[28px]">Belle Montre Wallonne</Link>
                     </div>
 
-                    <div className="hx-nav-right">
-                        <Link to="/besoin-daide">Aide</Link>
-                        <Link to="/connexion">Connexion</Link>
+                    <div className="flex w-1/3 items-center justify-end gap-7.5 max-lg:hidden">
+                        <Link to="/besoin-daide" className="relative text-[11px] font-medium uppercase tracking-[0.05em] text-[#faf8f5] transition-opacity duration-220 hover:opacity-[0.86] after:content-[''] after:absolute after:left-0 after:-bottom-1.5 after:w-full after:h-px after:bg-current after:origin-left after:scale-x-0 after:transition-transform after:duration-240 hover:after:scale-x-100">Aide</Link>
+                        <Link to="/connexion" className="relative text-[11px] font-medium uppercase tracking-[0.05em] text-[#faf8f5] transition-opacity duration-220 hover:opacity-[0.86] after:content-[''] after:absolute after:left-0 after:-bottom-1.5 after:w-full after:h-px after:bg-current after:origin-left after:scale-x-0 after:transition-transform after:duration-240 hover:after:scale-x-100">Connexion</Link>
                     </div>
                 </div>
             </nav>
 
             <section
-                className="hx-hero"
+                className="relative flex h-screen w-full items-center justify-center bg-[#1c1d21] bg-cover bg-center bg-no-repeat"
                 style={{
                     backgroundImage:
                         "linear-gradient(rgba(28, 29, 33, 0.4), rgba(28, 29, 33, 0.6)), url('/images/imageFondAcceuil.jpg')"
                 }}
             >
-                <div className="hx-hero-content">
-                    <h1>Le Temps, Sublime.</h1>
-                    <a className="hx-btn-outline" href="#discover">Découvrir</a>
+                <div className="relative z-10 flex flex-col items-center px-4 text-center">
+                    <h1 className="mb-7 font-serif text-[clamp(52px,6vw,82px)] font-normal leading-[1.05] text-[#faf8f5]">Le Temps, Sublime.</h1>
+                    <a className="inline-flex items-center justify-center border border-[#faf8f5] bg-transparent px-8 py-3.75 text-[11px] font-medium uppercase tracking-widest text-[#faf8f5]" href="#discover">Découvrir</a>
                 </div>
 
-                <div className="hx-scroll-indicator">
-                    <span className="material-symbols-outlined">expand_all</span>
+                <div className="absolute bottom-10.5 left-1/2 -translate-x-1/2 text-[#faf8f5]">
+                    <span className="material-symbols-outlined text-[19px]">expand_all</span>
                 </div>
             </section>
 
-            <div className="hx-main" id="discover">
-                <section className="hx-editorial">
-                    <article className="hx-editorial-text">
-                        <span className="hx-label">Héritage</span>
-                        <h2>L'Art de la Précision Absolue</h2>
-                        <p>
+            <div className="bg-[#faf8f5]" id="discover">
+                <section className="mx-auto flex min-h-204.75 w-full max-w-360 items-stretch max-lg:flex-col">
+                    <article className="flex w-1/2 flex-col justify-center px-24 py-20 max-lg:w-full max-[700px]:px-6 max-[700px]:py-13">
+                        <span className="mb-6 text-[11px] font-medium uppercase tracking-widest text-[#8c8d8e]">Héritage</span>
+                        <h2 className="mb-7.5 font-serif text-[clamp(50px,4.5vw,74px)] font-normal leading-[1.06]">L'Art de la Précision Absolue</h2>
+                        <p className="mb-10 max-w-130 text-base font-light leading-[1.72] text-[rgba(28,29,33,0.82)]">
                             Chaque garde-temps est une célébration silencieuse du savoir-faire
                             Artisanal. Nous ne créons pas de simples montres, nous forgeons des
                             Héritages conçus pour traverser les générations avec une élégance
                             Discrète.
                         </p>
-                        <Link to="/collection" className="hx-btn-solid">Explorez la Collection</Link>
+                        <Link to="/collection" className="inline-flex w-fit items-center justify-center bg-[#2a2f35] px-8 py-3.75 text-[11px] font-medium uppercase tracking-widest text-[#faf8f5] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#1f2328] hover:shadow-[0_12px_22px_rgba(28,29,33,0.18)]">Explorez la Collection</Link>
                     </article>
 
                     <div
-                        className="hx-editorial-image"
+                        className="min-h-128 w-1/2 bg-cover bg-center bg-no-repeat max-lg:w-full"
                         style={{
                             backgroundImage:
                                 "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBfYS_Y8e8Xxa4T1HTACpSXWhCqY3bYWNEw4nC8jEna5dtppi2mC4OPn74NrTAGjhF79Sbh5HZQ46ZXoNbl5C4MaR2j8fCbjNhhuJWa6611sTcMWLadDNlm02l7wcAeSM8BOUcxIub7tZNEz6sdEaDq19eJgDdivj-0pyPYuLRV0FC_IE_1FTlWFZCvi_tLf3cyZERYSDKqa38ML49FBR2hwqwALMgIG7uq5QgkpCLNnEfmTdamsJxKfSM-4ZFYqFjXsBHwfLg5hj0')"
@@ -78,11 +78,11 @@ export default function HomePage() {
                     />
                 </section>
 
-                <div className="hx-divider" />
+                <div className="mx-auto h-px w-full max-w-360 bg-[#efebe4]" />
 
-                <section className="hx-editorial reverse">
+                <section className="mx-auto flex min-h-204.75 w-full max-w-360 items-stretch max-lg:flex-col">
                     <div
-                        className="hx-editorial-image"
+                        className="min-h-128 w-1/2 bg-cover bg-center bg-no-repeat max-lg:w-full"
                         style={{
                             backgroundImage:
                                 "url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQTdR00jRJCS48u178XDVXxb191H2HBkVPVVwwug_g_MVxCAgOzT-BP7f-CGH4l9pdFYf-k9YFuo6BTTViFmHI4mcwwAYiO5ThQdmjsXGwAWleT5zY1vaIJOqxu3pifR3vPKmNirOe5CaXTWOv-Wi9d04c3FITaUoB2fY9FJx4SHeFKbW8LGiOxAWwY1JW3wV0hzYA9guf54oYQYW3r6egktHMSF4DBt1_AJ-G5F9WEB34TiO_2hFm1_9gsqG4syJ8O0JP42XOgG4')"
@@ -90,18 +90,18 @@ export default function HomePage() {
                         aria-label="Portrait horloger"
                     />
 
-                    <article className="hx-editorial-text">
-                        <span className="hx-label">Philosophie</span>
-                        <h2>Le Luxe Dans Sa Plus Simple Expression</h2>
-                        <p>
+                    <article className="flex w-1/2 flex-col justify-center px-24 py-20 max-lg:w-full max-[700px]:px-6 max-[700px]:py-13">
+                        <span className="mb-6 text-[11px] font-medium uppercase tracking-widest text-[#8c8d8e]">Philosophie</span>
+                        <h2 className="mb-7.5 font-serif text-[clamp(50px,4.5vw,74px)] font-normal leading-[1.06]">Le Luxe Dans Sa Plus Simple Expression</h2>
+                        <p className="mb-10 max-w-130 text-base font-light leading-[1.72] text-[rgba(28,29,33,0.82)]">
                             Dans un monde bruyant, nous choisissons le murmure. Nos créations
                             refusent l'ostentation au profit d'une pureté de lignes et d'une
                             sélection de matériaux nobles. Le veritable luxe se ressent, il ne
                             s'affiche pas.
                         </p>
-                        <a className="hx-link-inline" href="#brand">
+                        <a className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-[#1c1d21] transition-colors duration-200 hover:text-[#2a2f35]" href="#brand">
                             Découvrir Notre Marque
-                            <span className="material-symbols-outlined">arrow_forward</span>
+                            <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                         </a>
                     </article>
                 </section>

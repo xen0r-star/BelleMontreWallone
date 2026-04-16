@@ -23,14 +23,14 @@ function computeStatus(reservationDate, reservationTime, returnDate) {
     const end = new Date(`${returnDate}T23:59:59`);
 
     if (now < start) {
-        return { label: "A venir chercher", className: "pill future" };
+        return { label: "A venir chercher", className: "inline-block whitespace-nowrap border border-[#ddd6cc] bg-[#fef3c7] px-2 py-1 text-[0.72rem] uppercase text-[#854d0e]" };
     }
 
     if (now > end) {
-        return { label: "Dépasser", className: "pill late" };
+        return { label: "Dépasser", className: "inline-block whitespace-nowrap border border-[#ddd6cc] bg-[#ffe4e6] px-2 py-1 text-[0.72rem] uppercase text-[#9f1239]" };
     }
 
-    return { label: "En cours", className: "pill current" };
+    return { label: "En cours", className: "inline-block whitespace-nowrap border border-[#ddd6cc] bg-[#d1fae5] px-2 py-1 text-[0.72rem] uppercase text-[#065f46]" };
 }
 
 function computeDurationDays(reservationDate, returnDate) {
@@ -94,50 +94,50 @@ export default function AdminReservationsPage() {
 
     if (!watches || watches.length === 0 || !reservations || reservations.length === 0 || isLoading) {
         return (
-            <div className="page-root">
+            <div className="flex min-h-screen flex-col">
                 <SiteHeader isAdmin />
-                <main className="container reservations-page">
-                    <section className="kpi-grid">
-                        <article className="kpi-card">
-                            <p className="kpi-label">Montres</p>
-                            <p className="kpi-value">/</p>
+                <main className="mx-auto my-8 w-[min(1380px,calc(100%-5rem))] max-[700px]:w-[calc(100%-1.5rem)]">
+                    <section className="mb-4 grid grid-cols-3 gap-3 max-[1024px]:grid-cols-1">
+                        <article className="border border-[#ddd6cc] bg-white p-4">
+                            <p className="m-0 text-[0.74rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Montres</p>
+                            <p className="m-0 mt-2 font-serif text-[1.8rem]">/</p>
                         </article>
-                        <article className="kpi-card">
-                            <p className="kpi-label">Reservations en attente</p>
-                            <p className="kpi-value">/</p>
+                        <article className="border border-[#ddd6cc] bg-white p-4">
+                            <p className="m-0 text-[0.74rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Reservations en attente</p>
+                            <p className="m-0 mt-2 font-serif text-[1.8rem]">/</p>
                         </article>
-                        <article className="kpi-card">
-                            <p className="kpi-label">Retours en retard</p>
-                            <p className="kpi-value">/</p>
+                        <article className="border border-[#ddd6cc] bg-white p-4">
+                            <p className="m-0 text-[0.74rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Retours en retard</p>
+                            <p className="m-0 mt-2 font-serif text-[1.8rem]">/</p>
                         </article>
                     </section>
-                    <section className="filters-card reservations-filters">
+                    <section className="mb-4 border border-[#ddd6cc] bg-[color-mix(in_srgb,white_85%,#faf8f5)] p-4">
                         <h3>Filtres</h3>
-                        <div className="filter-row">
-                            <label>
+                        <div className="grid grid-cols-3 gap-3 max-[1024px]:grid-cols-1">
+                            <label className="grid gap-1 text-[0.85rem]">
                                 Statut
-                                <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+                                <select className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
                                     <option value="all">Tous</option>
                                     <option value="future">En attente</option>
                                     <option value="current">En cours</option>
                                     <option value="late">En retard</option>
                                 </select>
                             </label>
-                            <label>
+                            <label className="grid gap-1 text-[0.85rem]">
                                 Du
-                                <input type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} />
+                                <input className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} />
                             </label>
-                            <label>
+                            <label className="grid gap-1 text-[0.85rem]">
                                 Au
-                                <input type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} />
+                                <input className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} />
                             </label>
                         </div>
                     </section>
-                    <div className="section-title-row">
+                    <div className="mb-4 flex items-baseline justify-between gap-3 max-[700px]:flex-col max-[700px]:items-start">
                         <h2>Gestion des reservations</h2>
-                        <p className="muted">X reservation(s)</p>
+                        <p className="text-[#8c8d8e]">X reservation(s)</p>
                     </div>
-                    <div className="table-wrap">
+                    <div className="overflow-x-auto border border-[#ddd6cc] bg-white">
                         <table>
                             <thead>
                                 <tr>
@@ -155,7 +155,7 @@ export default function AdminReservationsPage() {
                                     <td>
                                         /
                                         <br />
-                                        <span className="muted small">/</span>
+                                        <span className="text-[0.83rem] text-[#8c8d8e]">/</span>
                                     </td>
                                     <td>
                                         / jour(s)
@@ -182,91 +182,91 @@ export default function AdminReservationsPage() {
     }
 
     return (
-        <div className="page-root">
+        <div className="flex min-h-screen flex-col">
             <SiteHeader isAdmin />
             
-            <main className="container reservations-page">
-                <section className="kpi-grid">
-                    <article className="kpi-card">
-                        <p className="kpi-label">Montres</p>
-                        <p className="kpi-value">{kpis.totalWatches}</p>
+            <main className="mx-auto my-8 w-[min(1380px,calc(100%-5rem))] max-[700px]:w-[calc(100%-1.5rem)]">
+                <section className="mb-4 grid grid-cols-3 gap-3 max-[1024px]:grid-cols-1">
+                    <article className="border border-[#ddd6cc] bg-white p-4">
+                        <p className="m-0 text-[0.74rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Montres</p>
+                        <p className="m-0 mt-2 font-serif text-[1.8rem]">{kpis.totalWatches}</p>
                     </article>
-                    <article className="kpi-card">
-                        <p className="kpi-label">Reservations en attente</p>
-                        <p className="kpi-value">{kpis.waitingReservations}</p>
+                    <article className="border border-[#ddd6cc] bg-white p-4">
+                        <p className="m-0 text-[0.74rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Reservations en attente</p>
+                        <p className="m-0 mt-2 font-serif text-[1.8rem]">{kpis.waitingReservations}</p>
                     </article>
-                    <article className="kpi-card">
-                        <p className="kpi-label">Retours en retard</p>
-                        <p className="kpi-value">{kpis.lateReturns}</p>
+                    <article className="border border-[#ddd6cc] bg-white p-4">
+                        <p className="m-0 text-[0.74rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Retours en retard</p>
+                        <p className="m-0 mt-2 font-serif text-[1.8rem]">{kpis.lateReturns}</p>
                     </article>
                 </section>
 
-                <section className="filters-card reservations-filters">
+                <section className="mb-4 border border-[#ddd6cc] bg-[color-mix(in_srgb,white_85%,#faf8f5)] p-4">
                     <h3>Filtres</h3>
-                    <div className="filter-row">
-                        <label>
+                    <div className="grid grid-cols-3 gap-3 max-[1024px]:grid-cols-1">
+                        <label className="grid gap-1 text-[0.85rem]">
                             Statut
-                            <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+                            <select className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
                                 <option value="all">Tous</option>
                                 <option value="future">En attente</option>
                                 <option value="current">En cours</option>
                                 <option value="late">En retard</option>
                             </select>
                         </label>
-                        <label>
+                        <label className="grid gap-1 text-[0.85rem]">
                             Du
-                            <input type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} />
+                            <input className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} />
                         </label>
-                        <label>
+                        <label className="grid gap-1 text-[0.85rem]">
                             Au
-                            <input type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} />
+                            <input className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} />
                         </label>
                     </div>
                 </section>
 
-                <div className="section-title-row">
+                <div className="mb-4 flex items-baseline justify-between gap-3 max-[700px]:flex-col max-[700px]:items-start">
                     <h2>Gestion des reservations</h2>
-                    <p className="muted">{rows.length} reservation(s)</p>
+                    <p className="text-[#8c8d8e]">{rows.length} reservation(s)</p>
                 </div>
 
                 {rows.length === 0 ? (
-                    <div className="empty-box">Aucune reservation pour le moment.</div>
+                    <div className="border border-dashed border-[#ddd6cc] p-4 text-[#8c8d8e]">Aucune reservation pour le moment.</div>
                 ) : (
-                    <div className="table-wrap">
-                        <table>
+                    <div className="overflow-x-auto border border-[#ddd6cc] bg-white">
+                        <table className="w-full border-collapse bg-white">
                             <thead>
                                 <tr>
-                                    <th>Date réservation</th>
-                                    <th>Temps</th>
-                                    <th>Date retour</th>
-                                    <th>Statut</th>
-                                    <th>Nom</th>
-                                    <th>Prénom</th>
-                                    <th>Modèle</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Date réservation</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Temps</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Date retour</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Statut</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Nom</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Prénom</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Modèle</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {rows.map((row) => (
                                     <tr key={row.id}>
-                                        <td>
+                                        <td className="border-b border-[#ddd6cc] p-3 align-top">
                                             {formatDateFr(row.reservationDate)}
                                             <br />
-                                            <span className="muted small">{row.reservationTime}</span>
+                                            <span className="text-[0.83rem] text-[#8c8d8e]">{row.reservationTime}</span>
                                         </td>
-                                        <td>
+                                        <td className="border-b border-[#ddd6cc] p-3 align-top">
                                             {row.durationDays} jour(s)
                                         </td>
-                                        <td>
+                                        <td className="border-b border-[#ddd6cc] p-3 align-top">
                                             {formatDateFr(row.returnDate)}
                                         </td>
-                                        <td>
+                                        <td className="border-b border-[#ddd6cc] p-3 align-top">
                                             <span className={row.status.className}>{row.status.label}</span>
                                         </td>
-                                        <td>{row.lastName}</td>
-                                        <td>{row.firstName}</td>
-                                        <td>
+                                        <td className="border-b border-[#ddd6cc] p-3 align-top">{row.lastName}</td>
+                                        <td className="border-b border-[#ddd6cc] p-3 align-top">{row.firstName}</td>
+                                        <td className="border-b border-[#ddd6cc] p-3 align-top">
                                             {row.watch ? (
-                                                <Link to={`/montre/${row.watch.id}`}>{row.watch.model}</Link>
+                                                <Link to={`/montre/${row.watch.id}`} className="underline">{row.watch.model}</Link>
                                             ) : (
                                                 "N/A"
                                             )}

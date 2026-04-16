@@ -40,8 +40,9 @@ export default function App() {
     }, [transitionStage, location]);
 
     return (
-        <div className={`route-shell ${transitionStage}`}>
-            {/* <SiteHeader /> */}
+        <div
+            className={`min-h-screen will-change-[opacity] transition-opacity duration-220 ${transitionStage === "fade-out" ? "opacity-0" : "opacity-100"}`}
+        >
             <Routes location={displayLocation}>
                 {/* Public & Auth */}
                 <Route path="/" element={<HomePage />} />

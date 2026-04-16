@@ -32,11 +32,11 @@ export default function RegisterPage() {
         };
 
     if (isLoading) {
-            return <div className="page-root">
+            return <div className="flex min-h-screen flex-col">
                 <SiteHeader />
-                <main className="container auth-layout">
-                    <section className="auth-card">
-                        <p className="kicker">Espace Client</p>
+                <main className="my-8 grid place-items-center">
+                    <section className="grid w-[min(560px,100%)] gap-3 border border-[#ddd6cc] bg-[color-mix(in_srgb,white_84%,#faf8f5)] p-5">
+                        <p className="m-0 text-[0.8rem] uppercase tracking-[0.12em] text-[#8c8d8e]">Espace Client</p>
                         <h1>Inscription</h1>
                         Chargement en cours...
                     </section>
@@ -46,21 +46,21 @@ export default function RegisterPage() {
         }
 
     if (verif && user) {
-            return <div className="page-root">
+            return <div className="flex min-h-screen flex-col">
                 <SiteHeader />
-                <main className="container auth-layout">
-                    <section className="auth-card">
-                        <p className="kicker">Espace Client</p>
+                <main className="my-8 grid place-items-center">
+                    <section className="grid w-[min(560px,100%)] gap-3 border border-[#ddd6cc] bg-[color-mix(in_srgb,white_84%,#faf8f5)] p-5">
+                        <p className="m-0 text-[0.8rem] uppercase tracking-[0.12em] text-[#8c8d8e]">Espace Client</p>
                         <h1>Votre compte</h1>
-                        <div className="muted">
+                        <div className="text-[#8c8d8e]">
                             Bienvenue sur ton espace personnel {user.userName} !
                             <hr/>Informations du compte :<br/>Mail : {user.mail}<br/>Nom : {user.userName}<br/>Administrateur du site : {user.isAdmin ? "Oui" : "Non"}<hr/>
                         </div>
-                        <button className="logout-btn" onClick={handleLogout}>
+                        <button className="m-0 cursor-pointer border border-[#ddd6cc] bg-[#ff6c6c] px-4 py-2 text-sm text-[#1c1d21] hover:bg-[#ff4040]" onClick={handleLogout}>
                             Se déconnecter
                         </button>                    
                             
-                        {message && <p className={verif ? "success-msg" : "nsuccess-msg"}>{message}</p>}
+                        {message && <p className={verif ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#d16d6d] bg-[#ffc9c9] p-3 text-[#b22626]"}>{message}</p>}
                     </section>
                 </main>
                 <SiteFooter />
@@ -68,54 +68,55 @@ export default function RegisterPage() {
         }
 
     return (
-        <div className="page-root">
+        <div className="flex min-h-screen flex-col">
             <SiteHeader />
 
-            <main className="container auth-layout">
-                <section className="auth-card">
-                    <p className="kicker">Espace Client</p>
+            <main className="my-8 grid place-items-center">
+                <section className="grid w-[min(560px,100%)] gap-3 border border-[#ddd6cc] bg-[color-mix(in_srgb,white_84%,#faf8f5)] p-5">
+                    <p className="m-0 text-[0.8rem] uppercase tracking-[0.12em] text-[#8c8d8e]">Espace Client</p>
 
                     <h1>Inscription</h1>
-                    <p className="muted">
+                    <p className="text-[#8c8d8e]">
                         Crée ton compte pour accéder aux réservations et au suivi de ton espace.
                     </p>
 
-                    <form className="form-grid" onSubmit={handleRegister}>
-                        <label>
+                    <form className="grid gap-3" onSubmit={handleRegister}>
+                        <label className="grid gap-1 text-[0.88rem]">
                             Nom
-                            <input name="username" required placeholder="nom" />
+                            <input name="username" required placeholder="nom" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
                         </label>
 
-                        <label>
+                        <label className="grid gap-1 text-[0.88rem]">
                             Mot de passe
                             <input
                                 name="password"
                                 type="password"
                                 required
                                 placeholder="mot de passe"
+                                className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]"
                             />
                         </label>
 
-                        <label>
+                        <label className="grid gap-1 text-[0.88rem]">
                             Email
-                            <input name="email" type="email" required placeholder="email" />
+                            <input name="email" type="email" required placeholder="email" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
                         </label>
 
-                        <label>
+                        <label className="grid gap-1 text-[0.88rem]">
                             Date de naissance
-                            <input name="birthDate" type="date" required />
+                            <input name="birthDate" type="date" required className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
                         </label>
 
-                        <button className="btn" type="submit">
+                        <button className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" type="submit">
                             S'inscrire
                         </button>
                     </form>
 
-                    <p className="auth-switch">
-                        Deja un compte ? <Link to="/connexion">Connexion</Link>
+                    <p className="m-0 text-[0.9rem] text-[#8c8d8e]">
+                        Deja un compte ? <Link to="/connexion" className="text-[#1c1d21] underline">Connexion</Link>
                     </p>
 
-                    {message && <p className={verif ? "success-msg" : "nsuccess-msg"}>{message}</p>}
+                    {message && <p className={verif ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#d16d6d] bg-[#ffc9c9] p-3 text-[#b22626]"}>{message}</p>}
                 </section>
             </main>
             

@@ -7,8 +7,8 @@ import { fetchWatches } from "../hooks/fetchAPI";
 
 function NoImagePlaceholder() {
     return (
-        <div className="no-image" aria-label="Image indisponible">
-            <span className="material-symbols-outlined">image_not_supported</span>
+        <div className="grid h-full w-full place-content-center justify-items-center gap-1 border border-dashed border-[#ddd6cc] bg-[#f8f6f2] text-[#8c8d8e]" aria-label="Image indisponible">
+            <span className="material-symbols-outlined text-[2rem]">image_not_supported</span>
             <p>Aucune image</p>
         </div>
     );
@@ -24,11 +24,12 @@ function ImageWithFallback({ src, alt }) {
     }
 
     return (
-        <div className="image-shell">
-            {!isLoaded && <div className="skeleton skeleton-image" aria-hidden="true" />}
+        <div className="relative h-full w-full">
+            {!isLoaded && <div className="absolute inset-0 animate-pulse bg-linear-to-r from-[#ece7df] via-[#f7f4ef] to-[#ece7df]" aria-hidden="true" />}
             <img
                 src={imageSrc}
                 alt={alt}
+                className="block h-full w-full object-contain"
                 onLoad={() => setIsLoaded(true)}
                 onError={() => setHasError(true)}
             />
@@ -122,9 +123,9 @@ export default function CollectionPage() {
 
     if (isLoading) {
         return (
-            <div className="page-root">
+            <div className="flex min-h-screen flex-col">
                 <SiteHeader />
-                <main className="container collection-layout">
+                <main className="mx-auto my-8 grid w-[min(1440px,calc(100%-5rem))] grid-cols-[260px_1fr] items-start gap-6 max-[1024px]:grid-cols-1 max-[700px]:w-[calc(100%-1.5rem)]">
                     <p>Chargement des montres...</p>
                 </main>
                 <SiteFooter />
@@ -133,19 +134,19 @@ export default function CollectionPage() {
     }
 
     return (
-        <div className="page-root">
+        <div className="flex min-h-screen flex-col">
             <SiteHeader />
-            <main className="container collection-layout">
-                <aside className="filters-card">
+            <main className="mx-auto my-8 grid w-[min(1440px,calc(100%-5rem))] grid-cols-[260px_1fr] items-start gap-6 max-[1024px]:grid-cols-1 max-[700px]:w-[calc(100%-1.5rem)]">
+                <aside className="sticky top-32 grid max-h-[calc(100vh-9rem)] w-full gap-4 overflow-y-auto border border-[#ddd6cc] bg-[color-mix(in_srgb,white_85%,#faf8f5)] p-4 max-[1024px]:static max-[1024px]:max-h-none">
                     <h2>Recherche de produit</h2>
-                    <div className="filter-section">
-                        <p className="muted">Marque</p>
-                        <div className="chips-row">
+                    <div className="border-t border-[#ddd6cc] pt-3">
+                        <p className="text-[#8c8d8e]">Marque</p>
+                        <div className="flex flex-wrap gap-2">
                             {availableBrands.map((brand) => (
                                 <button
                                     key={brand}
                                     type="button"
-                                    className={`filter-chip ${activeBrands.includes(brand) ? "active" : ""}`}
+                                    className={`cursor-pointer border px-2 py-1 text-xs uppercase tracking-[0.07em] ${activeBrands.includes(brand) ? "border-[#141823] bg-[#141823] text-[#faf8f5]" : "border-[#ddd6cc] bg-white text-[#1c1d21]"}`}
                                     onClick={() => toggleBrand(brand)}
                                 >
                                     {brand}
@@ -153,14 +154,14 @@ export default function CollectionPage() {
                             ))}
                         </div>
                     </div>
-                    <div className="filter-section">
-                        <p className="muted">Matière</p>
-                        <div className="chips-row">
+                    <div className="border-t border-[#ddd6cc] pt-3">
+                        <p className="text-[#8c8d8e]">Matière</p>
+                        <div className="flex flex-wrap gap-2">
                             {availableMaterials.map((material) => (
                                 <button
                                     key={material}
                                     type="button"
-                                    className={`filter-chip ${activeMaterials.includes(material) ? "active" : ""}`}
+                                    className={`cursor-pointer border px-2 py-1 text-xs uppercase tracking-[0.07em] ${activeMaterials.includes(material) ? "border-[#141823] bg-[#141823] text-[#faf8f5]" : "border-[#ddd6cc] bg-white text-[#1c1d21]"}`}
                                     onClick={() => toggleMaterial(material)}
                                 >
                                     {material}
@@ -168,52 +169,52 @@ export default function CollectionPage() {
                             ))}
                         </div>
                     </div>
-                    <div className="filter-section">
-                        <p className="muted">Trier</p>
-                        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                    <div className="border-t border-[#ddd6cc] pt-3">
+                        <p className="text-[#8c8d8e]">Trier</p>
+                        <select className="w-full border border-[#ddd6cc] bg-white px-3 py-2 text-[#1c1d21]" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                             <option value="featured">Sélection maison</option>
                             <option value="priceAsc">Prix croissant</option>
                             <option value="priceDesc">Prix décroissant</option>
                             <option value="nameAsc">Nom A-Z</option>
                         </select>
                     </div>
-                    <div className="filter-section">
-                        <p className="muted">Prix Retail (€)</p>
-                        <div style={{ display: "flex", gap: "10px" }}>
+                    <div className="border-t border-[#ddd6cc] pt-3">
+                        <p className="text-[#8c8d8e]">Prix Retail (€)</p>
+                        <div className="flex gap-2.5">
                             <input 
                                 type="number" 
                                 placeholder="Min" 
                                 value={minPrice} 
                                 onChange={(e) => setMinPrice(e.target.value)} 
-                                style={{ width: "100%", padding: "5px" }}
+                                className="w-full border border-[#ddd6cc] bg-white px-2 py-1"
                             />
                             <input 
                                 type="number" 
                                 placeholder="Max" 
                                 value={maxPrice} 
                                 onChange={(e) => setMaxPrice(e.target.value)} 
-                                style={{ width: "100%", padding: "5px" }}
+                                className="w-full border border-[#ddd6cc] bg-white px-2 py-1"
                             />
                         </div>
                     </div>
-                    <div className="filter-section">
-                        <p className="muted">Diamètre (mm)</p>
+                    <div className="border-t border-[#ddd6cc] pt-3">
+                        <p className="text-[#8c8d8e]">Diamètre (mm)</p>
                         <input 
                             type="number" 
                             placeholder="Ex: 40" 
                             value={diameter} 
                             onChange={(e) => setDiameter(e.target.value)} 
-                            style={{ width: "100%", padding: "5px" }}
+                            className="w-full border border-[#ddd6cc] bg-white px-2 py-1"
                         />
                     </div>
-                    <div className="filter-section">
-                        <p className="muted">Mouvement</p>
-                        <div className="chips-row">
+                    <div className="border-t border-[#ddd6cc] pt-3">
+                        <p className="text-[#8c8d8e]">Mouvement</p>
+                        <div className="flex flex-wrap gap-2">
                             {availableMovements.map((mvmt) => (
                                 <button
                                     key={mvmt}
                                     type="button"
-                                    className={`filter-chip ${activeMovements.includes(mvmt) ? "active" : ""}`}
+                                    className={`cursor-pointer border px-2 py-1 text-xs uppercase tracking-[0.07em] ${activeMovements.includes(mvmt) ? "border-[#141823] bg-[#141823] text-[#faf8f5]" : "border-[#ddd6cc] bg-white text-[#1c1d21]"}`}
                                     onClick={() => toggleMovement(mvmt)}
                                 >
                                     {mvmt}
@@ -223,35 +224,35 @@ export default function CollectionPage() {
                     </div>
                     <button
                         type="button"
-                        className="btn btn-ghost"
+                        className="inline-flex w-fit cursor-pointer border border-[#141823] bg-transparent px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#1c1d21] hover:bg-black hover:text-[#faf8f5]"
                         onClick={resetFilters}
                     >
                         Réinitialiser
                     </button>
-                    <Link className="btn cta-collection-login" to="/connexion">
+                    <Link className="inline-flex w-full items-center justify-center border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" to="/connexion">
                         Connexion
                     </Link>
                 </aside>
                 <section>
-                    <div className="section-title-row">
+                    <div className="mb-4 flex items-baseline justify-between gap-3 max-[700px]:flex-col max-[700px]:items-start">
                         <h1>Collection</h1>
-                        <p className="muted">{filteredWatches.length} modèle(s)</p>
+                        <p className="text-[#8c8d8e]">{filteredWatches.length} modèle(s)</p>
                     </div>
-                    <div className="cards-grid">
+                    <div className="grid grid-cols-3 gap-4 max-[1024px]:grid-cols-2 max-[700px]:grid-cols-1">
                         {filteredWatches.map((watch) => (
-                            <article className="watch-card" key={watch.watchId}>
-                                <Link to={`/montre/${watch.watchId}`} className="image-link">
-                                    <div className="collection-media-box">
+                            <article className="grid grid-rows-[auto_1fr_auto] gap-3 border border-[#ddd6cc] bg-white p-3" key={watch.watchId}>
+                                <Link to={`/montre/${watch.watchId}`} className="block">
+                                    <div className="h-65 w-full overflow-hidden border border-[#ddd6cc] bg-[#f4f3f1] max-[700px]:h-57.5">
                                         <WatchImage watch={watch} />
                                     </div>
                                 </Link>
-                                <div className="watch-meta">
-                                    <p className="muted small">{watch.brand || "/"}</p>
-                                    <h3>{watch.model}</h3>
+                                <div>
+                                    <p className="text-[0.83rem] text-[#8c8d8e]">{watch.brand || "/"}</p>
+                                    <h3 className="my-1 font-serif">{watch.model}</h3>
                                     <p>{formatPrice(watch.retailPrice)}</p>
                                 </div>
-                                <div className="watch-actions">
-                                    <Link className="btn" to={`/montre/${watch.watchId}`}>
+                                <div>
+                                    <Link className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" to={`/montre/${watch.watchId}`}>
                                         Voir le détail
                                     </Link>
                                 </div>
