@@ -44,7 +44,6 @@ export default function CollectionPage() {
     const [watches, setWatches] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Nouveaux états pour les filtres
     const [activeBrands, setActiveBrands] = useState([]);
     const [activeMaterials, setActiveMaterials] = useState([]);
     const [activeMovements, setActiveMovements] = useState([]);
@@ -55,7 +54,6 @@ export default function CollectionPage() {
 
     fetchWatches(setWatches, setIsLoading);
 
-    // Listes dynamiques basées sur les données reçues du backend
     const availableBrands = useMemo(() => {
         const brands = watches.map(w => w.brand).filter(Boolean);
         return [...new Set(brands)].sort();
@@ -66,7 +64,6 @@ export default function CollectionPage() {
         return [...new Set(mats)].sort();
     }, [watches]);
 
-    // Mouvements dynamiques basés sur les données reçues du backend
     const availableMovements = useMemo(() => {
         const movements = watches.map(w => w.movement).filter(Boolean);
         return [...new Set(movements)].sort();
@@ -80,11 +77,9 @@ export default function CollectionPage() {
             const materialOk = activeMaterials.length === 0 || activeMaterials.includes(watch.materials);
             const movementOk = activeMovements.length === 0 || activeMovements.includes(watch.movement);
 
-            // Filtre par prix
             const minPriceOk = minPrice === "" || (watch.retailPrice && watch.retailPrice >= Number(minPrice));
             const maxPriceOk = maxPrice === "" || (watch.retailPrice && watch.retailPrice <= Number(maxPrice));
             
-            // Filtre par diamètre
             const diameterOk = diameter === "" || (watch.diameter && Number(watch.diameter) === Number(diameter));
 
             return brandOk && materialOk && movementOk && minPriceOk && maxPriceOk && diameterOk;
@@ -103,7 +98,6 @@ export default function CollectionPage() {
         return sorted;
     }, [watches, activeBrands, activeMaterials, activeMovements, minPrice, maxPrice, diameter, sortBy]);
 
-    // Fonctions utilitaires pour le toggle des filtres
     function toggleBrand(brand) {
         setActiveBrands((prev) => prev.includes(brand) ? prev.filter((item) => item !== brand) : [...prev, brand]);
     }

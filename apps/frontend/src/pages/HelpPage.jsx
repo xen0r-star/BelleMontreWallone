@@ -19,17 +19,19 @@ const faqs = [
 ];
 
 export default function HelpPage() {
+    const [message, setMessage] = useState("");
     const [isSent, setIsSent] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    function handleSubmit(event) {
-        event.preventDefault();
-        setIsSent(true);
+    async function handleHelping(e) {
+        setMessage('');
+        e.preventDefault();
+        await clientContact(setMessage, setIsLoading, setIsSent);
     }
 
     return (
         <div className="page-root">
             <SiteHeader />
-
             <main className="container help-layout">
                 <section className="help-hero">
                     <p className="kicker">Accompagnement Signature</p>
@@ -40,7 +42,6 @@ export default function HelpPage() {
                         rendez-vous confidentiels.
                     </p>
                 </section>
-
                 <section className="help-section-card">
                     <h2>Questions fréquentes</h2>
                     {faqs.map((faq) => (
@@ -50,27 +51,19 @@ export default function HelpPage() {
                         </details>
                     ))}
                 </section>
-
                 <section className="help-section-card">
                     <h2>Contactez-nous</h2>
-                    {!isSent ? (
-                        <form className="form-grid help-form" onSubmit={handleSubmit}>
-                            <input required placeholder="Nom" />
-                            <input required placeholder="Prénom" />
-                            <input required type="email" placeholder="Email" />
-                            <input placeholder="Téléphone" />
-                            <textarea required rows="4" placeholder="Votre message" />
-                            <button className="btn" type="submit">Envoyer la demande</button>
-                        </form>
-                        
-                    ) : (
-                        <p className="success-msg">
-                            Message envoyée. Notre équipe vous fera un retour rapidement.
-                        </p>
-                    )}
+                    <form className="form-grid help-form" onSubmit={handleHelping}>
+                        <input required placeholder="Nom" />
+                        <input required placeholder="Prénom" />
+                        <input required type="email" placeholder="Email" />
+                        <input placeholder="Téléphone" />
+                        <textarea required rows="4" placeholder="Votre message" />
+                        <button className="btn" type="submit">Envoyer la demande</button>
+                    </form>
+                    {message && <p className={isSent ? "success-msg" : "nsuccess-msg"}>{message}</p>}
                 </section>
             </main>
-
             <SiteFooter />
         </div>
     );
