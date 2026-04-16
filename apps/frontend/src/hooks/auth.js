@@ -146,23 +146,49 @@ export async function clientAuthReg(setMessage, setIsLoading, setVerification, s
     }
 }
 
-export async function clientContact(setIsLoading) {
+export async function clientContact(setMessage, setIsLoading, setIsSent) {
     setIsLoading(true);
-    const response = await fetch(`${API_URL}/auth/me`, {
-        method: 'GET',
-        credentials: 'include'
-    });
-    if (response.status === 401) return setUser(null);
-    if (!response.ok) throw new Error(`Erreur requête HTTP : ${response.status}`);
-
-    const data  = await response.json();
-
-    if (!data) {
+    const result = await checkAPIStat();
+    if(!result) {
         setIsLoading(false);
-        return console.error("Erreur lors de l'authentification lors de la récupération des informations utilisateurs.");
-    } else {
-        setUser(data.user)
-        setVerification(true);
+        return console.error("API pas disponible pour le frontend.");
     }
-    setIsLoading(false);
+    try {
+        const response = await fetch(`${API_URL}/contact`, {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({ // A finir
+                "surname": "Test",
+                "name": "Test",
+                "email": "Test@gmail.com",
+                "tel": "+32 123 45 67 89",
+                "message": "testmsg"
+            })
+        });
+        
+        if (!response.ok) {
+            setVerification(false);
+            await sleep(2000);
+            setMessage("Il est impossible de vous connecter. Veuillez-réessayer !")
+            throw new Error(`Erreur requête HTTP : ${response.status}`);
+        } else {
+            setVerification(true);
+            setMessage("Inscription validée. Bienvenue dans votre espace.")
+        }
+        const data  = await response.json();
+        console.log(data);
+        if (!data) {
+            return console.error("Erreur lors de l'authentification lors de la récupération des informations utilisateur.");
+        } else {
+            setUser(data.user)
+            setVerification(true);
+        }
+    } catch (e) {
+        console.error("Erreur lors de la connexion :", e);
+    } finally {
+        setIsLoading(false);
+    }
 }
