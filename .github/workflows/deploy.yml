@@ -91,6 +91,7 @@ jobs:
         run: composer validate --no-check-publish 2>/dev/null || echo "Pas de composer.json"
       
       - name: Tester avec Docker Compose
+        working-directory: ./apps/backend
         run: |
           docker compose up -d
           docker compose ps
