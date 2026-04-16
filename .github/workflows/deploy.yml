@@ -114,19 +114,19 @@ jobs:
       
       - name: Déployer Backend
         run: |
-          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa_deploy -r apps/backend/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_BACKEND_PATH }}/
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/backend/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_BACKEND_PATH }}/
       
       - name: Déployer Frontend
         run: |
-          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa_deploy -r apps/frontend/dist/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_FRONTEND_PATH }}/
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/frontend/dist/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_FRONTEND_PATH }}/
       
       - name: Redémarrer services
         run: |
-          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa_deploy ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} '${{ secrets.OVH_RESTART_COMMAND }}'
+          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} '${{ secrets.OVH_RESTART_COMMAND }}'
       
       - name: Nettoyer clé SSH
         if: always()
-        run: rm -f ~/.ssh/id_rsa_deploy
+        run: rm -f ~/.ssh/id_rsa
 
   # Notification des résultats
   notify:
