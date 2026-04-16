@@ -67,6 +67,7 @@ export default function HelpPage() {
                     {message && <p className={isSent ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#a57c7c] bg-[#edf9ef] p-3 text-[#275030]"}>{message}</p>}
                 </section>
             </main>
+            
             <SiteFooter />
         </div>
     );
