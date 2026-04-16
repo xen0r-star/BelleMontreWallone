@@ -53,6 +53,7 @@ export default function HelpPage() {
                         </details>
                     ))}
                 </section>
+                
                 <section className="border border-[#ddd6cc] bg-[color-mix(in_srgb,white_88%,#faf8f5)] p-[clamp(1.2rem,3vw,2rem)]">
                     <h2>Contactez-nous</h2>
                     <form className="grid grid-cols-2 gap-4 max-[700px]:grid-cols-1" onSubmit={handleSubmit}>
