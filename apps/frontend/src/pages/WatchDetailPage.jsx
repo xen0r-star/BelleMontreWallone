@@ -100,10 +100,10 @@ export default function WatchDetailPage() {
                             <span>{watch.watertightness || "/"}</span>
                         </li>
                     </ul>
-
-                    <button type="button" className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" onClick={() => setIsModalOpen(true)}>
+                    {<button type="button" className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" onClick={() => setIsModalOpen(true)}>
                         Demander une réservation
-                    </button>
+                    </button>}
+                    
                 </section>
             </main>
 

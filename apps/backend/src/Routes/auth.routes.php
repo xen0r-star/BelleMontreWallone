@@ -209,7 +209,7 @@ function register(): void {
             Response::json([
                 'error' => 'USER_ALREADY_EXISTS',
                 'message' => 'Username or email already used',
-            ], 409);
+            ], 401);
             return;
         }
 

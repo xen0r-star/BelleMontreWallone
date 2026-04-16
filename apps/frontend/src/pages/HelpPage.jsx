@@ -1,7 +1,7 @@
 import { useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { clientContact } from "../hooks/auth";
+import { clientContact } from "../hooks/caca";
 
 const faqs = [
     {
@@ -56,7 +56,7 @@ export default function HelpPage() {
                 
                 <section className="border border-[#ddd6cc] bg-[color-mix(in_srgb,white_88%,#faf8f5)] p-[clamp(1.2rem,3vw,2rem)]">
                     <h2>Contactez-nous</h2>
-                    <form className="grid grid-cols-2 gap-4 max-[700px]:grid-cols-1" onSubmit={handleSubmit}>
+                    <form className="grid grid-cols-2 gap-4 max-[700px]:grid-cols-1" onSubmit={handleHelping}>
                         <input required placeholder="Nom" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
                         <input required placeholder="Prénom" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
                         <input required type="email" placeholder="Email" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
@@ -64,7 +64,8 @@ export default function HelpPage() {
                         <textarea required rows="4" placeholder="Votre message" className="col-span-2 w-full resize-none border border-[#ddd6cc] bg-white px-3 py-[0.65rem] max-[700px]:col-span-1" />
                         <button className="col-span-2 inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black max-[700px]:col-span-1" type="submit">Envoyer la demande</button>
                     </form>
-                    {message && <p className={isSent ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#a57c7c] bg-[#edf9ef] p-3 text-[#275030]"}>{message}</p>}
+                    <br/>
+                    {message && <p className={isSent ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#a57c7c] bg-[#f9eded] p-3 text-[#502727]"}>{message}</p>}
                 </section>
             </main>
             
