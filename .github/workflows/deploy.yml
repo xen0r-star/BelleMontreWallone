@@ -112,6 +112,33 @@ jobs:
         with:
           name: frontend-dist
           path: apps/frontend/dist
+
+      - name: Générer .env backend depuis secrets
+        run: |
+          cat > .env.deploy << 'EOF'
+          APP_ENV=${{ secrets.APP_ENV }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          CORS_ALLOWED_ORIGINS=${{ secrets.CORS_ALLOWED_ORIGINS }}
+          ADMIN_USER=${{ secrets.ADMIN_USER }}
+          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+          ADMIN_API_KEY=${{ secrets.ADMIN_API_KEY }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+          MYSQL_USER=${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          BACKEND_HOSTNAME=${{ secrets.BACKEND_HOSTNAME }}
+          BACKEND_CODE_PATH=./backend
+          FRONTEND_DIST_PATH=./frontend
+          APP_DOMAIN=${{ secrets.APP_DOMAIN }}
+          TRAEFIK_NETWORK=${{ secrets.TRAEFIK_NETWORK }}
+          TRAEFIK_ENTRYPOINTS=${{ secrets.TRAEFIK_ENTRYPOINTS }}
+          TRAEFIK_CERTRESOLVER=${{ secrets.TRAEFIK_CERTRESOLVER }}
+          EOF
       
       - name: Créer clé SSH privée
         env:
@@ -123,19 +150,30 @@ jobs:
           echo "$OVH_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p $OVH_PORT_SSH -H $OVH_SERVER_IP >> ~/.ssh/known_hosts
-          
+
+      - name: Préparer dossiers distants
+        run: |
+          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'mkdir -p ${{ secrets.OVH_PATH }} ${{ secrets.OVH_PATH }}/backend ${{ secrets.OVH_PATH }}/frontend ${{ secrets.OVH_PATH }}/config'
+
+      - name: Déployer Docker Compose racine
+        run: |
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa docker-compose.yml ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/docker-compose.yml
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa .env.deploy ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/.env
       
       - name: Déployer Backend
         run: |
-          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/backend ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_BACKEND_PATH }}/
-      
+          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'rm -rf ${{ secrets.OVH_PATH }}/backend/*'
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/backend/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/backend/
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa config/php.ini ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/config/php.ini
+
       - name: Déployer Frontend
         run: |
-          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/frontend/dist/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_FRONTEND_PATH }}/
+          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'rm -rf ${{ secrets.OVH_PATH }}/frontend/*'
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/frontend/dist/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/frontend/
       
-      - name: Redémarrer services
+      - name: Lancer Docker Compose backend
         run: |
-          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} '${{ secrets.OVH_RESTART_COMMAND }}'
+          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'cd ${{ secrets.OVH_PATH }} && docker compose --env-file .env up -d --build --remove-orphans && docker compose ps'
       
       - name: Nettoyer clé SSH
         if: always()
