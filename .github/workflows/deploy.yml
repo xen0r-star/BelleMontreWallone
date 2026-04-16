@@ -114,7 +114,7 @@ jobs:
       
       - name: Déployer Backend
         run: |
-          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/backend/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_BACKEND_PATH }}/
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/backend ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_BACKEND_PATH }}/
       
       - name: Déployer Frontend
         run: |

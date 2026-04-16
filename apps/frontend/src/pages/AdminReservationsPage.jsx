@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { fetchWatches, fetchReservations } from "../hooks/fetchAPI";
-             
+              
 function toDateTime(date, time) {
     return new Date(`${date}T${time}:00`);
 }
