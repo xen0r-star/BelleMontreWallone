@@ -45,7 +45,7 @@ export default function HelpPage() {
             tel: data.tel,
             message: data.message
         }
-        
+
         await clientContact(setMessage, setIsLoading, setIsSent, payload);
         await sleep(2000);
         setMessage('Réinitialisation du formulaire en cours...');
@@ -54,12 +54,9 @@ export default function HelpPage() {
         setMessage('');
     }
 
-    
-
     return (
         <div className="flex min-h-screen flex-col">
             <SiteHeader />
-
             <main className="mx-auto my-12 grid w-[min(1240px,calc(100%-5rem))] gap-8 max-[700px]:w-[calc(100%-1.5rem)]">
                 <section className="grid gap-4 border border-[#ddd6cc] bg-linear-to-br from-[#f7f5f1] to-white p-[clamp(1.5rem,4vw,3rem)]">
                     <p className="m-0 text-[0.8rem] uppercase tracking-[0.12em] text-[#8c8d8e]">Accompagnement Signature</p>
@@ -70,7 +67,6 @@ export default function HelpPage() {
                         rendez-vous confidentiels.
                     </p>
                 </section>
-
                 <section className="border border-[#ddd6cc] bg-[color-mix(in_srgb,white_88%,#faf8f5)] p-[clamp(1.2rem,3vw,2rem)]">
                     <h2>Questions fréquentes</h2>
                     {faqs.map((faq) => (
@@ -80,7 +76,6 @@ export default function HelpPage() {
                         </details>
                     ))}
                 </section>
-                
                 <section className="border border-[#ddd6cc] bg-[color-mix(in_srgb,white_88%,#faf8f5)] p-[clamp(1.2rem,3vw,2rem)]">
                     <h2 className="font-bold">Contactez-nous</h2>
                     <p className="text-gray-400 p-5">[*] : champ obligatoire (tous)</p>
@@ -96,7 +91,6 @@ export default function HelpPage() {
                     {message && <p className={isSent ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#a57c7c] bg-[#f9eded] p-3 text-[#502727]"}>{message}</p>}
                 </section>
             </main>
-            
             <SiteFooter />
         </div>
     );

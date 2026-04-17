@@ -22,6 +22,7 @@ export async function clientContact(setMessage, setIsLoading, setIsSent, data) {
             credentials: 'include',
             body: JSON.stringify(data)
         });
+        
         if (!response.ok) {
             setIsSent(false);
             await sleep(2000);
