@@ -17,7 +17,7 @@ services:
       APP_ENV: ${APP_ENV:-development}
       DB_HOST: ${DB_HOST:-db}
       DB_PORT: ${DB_PORT:-3306}
-      DB_NAME: ${DB_NAME:-watch_store}
+      DB_NAME: ${DB_NAME:-belle_montre_wallone}
       DB_USER: ${DB_USER:-watch_user}
       DB_PASSWORD: ${DB_PASSWORD:-watch_password}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
@@ -69,7 +69,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-watch_store}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-belle_montre_wallone}
       MYSQL_USER: ${MYSQL_USER:-watch_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-watch_password}
     volumes:
