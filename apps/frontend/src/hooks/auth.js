@@ -1,8 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 import { checkAPIStat } from "./fetchAPI";
-
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { sleep } from "../utils/sleep";
 
 export async function checkAuth(setUser, setVerification, setIsLoading) {
     setIsLoading(true);

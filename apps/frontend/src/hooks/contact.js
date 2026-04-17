@@ -1,10 +1,9 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 import { checkAPIStat } from "./fetchAPI";
+import { sleep } from "../utils/sleep";
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-export async function clientContact(setMessage, setIsLoading, setIsSent) {
+export async function clientContact(setMessage, setIsLoading, setIsSent, data) {
     setIsLoading(true);
     const result = await checkAPIStat();
     if(!result) {
@@ -12,18 +11,19 @@ export async function clientContact(setMessage, setIsLoading, setIsSent) {
         return console.error("API pas disponible pour le frontend.");
     }
     try {
+        if (!data.surname || !data.name || !data.email || !data.tel || !data.msg) throw new Error(`Erreur lors de la réception des données.`);
         const response = await fetch(`${API_URL}/contact`, {
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({ // A finir
-                "surname": "Test",
-                "name": "Test",
-                "email": "Test@gmail.com",
-                "tel": "+32 123 45 67 89",
-                "message": "testmsg"
+            body: JSON.stringify({
+                "surname": data.surname,
+                "name": data.name,
+                "email": data.email,
+                "tel": data.tel,
+                "message": data.msg
             })
         });
         if (!response.ok) {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { clientContact } from "../hooks/caca";
+import { clientContact } from "../hooks/contact";
 
 const faqs = [
     {
@@ -23,11 +23,32 @@ export default function HelpPage() {
     const [isSent, setIsSent] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [surname, setSurname] = useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [tel, setTel] = useState('');
+    const [msg, setMsg] = useState('');
+    
+    const regex = /^\+?[0-9 .()\-]{7,20}$/;
+
     async function handleHelping(e) {
         setMessage('');
         e.preventDefault();
-        await clientContact(setMessage, setIsLoading, setIsSent);
+        const data = {
+            surname: surname,
+            name: name,
+            email: email,
+            tel: tel,
+            msg: msg
+        }
+        if (!data.surname || !data.name || !data.email || !data.tel || !data.msg || !regex.test(tel)) {
+            setIsSent(false);
+            return setMessage('Merci de remplir tout les champs obligatoire correctement [*] !')
+        }
+        await clientContact(setMessage, setIsLoading, setIsSent, data);
     }
+
+    
 
     return (
         <div className="flex min-h-screen flex-col">
@@ -55,13 +76,14 @@ export default function HelpPage() {
                 </section>
                 
                 <section className="border border-[#ddd6cc] bg-[color-mix(in_srgb,white_88%,#faf8f5)] p-[clamp(1.2rem,3vw,2rem)]">
-                    <h2>Contactez-nous</h2>
+                    <h2 className="font-bold">Contactez-nous</h2>
+                    <p className="text-gray-400 p-5">[*] : champ obligatoire (tous)</p>
                     <form className="grid grid-cols-2 gap-4 max-[700px]:grid-cols-1" onSubmit={handleHelping}>
-                        <input required placeholder="Nom" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
-                        <input required placeholder="Prénom" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
-                        <input required type="email" placeholder="Email" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
-                        <input placeholder="Téléphone" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
-                        <textarea required rows="4" placeholder="Votre message" className="col-span-2 w-full resize-none border border-[#ddd6cc] bg-white px-3 py-[0.65rem] max-[700px]:col-span-1" />
+                        <input required placeholder="[*] Nom" onChange={(e) => setSurname(e.target.value)} className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
+                        <input required placeholder="[*] Prénom" onChange={(e) => setName(e.target.value)} className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
+                        <input required type="email" placeholder="[*] Email" onChange={(e) => setEmail(e.target.value)} className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
+                        <input placeholder="[*] Téléphone" onChange={(e) => setTel(e.target.value)} className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
+                        <textarea required rows="4" placeholder="[*] Votre message" onChange={(e) => setMsg(e.target.value)} className="col-span-2 w-full resize-none border border-[#ddd6cc] bg-white px-3 py-[0.65rem] max-[700px]:col-span-1" />
                         <button className="col-span-2 inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black max-[700px]:col-span-1" type="submit">Envoyer la demande</button>
                     </form>
                     <br/>
