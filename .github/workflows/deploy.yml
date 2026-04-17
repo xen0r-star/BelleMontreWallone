@@ -98,21 +98,15 @@ jobs:
           docker compose logs
           docker compose down
 
-  # Déploiement sur OVH
-  deploy-ovh:
-    needs: [frontend-check, backend-check]
-    # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  # Déploiement Backend sur OVH
+  deploy-backend:
+    needs: [changes, backend-check]
+    if: github.event_name == 'push' && needs.changes.outputs.backend == 'true' && needs.backend-check.result == 'success'
     runs-on: ubuntu-latest
     environment: production
     
     steps:
       - uses: actions/checkout@v4
-
-      - name: Download artifact frontend
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-dist
-          path: apps/frontend/dist
 
       - name: Générer .env backend depuis secrets
         run: |
@@ -166,11 +160,6 @@ jobs:
           ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'rm -rf ${{ secrets.OVH_PATH }}/backend/*'
           scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/backend/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/backend/
           scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa config/php.ini ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/config/php.ini
-
-      - name: Déployer Frontend
-        run: |
-          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'rm -rf ${{ secrets.OVH_PATH }}/frontend/*'
-          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/frontend/dist/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/frontend/
       
       - name: Lancer Docker Compose backend
         run: |
@@ -180,14 +169,62 @@ jobs:
         if: always()
         run: rm -f ~/.ssh/id_rsa
 
+  # Déploiement Frontend sur OVH
+  deploy-frontend:
+    needs: [changes, frontend-check]
+    if: github.event_name == 'push' && needs.changes.outputs.frontend == 'true' && needs.frontend-check.result == 'success'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifact frontend
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: apps/frontend/dist
+
+      - name: Créer clé SSH privée
+        env:
+          OVH_SSH_PRIVATE_KEY: ${{ secrets.OVH_SSH_PRIVATE_KEY }}
+          OVH_SERVER_IP: ${{ secrets.OVH_SERVER_IP }}
+          OVH_PORT_SSH: ${{ secrets.OVH_PORT_SSH }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$OVH_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p $OVH_PORT_SSH -H $OVH_SERVER_IP >> ~/.ssh/known_hosts
+
+      - name: Préparer dossiers distants
+        run: |
+          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'mkdir -p ${{ secrets.OVH_PATH }} ${{ secrets.OVH_PATH }}/frontend'
+
+      - name: Déployer Frontend
+        run: |
+          ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'rm -rf ${{ secrets.OVH_PATH }}/frontend/*'
+          scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/frontend/dist/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/frontend/
+
+      - name: Nettoyer clé SSH
+        if: always()
+        run: rm -f ~/.ssh/id_rsa
+
   # Notification des résultats
   notify:
     runs-on: ubuntu-latest
     if: always()
-    needs: [frontend-check, backend-check, deploy-ovh]
+    needs: [changes, frontend-check, backend-check, deploy-frontend, deploy-backend]
     steps:
-      - name: Résumé du build
+      - name: Résumé CI/CD
         run: |
-          echo "✅ Frontend check: ${{ needs.frontend-check.result }}"
-          echo "✅ Backend check: ${{ needs.backend-check.result }}"
-          echo "✅ Deploy OVH: ${{ needs.deploy-ovh.result }}"
+          echo "=== Changement détecté ==="
+          echo "Frontend: ${{ needs.changes.outputs.frontend }}"
+          echo "Backend : ${{ needs.changes.outputs.backend }}"
+          echo ""
+          echo "=== Résultats checks ==="
+          echo "Frontend check: ${{ needs.frontend-check.result }}"
+          echo "Backend check : ${{ needs.backend-check.result }}"
+          echo ""
+          echo "=== Résultats déploiements (push uniquement) ==="
+          echo "Deploy frontend: ${{ needs.deploy-frontend.result }}"
+          echo "Deploy backend : ${{ needs.deploy-backend.result }}"
