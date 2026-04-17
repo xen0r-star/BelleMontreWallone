@@ -3,7 +3,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 import { checkAPIStat } from "./fetchAPI";
 import { sleep } from "../utils/sleep";
 
-export async function clientContact(setMessage, setIsLoading, setIsSent, payload) {
+export async function clientReservation(setMessage, setIsLoading, setIsSent, payload) {
     setIsLoading(true);
     const result = await checkAPIStat();
     

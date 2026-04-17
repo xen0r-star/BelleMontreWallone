@@ -21,8 +21,23 @@ export default function RegisterPage() {
      async function handleRegister(e) {
             setMessage('');
             e.preventDefault();
-            // Data entrée à récupérer (UserName / Password)
-            await clientAuthReg(setMessage, setIsLoading, setVerif, setUser);
+
+            const form = e.currentTarget;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            if (!data.username || !data.password || !data.email || !data.birthDate) {
+                setVerif(false);
+                return setMessage('Des identifiants sont manquants. Merci de réessayer !')
+            }
+
+            const payload = {
+                userName: data.username,
+                password: data.password,
+                email: data.email,
+                dateOfBirth: data.birthDate
+            }
+            await clientAuthReg(setMessage, setIsLoading, setVerif, setUser, payload);
         };
     
         async function handleLogout(e) {

@@ -4,6 +4,7 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
 import { fetchWatches } from "../hooks/fetchAPI";
+import { checkAuth } from "../hooks/auth";
 
 function ImageWithSkeleton({ src, alt, className }) {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -23,10 +24,22 @@ function ImageWithSkeleton({ src, alt, className }) {
 
 export default function WatchDetailPage() {
     const [watches, setWatches] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sent, setSent] = useState(false);
     const { id } = useParams();
+
+    const [message, setMessage] = useState("");
+    const [user, setUser] = useState(null);
+    const [isSent, setIsSent] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    
+    useEffect(() => {
+        const checkUser = async () => {
+            await checkAuth(setUser, setIsSent, setIsLoading);
+        };
+        checkUser();
+    }, []);
+
     
     fetchWatches(setWatches, setIsLoading);
     if (!watches || watches.length === 0 || isLoading) {
@@ -60,6 +73,59 @@ export default function WatchDetailPage() {
     function handleSubmit(event) {
         event.preventDefault();
         setSent(true);
+    }
+    if (!user) {
+        return (
+        <div className="flex min-h-screen flex-col">
+            <SiteHeader />
+            
+            <main className="mx-auto my-8 ml-6.25 mr-6.25 grid w-[min(1380px,calc(100%-5rem))] grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] gap-8 max-[1024px]:grid-cols-1 max-[700px]:w-[calc(100%-1.5rem)]">
+                <section>
+                    <ImageWithSkeleton
+                        src={watch.imageUrl}
+                        alt={watch.model}
+                        className="h-135 border-2 border-[#ddd6cc] bg-[#eaeaea] max-[700px]:h-90"
+                    />
+                </section>
+
+                <section className="mr-6.25 grid content-start gap-4">
+                    <p className="m-0 text-[0.8rem] uppercase tracking-[0.12em] text-[#8c8d8e]">{watch.brand || "/"}</p>
+
+                    <h1 className="text-3xl font-bold font-['Cormorant Garamond']">{watch.model}</h1>
+                    <div className="text-[1.2rem]">Prix de vente : {formatPrice(watch.retailPrice)}<hr/>Prix conseillé : {formatPrice(watch.marketPrice)}</div>
+                    <p className="text-[#8c8d8e]">{watch.watchDesc ? ("Description : " + watch.watchDesc) : "Aucune description trouvé."}</p>
+
+                    <ul className="m-0 list-none border-t border-[#ddd6cc] p-0">
+                        <li className="flex justify-between border-b border-[#ddd6cc] py-2 text-[0.95rem]">
+                            <span>Mouvement</span>
+                            <span>{watch.movement || "/"}</span>
+                        </li>
+                        <li className="flex justify-between border-b border-[#ddd6cc] py-2 text-[0.95rem]">
+                            <span>Diamètre</span>
+                            <span>{watch.diameter + "mm" || "/"}</span>
+                        </li>
+                        <li className="flex justify-between border-b border-[#ddd6cc] py-2 text-[0.95rem]">
+                            <span>Matériel</span>
+                            <span>{watch.materials || "/"}</span>
+                        </li>
+                        <li className="flex justify-between border-b border-[#ddd6cc] py-2 text-[0.95rem]">
+                            <span>Étanchéité</span>
+                            <span>{watch.watertightness || "/"}</span>
+                        </li>
+                    </ul>
+                    {<button type="button" className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black">
+                        Demander une réservation [/]
+                    </button>}
+                    <div className="text-red-700 font-bold">
+                        ⚠️ Attention : Les réservations sont réserver à nos membres. Pour réserver, veuillez vous connecter ! ⚠️
+                    </div>
+                </section>
+            </main>
+
+
+            <SiteFooter />
+        </div>
+    );
     }
 
     return (
