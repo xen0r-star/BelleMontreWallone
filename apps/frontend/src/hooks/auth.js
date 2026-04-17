@@ -47,11 +47,11 @@ export async function clientAuth(setMessage, setIsLoading, setVerification, setU
         if (!response.ok) {
             setVerification(false);
             await sleep(2000);
-            setMessage("Vos identifiants sont incorrects. Veuillez-réessayer !")
+            setMessage('Vos identifiants sont incorrects. Veuillez-réessayer !')
             throw new Error(`Erreur requête HTTP : ${response.status}`);
         } else {
             setVerification(true);
-            setMessage("Connexion validée. Bienvenue dans votre espace.")
+            setMessage('Connexion validée. Bienvenue dans votre espace.')
         }
         const data  = await response.json();
         if (!data) {
@@ -85,12 +85,12 @@ export async function clientLogout(setMessage, setIsLoading, setVerification, se
         if (!response.ok) {
             setVerification(false);
             await sleep(2000);
-            setMessage("Impossible de vous déconnecter. Veuillez-réessayer !")
+            setMessage('Impossible de vous déconnecter. Veuillez-réessayer !')
             throw new Error(`Erreur requête HTTP : ${response.status}`);
         } else {
             setVerification(true);
             setUser(null);
-            setMessage("Déconnexion réussi. A bientôt chez BMW !")
+            setMessage('Déconnexion réussi. A bientôt chez BMW !')
         }
     } catch (e) {
         console.error("Erreur lors de la déconnexion :", e);
@@ -124,11 +124,11 @@ export async function clientAuthReg(setMessage, setIsLoading, setVerification, s
         if (!response.ok) {
             setVerification(false);
             await sleep(2000);
-            setMessage("Il est impossible de vous connecter. Veuillez-réessayer !")
+            setMessage('Il est impossible de vous connecter. Veuillez-réessayer !')
             throw new Error(`Erreur requête HTTP : ${response.status}`);
         } else {
             setVerification(true);
-            setMessage("Inscription validée. Bienvenue dans votre espace.")
+            setMessage('Inscription validée. Bienvenue dans votre espace.')
         }
         const data  = await response.json();
         console.log(data);
