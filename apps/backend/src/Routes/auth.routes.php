@@ -406,7 +406,7 @@ function getCurrentUser(): void {
             throw new PDOException('Unable to prepare user lookup statement');
         }
 
-        $statement->execute(['userId' => (int) $token]);
+        $statement->execute(['userId' => (int) $token['userId']]);
         $user = $statement->fetch();
 
         if (!$user) {

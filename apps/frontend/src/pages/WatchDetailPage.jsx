@@ -5,6 +5,8 @@ import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
 import { fetchWatches } from "../hooks/fetchAPI";
 import { checkAuth } from "../hooks/auth";
+import { clientReservation } from "../hooks/reservations";
+import { sleep } from "../utils/sleep";
 
 function ImageWithSkeleton({ src, alt, className }) {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -25,6 +27,7 @@ function ImageWithSkeleton({ src, alt, className }) {
 export default function WatchDetailPage() {
     const [watches, setWatches] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModal2Open, setIsModal2Open] = useState(false);
     const [sent, setSent] = useState(false);
     const { id } = useParams();
 
@@ -39,7 +42,6 @@ export default function WatchDetailPage() {
         };
         checkUser();
     }, []);
-
     
     fetchWatches(setWatches, setIsLoading);
     if (!watches || watches.length === 0 || isLoading) {
@@ -70,10 +72,32 @@ export default function WatchDetailPage() {
         );
     }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-        setSent(true);
+    async function handleReservation(e) {
+        setMessage('');
+        e.preventDefault();
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!data.date || !id) {
+            setSent(false);
+            return setMessage('Des identifiants sont manquants. Merci de réessayer !')
+        }
+
+        const payload = {
+            watchId: parseInt(id, 10),
+            returnDate: data.date
+        };
+        
+        await clientReservation(setMessage, setIsLoading, setIsSent, setUser, payload);
+        await sleep(4000);
+        setMessage('Réinitialisation du formulaire en cours...');
+        await sleep(1000);
+        form.reset();
+        setMessage('');
     }
+
     if (!user) {
         return (
         <div className="flex min-h-screen flex-col">
@@ -169,6 +193,9 @@ export default function WatchDetailPage() {
                     {<button type="button" className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" onClick={() => setIsModalOpen(true)}>
                         Demander une réservation
                     </button>}
+                    {<button type="button" className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" onClick={() => setIsModal2Open(true)}>
+                        Disponibilités
+                    </button>}
                     
                 </section>
             </main>
@@ -188,19 +215,42 @@ export default function WatchDetailPage() {
                         </button>
 
                         <h2>Réservation - {watch.model}</h2>
-                        {!sent ? (
-                            <form className="grid gap-3" onSubmit={handleSubmit}>
-                                <input required placeholder="Nom :" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
-                                <input required placeholder="Prenom :" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
-                                <input required type="email" placeholder="Email :" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
-                                <input type="tel" placeholder="Telephone : [Format: +xx xxx xx xx xx]" pattern="[0-9]{2} [0-9]{3} [0-9]{2} [0-9]{2} [0-9]{2}" className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]"/>
-                                <textarea rows="7" placeholder="Message :" className="w-full resize-none border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
-                                <button className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" type="submit">Envoyer</button>
-                            </form>
+                        <form className="grid gap-3" onSubmit={handleReservation}>
+                            Durée de réservation souhaitée :
+                            <input required type="date" name="date" min={new Date().toISOString().split('T')[0]} max={'2030-01-01'} className="w-full border border-[#ddd6cc] bg-white px-3 py-[0.65rem]" />
+                            <button className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" type="submit">Envoyer</button>
+                        </form>
+                        <br/>
+                        {message && <p className={isSent ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#a57c7c] bg-[#f9eded] p-3 text-[#502727]"}>{message}</p>}
 
-                        ) : (
-                            <p className="border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]">Demande envoyée. Un de nos conseiller te contactera sous un délai de 24h.</p>
-                        )}
+
+                    </div>
+                </div>
+            )}
+
+            {isModal2Open && (
+                <div className="fixed inset-0 z-99 grid place-items-center bg-black/45 p-4" role="dialog" aria-modal="true">
+                    <div className="w-full max-w-190 border border-[#ddd6cc] bg-white p-[clamp(1rem,3vw,2rem)]">
+                        <button
+                            type="button"
+                            className="float-right cursor-pointer border-none bg-transparent text-[#8c8d8e]"
+                            onClick={() => {
+                                setIsModal2Open(false);
+                                setSent(false);
+                            }}
+                        >
+                            Fermer
+                        </button>
+
+                        <h2>Disponibilités - {watch.model}</h2>
+                        <form className="grid gap-3" onSubmit={handleReservation}>
+                            blablabla du form
+                            <button className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" type="submit">Bouton ??</button>
+                        </form>
+                        <br/>
+                        {message && <p className={isSent ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#a57c7c] bg-[#f9eded] p-3 text-[#502727]"}>{message}</p>}
+
+
                     </div>
                 </div>
             )}
