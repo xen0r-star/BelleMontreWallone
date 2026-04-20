@@ -1,8 +1,14 @@
 <div align="center">
 
-# ⌚ Belle Montre Wallone — Boutique de Montres en Ligne
+# Belle Montre Wallone
 
-**SPA e-commerce avec système de réservation, API PHP native & stack conteneurisée**
+Plateforme e-commerce de montres avec frontend React, API PHP native, MySQL et deploiement Docker.
+
+<img src="apps/frontend/public/icons/bmw_icon_big.png" alt="Logo Belle Montre Wallone" width="220" />
+
+[![CI/CD - Build & Deploy](https://github.com/xen0r-star/BelleMontreWallone/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/xen0r-star/BelleMontreWallone/actions/workflows/deploy.yml)
+[![Deploiement](https://img.shields.io/badge/Deploy-OVH-success?style=flat-square)](https://github.com/xen0r-star/BelleMontreWallone/actions/workflows/deploy.yml)
+[![Licence MIT](https://img.shields.io/badge/Licence-MIT-green.svg)](LICENSE)
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-JS-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -13,199 +19,139 @@
 
 </div>
 
----
+## Table des matieres
 
-## 📋 Table des Matières
+- [Presentation](#presentation)
+- [Architecture](#architecture)
+- [CI/CD](#cicd)
+- [Lancer le projet en local](#lancer-le-projet-en-local)
+- [Endpoints API](#endpoints-api)
+- [Contributeurs](#contributeurs)
+- [Licence](#licence)
 
-- [Aperçu](#-aperçu)
-- [Fonctionnalités](#-fonctionnalités)
-- [Stack Technologique](#️-stack-technologique)
-- [Architecture du Projet](#-architecture-du-projet)
-- [Prérequis](#-prérequis)
-- [Getting Started](#-getting-started)
-- [Variables d'Environnement](#️-variables-denvironnement)
-- [Endpoints API](#-endpoints-api)
+## Presentation
 
----
+Belle Montre Wallone est un monorepo npm structure en workspaces:
 
-## 🔍 Aperçu
+- frontend SPA React + Vite dans apps/frontend
+- backend API REST PHP native dans apps/backend
+- base MySQL initialisee automatiquement via scripts SQL
+- orchestration Docker Compose, avec routage de production via Traefik
 
-Belle Montre Wallone est un monorepo découplé frontend/backend pour une boutique de montres en ligne. Le frontend est une SPA React servie par Vite. Le backend est une API REST construite en PHP natif avec un système de routing custom, une architecture MVC allégée et une authentification JWT. L'ensemble tourne dans des conteneurs Docker orchestrés via `docker-compose`.
+Le site est publie en production sur: https://www.bellemontrewallone.store
 
----
+## Architecture
 
-## ✨ Fonctionnalités
+```mermaid
+flowchart LR
+    U[Utilisateur] --> FE[Frontend React Vite\napps/frontend]
+    FE -->|HTTP /api| BE[Backend PHP\napps/backend/public/index.php]
+    BE --> RT[Router custom\napps/backend/src/Routes/routes.php]
+    RT --> AUTH[Auth routes]
+    RT --> W[Watches routes]
+    RT --> RES[Reservation routes]
+    RT --> ADM[Admin routes]
+    RT --> C[Contact routes]
+    AUTH --> DB[(MySQL 9.5)]
+    W --> DB
+    RES --> DB
+    ADM --> DB
+    C --> DB
 
-### 🌐 Interface Publique & Utilisateurs
+    subgraph Docker Compose
+      FE
+      BE
+      DB
+    end
 
-- 🏠 **Home** — Landing page de la boutique
-- 🗂️ **Collection** — Catalogue complet des montres disponibles
-- 🔎 **Détail Montre** — Fiche produit complète par référence
-- 📝 **Inscription / Connexion** — Authentification utilisateur avec session JWT
-- 📅 **Réservation** — Les utilisateurs authentifiés peuvent réserver une montre
-- 💬 **Aide & Contact** — Page de support client
-
-### 🔐 Interface Administration (JWT + API Key)
-
-- 🛠️ **Gestion du Catalogue** — CRUD complet sur les montres (ajout, édition, suppression)
-- 📋 **Gestion des Réservations** — Suivi et administration des réservations clients
-
----
-
-## 🛠️ Stack Technologique
-
-| Couche | Technologie | Rôle |
-|---|---|---|
-| **Frontend** | React 18 + JSX | Composants UI, state management |
-| **Bundler** | Vite JS | Dev server HMR, build optimisé |
-| **Routing client** | React Router DOM v6 | Navigation SPA |
-| **Styles** | CSS natif (`styles.css`) | Styling global |
-| **Backend** | PHP natif | API REST, front controller pattern |
-| **Base de données** | MySQL 9.5 | Persistance des données |
-| **Auth** | JWT | Sécurisation des routes protégées |
-| **DevOps** | Docker & Docker Compose | Conteneurisation et orchestration |
-| **Admin DB** | PhpMyAdmin | Interface visuelle MySQL |
-
----
-
-## 📁 Architecture du Projet
-
-```
-projet-ti/
-│
-├── frontend/                   # SPA React
-│   ├── src/
-│   │   ├── pages/
-│   │   │   ├── HomePage.jsx
-│   │   │   ├── CollectionPage.jsx
-│   │   │   ├── WatchDetailPage.jsx
-│   │   │   ├── RegisterPage.jsx
-│   │   │   ├── LoginPage.jsx
-│   │   │   ├── HelpPage.jsx
-│   │   │   ├── AdminWatchPage.jsx
-│   │   │   └── AdminReservationsPage.jsx
-│   │   ├── App.jsx
-│   │   └── styles.css
-│   ├── index.html
-│   ├── vite.config.js
-│   └── package.json
-│
-├── backend/                    # API REST PHP natif
-│   ├── index.php               # Front Controller
-│   ├── Routes/                 # Définition des routes
-│   │   ├── watch.routes.php
-│   │   ├── reservation.routes.php
-│   │   ├── auth.routes.php
-│   │   └── contact.routes.php
-│   ├── Core/                   # Noyau applicatif (Router, DB, Auth)
-│   └── Utils/                  # Helpers (JWT, response formatter...)
-│
-└── docker-compose.yml          # Orchestration : backend + db + phpmyadmin
+    TR[Traefik production] --> FE
+    TR -->|PathPrefix /api| BE
 ```
 
----
+## CI/CD
 
-## ✅ Prérequis
+Le workflow GitHub Actions est defini dans .github/workflows/deploy.yml.
 
-- [Docker](https://www.docker.com/get-started) ≥ 24.x
-- [Docker Compose](https://docs.docker.com/compose/) v2+
-- [Node.js](https://nodejs.org/) ≥ 18.x + npm (pour le frontend en dev local)
+Il couvre:
 
----
+- detection des changements frontend/backend
+- verification frontend (installation et build)
+- verification backend (lint PHP, validation, test Docker Compose)
+- deploiement backend sur OVH
+- deploiement frontend sur OVH
+- resume final des jobs
 
-## 🚀 Getting Started
+Declenchement:
 
-### 1. Cloner le repo
+- push sur main
+- pull_request vers main
+
+## Lancer le projet en local
+
+### 1. Cloner le repository
 
 ```bash
-git clone https://github.com/ton-user/projet-ti.git
-cd projet-ti
+git clone https://github.com/xen0r-star/BelleMontreWallone.git
+cd BelleMontreWallone
 ```
 
-### 2. Configurer les variables d'environnement
-
-Copier et ajuster le fichier d'environnement avant de lancer quoi que ce soit :
+### 2. Installer les dependances frontend
 
 ```bash
-cp .env.example .env
-# Éditer .env avec tes valeurs (JWT_SECRET, ADMIN_API_KEY, etc.)
-```
-
-### 3. Lancer le backend (Docker)
-
-```bash
-docker-compose up -d
-```
-
-| Service | URL |
-|---|---|
-| API Backend | `http://localhost:8080` |
-| PhpMyAdmin | `http://localhost:8081` |
-| MySQL | `localhost:3306` |
-
-> Les conteneurs `backend`, `db` et `phpmyadmin` démarrent en mode détaché. Les variables d'environnement sont injectées directement depuis `docker-compose.yml`.
-
-### 4. Lancer le frontend (Dev)
-
-```bash
-cd frontend
 npm install
-npm run dev
 ```
 
-Le dev server Vite démarre sur **`http://localhost:5173`** avec HMR activé.
+### 3. Lancer backend + base de donnees (compose local)
 
----
-
-## ⚙️ Variables d'Environnement
-
-Ces variables sont injectées dans les conteneurs via `docker-compose.yml`.
-
-```env
-# Application
-APP_ENV=development
-
-# CORS
-CORS_ALLOWED_ORIGINS=http://localhost:5173
-
-# Base de données
-MYSQL_DATABASE=projet_ti
-MYSQL_USER=db_user
-MYSQL_PASSWORD=db_password
-MYSQL_ROOT_PASSWORD=root_password
-
-# Sécurité & Auth
-JWT_SECRET=your_jwt_secret_key
-ADMIN_USER=admin
-ADMIN_PASSWORD=admin_password
-ADMIN_API_KEY=your_api_key_here
+```bash
+cd apps/backend
+docker compose up -d
+cd ../..
 ```
 
-> ⚠️ Ne jamais committer `.env` avec des valeurs réelles. Ajouter `.env` au `.gitignore`.
+### 4. Lancer le frontend en developpement
 
----
+```bash
+npm run frontend:dev
+```
 
-## 📡 Endpoints API
+Frontend local: http://localhost:5173
 
-> Base URL : `http://localhost:8080`
+Backend local: http://localhost:8080/api
 
-| Méthode | Route | Auth | Description |
-|---|---|---|---|
-| `POST` | `/auth/register` | — | Inscription utilisateur |
-| `POST` | `/auth/login` | — | Connexion, retourne JWT |
-| `GET` | `/watches` | — | Liste du catalogue |
-| `GET` | `/watches/:id` | — | Détails d'une montre |
-| `POST` | `/watches` | JWT + API Key | Ajouter une montre (admin) |
-| `PUT` | `/watches/:id` | JWT + API Key | Modifier une montre (admin) |
-| `DELETE` | `/watches/:id` | JWT + API Key | Supprimer une montre (admin) |
-| `POST` | `/reservations` | JWT | Créer une réservation |
-| `GET` | `/reservations` | JWT + API Key | Lister toutes les réservations (admin) |
-| `POST` | `/contact` | — | Envoyer un message de contact |
+PhpMyAdmin local: http://localhost:8081
 
----
+## Endpoints API
 
-<div align="center">
+Base API de production: https://www.bellemontrewallone.store/api
 
-*Belle Montre Wallone — Architecture modulaire, stack moderne, zéro dépendance superflue.*
+| Methode | Endpoint            | Protection                     | Description                  |
+| ------- | ------------------- | ------------------------------ | ---------------------------- |
+| GET     | /health             | Aucune                         | Etat de sante API            |
+| GET     | /watches            | Aucune                         | Liste paginee des montres    |
+| GET     | /watches/filter     | Aucune                         | Valeurs de filtres catalogue |
+| GET     | /watches/:id        | Aucune                         | Detail montre                |
+| POST    | /auth/register      | Aucune                         | Inscription utilisateur      |
+| POST    | /auth/login         | Aucune                         | Connexion utilisateur        |
+| POST    | /auth/logout        | Session (cookie refresh_token) | Deconnexion utilisateur      |
+| POST    | /auth/refresh       | Refresh token (body JSON)      | Renouvellement de session    |
+| GET     | /auth/me            | Auth (cookie access_token)     | Utilisateur courant          |
+| POST    | /reservations       | Auth (cookie access_token)     | Creation reservation         |
+| POST    | /contact            | Aucune                         | Envoi formulaire de contact  |
+| POST    | /admin/watches      | Admin                          | Creation montre              |
+| PUT     | /admin/watches/:id  | Admin                          | Mise a jour montre           |
+| DELETE  | /admin/watches/:id  | Admin                          | Desactivation montre         |
+| GET     | /admin/reservations | Admin                          | Liste reservations           |
 
-</div>
+## Contributeurs
+
+Usernames GitHub detectes dans les commits du repo:
+
+- xen0r-star
+- TomusLeVrai
+- Coco-Lapin
+- Bapum755
+
+## Licence
+
+Projet sous licence MIT. Voir LICENSE.
