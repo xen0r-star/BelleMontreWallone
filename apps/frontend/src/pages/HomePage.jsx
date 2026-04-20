@@ -27,7 +27,7 @@ export default function HomePage() {
                     </div>
 
                     <div className="flex w-1/3 justify-center max-lg:w-full">
-                        <Link to="/" className="font-serif text-[34px] font-medium text-[#faf8f5] transition-transform duration-220 hover:-translate-y-px max-[700px]:text-[28px]">Belle Montre Wallonne</Link>
+                        <Link to="/" className="font-serif text-[34px] font-medium text-[#faf8f5] transition-transform duration-220 hover:-translate-y-px max-[700px]:text-[28px]">Belle Montre Wallone</Link>
                     </div>
 
                     <div className="flex w-1/3 items-center justify-end gap-7.5 max-lg:hidden">
