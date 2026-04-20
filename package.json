@@ -1,13 +1,13 @@
 {
-  "name": "projetti",
+  "name": "belle-montre-wallone",
   "private": true,
   "version": "1.0.0",
   "workspaces": [
     "apps/*"
   ],
   "scripts": {
-    "frontend:dev": "npm run dev --workspace @projetti/frontend",
-    "frontend:build": "npm run build --workspace @projetti/frontend",
-    "frontend:preview": "npm run preview --workspace @projetti/frontend"
+    "frontend:dev": "npm run dev --workspace @belle-montre-wallone/frontend",
+    "frontend:build": "npm run build --workspace @belle-montre-wallone/frontend",
+    "frontend:preview": "npm run preview --workspace @belle-montre-wallone/frontend"
   }
 }

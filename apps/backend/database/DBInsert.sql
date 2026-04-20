@@ -1,4 +1,4 @@
-﻿USE watch_store;
+﻿USE belle_montre_wallone;
 
 -- Utilisateurs
 INSERT INTO user(userId, userName, mail, dateOfBirth, hashPassWord, isAdmin, isPremium) VALUES

@@ -1,8 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 import { checkAPIStat } from "./fetchAPI";
-
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { sleep } from "../utils/sleep";
 
 export async function checkAuth(setUser, setVerification, setIsLoading) {
     setIsLoading(true);
@@ -25,7 +24,7 @@ export async function checkAuth(setUser, setVerification, setIsLoading) {
     setIsLoading(false);
 }
 
-export async function clientAuth(setMessage, setIsLoading, setVerification, setUser) {    
+export async function clientAuth(setMessage, setIsLoading, setVerification, setUser, payload) {
     setIsLoading(true);
     const result = await checkAPIStat();
     if(!result) {
@@ -33,26 +32,24 @@ export async function clientAuth(setMessage, setIsLoading, setVerification, setU
         return console.error("API pas disponible pour le frontend.");
     }
     try {
+        if (!payload || !payload.userName || !payload.password) throw new Error(`Erreur lors de la réception des données.`);
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({ // A finir
-                "userName": "Dupont",
-                "password": "$2y$13$TYjrxpTfrvq5/jYggPlPheahDSkWyx57Rz1adeF2JmT206pLFvBxm"
-            })
+            body: JSON.stringify(payload)
         });
         
         if (!response.ok) {
             setVerification(false);
             await sleep(2000);
-            setMessage("Vos identifiants sont incorrects. Veuillez-réessayer !")
+            setMessage('Vos identifiants sont incorrects. Veuillez-réessayer !')
             throw new Error(`Erreur requête HTTP : ${response.status}`);
         } else {
             setVerification(true);
-            setMessage("Connexion validée. Bienvenue dans votre espace.")
+            setMessage('Connexion validée. Bienvenue dans votre espace.')
         }
         const data  = await response.json();
         if (!data) {
@@ -86,12 +83,12 @@ export async function clientLogout(setMessage, setIsLoading, setVerification, se
         if (!response.ok) {
             setVerification(false);
             await sleep(2000);
-            setMessage("Impossible de vous déconnecter. Veuillez-réessayer !")
+            setMessage('Impossible de vous déconnecter. Veuillez-réessayer !')
             throw new Error(`Erreur requête HTTP : ${response.status}`);
         } else {
             setVerification(true);
             setUser(null);
-            setMessage("Déconnexion réussi. A bientôt chez BMW !")
+            setMessage('Déconnexion réussi. A bientôt chez BMW !')
         }
     } catch (e) {
         console.error("Erreur lors de la déconnexion :", e);
@@ -100,7 +97,7 @@ export async function clientLogout(setMessage, setIsLoading, setVerification, se
     }
 }
 
-export async function clientAuthReg(setMessage, setIsLoading, setVerification, setUser) {    
+export async function clientAuthReg(setMessage, setIsLoading, setVerification, setUser, payload) {    
     setIsLoading(true);
     const result = await checkAPIStat();
     if(!result) {
@@ -108,78 +105,26 @@ export async function clientAuthReg(setMessage, setIsLoading, setVerification, s
         return console.error("API pas disponible pour le frontend.");
     }
     try {
+        if (!payload || !payload.userName || !payload.email || !payload.password || !payload.dateOfBirth) throw new Error(`Erreur lors de la réception des données.`);
         const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({ // A finir
-                "userName": "Test",
-                "email": "Test@gmail.com",
-                "password": "mdptest1234",
-                "dateOfBirth": "01-01-2000"
-            })
+            body: JSON.stringify(payload)
         });
         
         if (!response.ok) {
             setVerification(false);
             await sleep(2000);
-            setMessage("Il est impossible de vous connecter. Veuillez-réessayer !")
+            setMessage('Il est impossible de vous connecter. Veuillez-réessayer !')
             throw new Error(`Erreur requête HTTP : ${response.status}`);
         } else {
             setVerification(true);
-            setMessage("Inscription validée. Bienvenue dans votre espace.")
+            setMessage('Inscription validée. Bienvenue dans votre espace.')
         }
         const data  = await response.json();
-        console.log(data);
-        if (!data) {
-            return console.error("Erreur lors de l'authentification lors de la récupération des informations utilisateur.");
-        } else {
-            setUser(data.user)
-            setVerification(true);
-        }
-    } catch (e) {
-        console.error("Erreur lors de la connexion :", e);
-    } finally {
-        setIsLoading(false);
-    }
-}
-
-export async function clientContact(setMessage, setIsLoading, setIsSent) {
-    setIsLoading(true);
-    const result = await checkAPIStat();
-    if(!result) {
-        setIsLoading(false);
-        return console.error("API pas disponible pour le frontend.");
-    }
-    try {
-        const response = await fetch(`${API_URL}/contact`, {
-            method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json'
-            },
-            credentials: 'include',
-            body: JSON.stringify({ // A finir
-                "surname": "Test",
-                "name": "Test",
-                "email": "Test@gmail.com",
-                "tel": "+32 123 45 67 89",
-                "message": "testmsg"
-            })
-        });
-        
-        if (!response.ok) {
-            setVerification(false);
-            await sleep(2000);
-            setMessage("Il est impossible de vous connecter. Veuillez-réessayer !")
-            throw new Error(`Erreur requête HTTP : ${response.status}`);
-        } else {
-            setVerification(true);
-            setMessage("Inscription validée. Bienvenue dans votre espace.")
-        }
-        const data  = await response.json();
-        console.log(data);
         if (!data) {
             return console.error("Erreur lors de l'authentification lors de la récupération des informations utilisateur.");
         } else {

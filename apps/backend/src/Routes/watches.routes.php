@@ -140,7 +140,27 @@ function getWatchById(string $id): void {
     $db = Database::connection();
 
     try {
-        $statement = $db->prepare('SELECT * FROM watch WHERE watchId = :id');
+        $statement = $db->prepare("
+            SELECT 
+                city.idCity, city.cityName, 
+                store.idStore, store.storeName,
+                watchCabinet.idWatchCabinet, watchCabinet.cabinetName,
+                watchCabinet.positionInStore, shelf.positionInCabinet,
+
+                watch.watchId, watch.idShelf, watch.brand,
+                watch.model, watch.watchDesc,
+                watch.watchCollection, watch.imageUrl,
+                watch.retailPrice, watch.marketPrice,
+                watch.isInProduction, watch.movement,
+                watch.diameter, watch.materials,
+                watch.watertightness, watch.isActif
+            FROM city
+            JOIN store USING(idCity)
+            JOIN watchCabinet USING(idStore)
+            JOIN shelf USING(idWatchCabinet)
+            JOIN watch USING(idShelf)
+            WHERE watch.watchId = :id;
+        ");
         $statement->execute(['id' => $id]);
         $watch = $statement->fetch();
 
@@ -161,7 +181,33 @@ function getWatchById(string $id): void {
     }
 
     Response::json([
-        'data' => $watch
+        'data' => [
+            'idCity' => $watch["idCity"],
+            'cityName' => $watch["cityName"],
+            'idStore' => $watch["idStore"],
+            'storeName' => $watch["storeName"],
+            'idWatchCabinet' => $watch["idWatchCabinet"],
+            'cabinetName' => $watch["cabinetName"],
+            'positionInStore' => $watch["positionInStore"],
+            'positionInCabinet' => $watch["positionInCabinet"],
+            'watch' => [
+                'watchId' => $watch["watchId"],
+                'idShelf' => $watch["idShelf"],
+                'brand' => $watch["brand"],
+                'model' => $watch["model"],
+                'watchDesc' => $watch["watchDesc"],
+                'watchCollection' => $watch["watchCollection"],
+                'imageUrl' => $watch["imageUrl"],
+                'retailPrice' => $watch["retailPrice"],
+                'marketPrice' => $watch["marketPrice"],
+                'isInProduction' => $watch["isInProduction"],
+                'movement' => $watch["movement"],
+                'diameter' => $watch["diameter"],
+                'materials' => $watch["materials"],
+                'watertightness' => $watch["watertightness"],
+                'isActif' => $watch["isActif"]
+            ]
+        ]
     ]);
 }
 

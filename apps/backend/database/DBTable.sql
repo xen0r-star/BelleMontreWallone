@@ -1,6 +1,6 @@
 SET LC_TIME_NAMES = 'fr_BE';
-CREATE DATABASE IF NOT EXISTS watch_store CHARACTER SET = 'utf8mb4';
-USE watch_store;
+CREATE DATABASE IF NOT EXISTS belle_montre_wallone CHARACTER SET = 'utf8mb4';
+USE belle_montre_wallone;
 
 CREATE TABLE IF NOT EXISTS user(
     userId INT AUTO_INCREMENT NOT NULL,

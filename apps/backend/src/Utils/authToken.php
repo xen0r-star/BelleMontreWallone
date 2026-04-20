@@ -11,7 +11,6 @@ use PDOException;
 
 
 function getAuthToken(bool $isAdmin = false): ?array {
-    // Reprendre une partie du commit `https://github.com/xen0r-star/BelleMontreWallone/tree/d9601e9742dda54fd492d56e700d2c78bab35890` si besoin de refaire l'auth avec le bearer
     $authHeader = $_COOKIE['access_token'] ?? '';
     if (!$authHeader) {
         Response::json([
@@ -60,6 +59,8 @@ function getAuthToken(bool $isAdmin = false): ?array {
             'userName' => (string) $token['userName'],
             'mail' => (string) $token['mail'],
         ]);
+
+        
         
         $user = $statement->fetch();
         if (!$user) {
@@ -86,7 +87,6 @@ function getAuthToken(bool $isAdmin = false): ?array {
         ], 403);
         return null;
     }
-
 
     return [
         'userId' => (int) $user['userId'],

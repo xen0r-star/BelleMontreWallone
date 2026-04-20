@@ -21,8 +21,22 @@ export default function LoginPage() {
     async function handleLogin(e) {
         setMessage('');
         e.preventDefault();
-        // Data entrée à récupérer (UserName / Password)
-        await clientAuth(setMessage, setIsLoading, setVerif, setUser);
+
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        if (!data.username || !data.password) {
+            setVerif(false);
+            return setMessage('Des identifiants sont manquants. Merci de réessayer !')
+        }
+
+        const payload = {
+            userName: data.username,
+            password: data.password
+        }
+        
+        await clientAuth(setMessage, setIsLoading, setVerif, setUser, payload);
     };
 
     async function handleLogout(e) {
@@ -55,6 +69,9 @@ export default function LoginPage() {
                     <div className="text-[#8c8d8e]">
                         Bienvenue sur ton espace personnel {user.userName} !
                         <hr/>Informations du compte :<br/>Mail : {user.mail}<br/>Nom : {user.userName}<br/>Administrateur du site : {user.isAdmin ? "Oui" : "Non"}<hr/>
+                    </div>
+                    <div className="text-red-800 font-bold">
+                        ⚠️ Attention, par mesure de sécurité après 15 minutes vous serait déconnecter de votre compte (RECONNEXION NECESSAIRE) ⚠️
                     </div>
                     <button className="m-0 cursor-pointer border border-[#ddd6cc] bg-[#ff6c6c] px-4 py-2 text-sm text-[#1c1d21] hover:bg-[#ff4040]" onClick={handleLogout}>
                         Se déconnecter
@@ -99,7 +116,7 @@ export default function LoginPage() {
                     <p className="m-0 text-[0.9rem] text-[#8c8d8e]">
                         Pas encore de compte ? <Link to="/inscription" className="text-[#1c1d21] underline">Inscription</Link>
                     </p>
-                    {message && <p className={verif ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#d16d6d] bg-[#ffc9c9] p-3 text-[#b22626]"}>{message}</p>}
+                    {message && <p className={verif ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#a57c7c] bg-[#f9eded] p-3 text-[#502727]"}>{message}</p>}
                 </section>
             </main>
             <SiteFooter />
