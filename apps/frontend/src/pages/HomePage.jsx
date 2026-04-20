@@ -1,41 +1,11 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 
 export default function HomePage() {
-    const [isScrolled, setIsScrolled] = useState(false);
-
-    useEffect(() => {
-        const onScroll = () => {
-            setIsScrolled(window.scrollY > 24);
-        };
-
-        onScroll();
-        window.addEventListener("scroll", onScroll, { passive: true });
-
-        return () => {
-            window.removeEventListener("scroll", onScroll);
-        };
-    }, []);
-
     return (
         <div className="flex min-h-screen flex-col bg-[#faf8f5] text-[#1c1d21]">
-            <nav className={`fixed left-0 top-0 z-50 w-full border-b border-[rgba(255,255,255,0.1)] transition-colors duration-200 ${isScrolled ? "border-[#2a2f35] bg-[#1c1d21]" : "bg-transparent"}`}>
-                <div className="mx-auto flex h-24 w-full max-w-360 items-center justify-between px-6 max-lg:justify-center max-[700px]:h-18.5">
-                    <div className="flex w-1/3 items-center gap-7.5 max-lg:hidden">
-                        <Link to="/collection" className="relative text-[11px] font-medium uppercase tracking-[0.05em] text-[#faf8f5] transition-opacity duration-220 hover:opacity-[0.86] after:content-[''] after:absolute after:left-0 after:-bottom-1.5 after:w-full after:h-px after:bg-current after:origin-left after:scale-x-0 after:transition-transform after:duration-240 hover:after:scale-x-100">Collection</Link>
-                    </div>
-
-                    <div className="flex w-1/3 justify-center max-lg:w-full">
-                        <Link to="/" className="font-serif text-[34px] font-medium text-[#faf8f5] transition-transform duration-220 hover:-translate-y-px max-[700px]:text-[28px]">Belle Montre Wallone</Link>
-                    </div>
-
-                    <div className="flex w-1/3 items-center justify-end gap-7.5 max-lg:hidden">
-                        <Link to="/besoin-daide" className="relative text-[11px] font-medium uppercase tracking-[0.05em] text-[#faf8f5] transition-opacity duration-220 hover:opacity-[0.86] after:content-[''] after:absolute after:left-0 after:-bottom-1.5 after:w-full after:h-px after:bg-current after:origin-left after:scale-x-0 after:transition-transform after:duration-240 hover:after:scale-x-100">Aide</Link>
-                        <Link to="/connexion" className="relative text-[11px] font-medium uppercase tracking-[0.05em] text-[#faf8f5] transition-opacity duration-220 hover:opacity-[0.86] after:content-[''] after:absolute after:left-0 after:-bottom-1.5 after:w-full after:h-px after:bg-current after:origin-left after:scale-x-0 after:transition-transform after:duration-240 hover:after:scale-x-100">Connexion</Link>
-                    </div>
-                </div>
-            </nav>
+            <SiteHeader transparentOnTop={true} reserveSpace={false} />
 
             <section
                 className="relative flex h-screen w-full items-center justify-center bg-[#1c1d21] bg-cover bg-center bg-no-repeat"

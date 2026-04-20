@@ -10,3 +10,84 @@ body {
     color: #1c1d21;
     font-family: "Satoshi", sans-serif;
 }
+
+@keyframes mobileMenuPanelIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.992);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes mobileMenuPanelOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.992);
+    }
+}
+
+@keyframes mobileMenuItemIn {
+    from {
+        opacity: 0;
+        transform: translateY(9px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes mobileMenuItemOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+}
+
+.mobile-menu-panel {
+    transform-origin: top center;
+}
+
+.mobile-menu-panel-open {
+    animation: mobileMenuPanelIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mobile-menu-panel-close {
+    animation: mobileMenuPanelOut 200ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.mobile-menu-item-open {
+    opacity: 0;
+    animation: mobileMenuItemIn 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.mobile-menu-item-close {
+    opacity: 1;
+    animation: mobileMenuItemOut 180ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mobile-menu-panel-open,
+    .mobile-menu-panel-close,
+    .mobile-menu-item-open,
+    .mobile-menu-item-close {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+}
