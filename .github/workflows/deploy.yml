@@ -220,17 +220,26 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     needs: [changes, frontend-check, backend-check, deploy-frontend, deploy-backend]
+    environment: notify
+
     steps:
-      - name: Résumé CI/CD
-        run: |
-          echo "=== Changement détecté ==="
-          echo "Frontend: ${{ needs.changes.outputs.frontend }}"
-          echo "Backend : ${{ needs.changes.outputs.backend }}"
-          echo ""
-          echo "=== Résultats checks ==="
-          echo "Frontend check: ${{ needs.frontend-check.result }}"
-          echo "Backend check : ${{ needs.backend-check.result }}"
-          echo ""
-          echo "=== Résultats déploiements (push uniquement) ==="
-          echo "Deploy frontend: ${{ needs.deploy-frontend.result }}"
-          echo "Deploy backend : ${{ needs.deploy-backend.result }}"
+      - name: Envoyer Notification Discord
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "Résumé CI/CD - Projet"
+          description: |
+            **Changements détectés**
+            - Frontend: ${{ needs.changes.outputs.frontend }}
+            - Backend : ${{ needs.changes.outputs.backend }}
+
+            **Résultats checks**
+            - Frontend check: ${{ needs.frontend-check.result }}
+            - Backend check : ${{ needs.backend-check.result }}
+
+            **Résultats déploiements**
+            - Deploy frontend: ${{ needs.deploy-frontend.result }}
+            - Deploy backend : ${{ needs.deploy-backend.result }}
+
+          status: ${{ (needs.frontend-check.result == 'success' && needs.backend-check.result == 'success') && 'success' || 'failure' }}
+
