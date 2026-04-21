@@ -12,11 +12,20 @@ use PDOException;
 
 function getAuthToken(bool $isAdmin = false): ?array {
     $authHeader = $_COOKIE['access_token'] ?? '';
-    if (!$authHeader) {
+    $refreshToken = $_COOKIE['refresh_token'] ?? '';
+    if (!$authHeader && !$refreshToken) {
         Response::json([
             'authentification' => 'UNAUTHORIZED',
-            'message' => 'Missing or invalid access token',
-        ], 200);
+            'message' => 'Missing access or refresh token',
+        ], 401);
+        return null;
+    }
+
+    if (!$authHeader && $refreshToken) {
+        Response::json([
+            'error' => 'TOKEN_EXPIRED',
+            'message' => 'Invalid access token',
+        ], 401);
         return null;
     }
 
@@ -26,7 +35,7 @@ function getAuthToken(bool $isAdmin = false): ?array {
 
     if ($token === null) {
         Response::json([
-            'error' => 'UNAUTHORIZED',
+            'error' => 'TOKEN_EXPIRED',
             'message' => 'Missing or invalid access token',
         ], 401);
         return null;

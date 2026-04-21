@@ -294,10 +294,8 @@ function register(): void {
 
 
 function refresh(): void {
-    $data = readJsonBody(2048);
-    if ($data === null) return;
-
-    if (!array_key_exists('refreshToken', $data) || !is_string($data['refreshToken'])) {
+    $authHeader = $_COOKIE['refresh_token'] ?? '';
+    if (!$authHeader) {
         Response::json([
             'error' => 'VALIDATION_ERROR',
             'message' => 'Refresh token is required',
@@ -305,7 +303,18 @@ function refresh(): void {
         return;
     }
 
-    $refreshToken = trim($data['refreshToken']);
+    // $data = readJsonBody(2048);
+    // if ($data === null) return;
+
+    // if (!array_key_exists('refreshToken', $data) || !is_string($data['refreshToken'])) {
+    //     Response::json([
+    //         'error' => 'VALIDATION_ERROR',
+    //         'message' => 'Refresh token is required',
+    //     ], 400);
+    //     return;
+    // }
+
+    $refreshToken = trim($authHeader);
     if ($refreshToken === '') {
         Response::json([
             'error' => 'VALIDATION_ERROR',
@@ -319,12 +328,13 @@ function refresh(): void {
     $db = Database::connection();
 
     try {
-        $statement = $db->prepare('SELECT userId, token, expiresAt, revokedAt FROM refresh_token WHERE token = :token LIMIT 1');
+        $statement = $db->prepare('SELECT userId, token, expiresAt, revokedAt FROM refreshToken WHERE token = ? LIMIT 1');
         if ($statement === false) {
             throw new PDOException('Unable to prepare token lookup statement');
         }
 
-        $statement->execute(['token' => $refreshToken]);
+        $statement->execute([$refreshToken]);
+        
         $tokenRecord = $statement->fetch();
 
         if (!$tokenRecord) {
@@ -369,7 +379,6 @@ function refresh(): void {
         }
 
         $newAccessToken = generateAccessToken($user, $config);
-
 
         setcookie('access_token', $newAccessToken, [
             'expires' => time() + 900,

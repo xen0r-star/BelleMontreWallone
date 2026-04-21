@@ -70,9 +70,6 @@ export default function LoginPage() {
                         Bienvenue sur ton espace personnel {user.userName} !
                         <hr/>Informations du compte :<br/>Mail : {user.mail}<br/>Nom : {user.userName}<br/>Administrateur du site : {user.isAdmin ? "Oui" : "Non"}<hr/>
                     </div>
-                    <div className="text-red-800 font-bold">
-                        ⚠️ Attention, par mesure de sécurité après 15 minutes vous serait déconnecter de votre compte (RECONNEXION NECESSAIRE) ⚠️
-                    </div>
                     <button className="m-0 cursor-pointer border border-[#ddd6cc] bg-[#ff6c6c] px-4 py-2 text-sm text-[#1c1d21] hover:bg-[#ff4040]" onClick={handleLogout}>
                         Se déconnecter
                     </button>                    

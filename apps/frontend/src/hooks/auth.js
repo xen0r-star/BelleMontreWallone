@@ -5,11 +5,32 @@ import { sleep } from "../utils/sleep";
 
 export async function checkAuth(setUser, setVerification, setIsLoading) {
     setIsLoading(true);
-    const response = await fetch(`${API_URL}/auth/me`, {
+    let response = await fetch(`${API_URL}/auth/me`, {
         method: 'GET',
         credentials: 'include'
     });
-    if (response.status === 401) return setUser(null);
+    if (response.status === 401) {
+        const datas = await response.json()
+        if (datas.authentification === 'UNAUTHORIZED') {
+            setIsLoading(false);
+            return setUser(null);
+        } else {
+            const rep = await fetch(`${API_URL}/auth/refresh`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            if (rep.ok) {
+                response = await fetch(`${API_URL}/auth/me`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+            } else {
+                console.log("aucun user");
+                setIsLoading(false);
+                return setUser(null);
+            }
+        }    
+    }
     if (!response.ok) throw new Error(`Erreur requête HTTP : ${response.status}`);
 
     const data  = await response.json();
