@@ -85,3 +85,29 @@ export async function fetchReservations(setReservations, setIsLoading) {
         fetchReservations();
     }, [])
 }
+
+export async function fetchWatchLocation(id, setLocation, setIsLoading) {
+    setIsLoading(true);
+    try {
+        const response = await fetch(`${API_URL}/watches/${id}/location`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) throw new Error(`Erreur requête HTTP : ${response.status}`);
+
+        const { data } = await response.json();
+        if (data) {
+            setLocation(data);
+        }
+    }
+    catch (e) {
+        console.error("Erreur lors du chargement des disponibilités:", e);
+    }
+    finally {
+        setIsLoading(false);
+    }
+           
+}

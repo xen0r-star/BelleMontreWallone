@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
-import { fetchWatches } from "../hooks/fetchAPI";
+import { fetchWatches, fetchWatchLocation } from "../hooks/fetchAPI";
 import { checkAuth } from "../hooks/auth";
 import { clientReservation } from "../hooks/reservations";
 import { sleep } from "../utils/sleep";
@@ -35,6 +35,9 @@ export default function WatchDetailPage() {
     const [user, setUser] = useState(null);
     const [isSent, setIsSent] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [location, setLocation] = useState(null);
+    const[isLocLoading, setIsLocLoading] = useState(false);
     
     useEffect(() => {
         const checkUser = async () => {
@@ -42,7 +45,13 @@ export default function WatchDetailPage() {
         };
         checkUser();
     }, []);
-    
+
+    useEffect(() => {
+        if(isModal2Open && id) {
+            fetchWatchLocation(id, setLocation, setIsLocLoading);
+        }
+    }, [isModal2Open, id]);
+
     fetchWatches(setWatches, setIsLoading);
     if (!watches || watches.length === 0 || isLoading) {
         return (<div className="flex min-h-screen flex-col">
@@ -71,6 +80,7 @@ export default function WatchDetailPage() {
             </div>
         );
     }
+
 
     async function handleReservation(e) {
         setMessage('');
@@ -233,28 +243,49 @@ export default function WatchDetailPage() {
                     <div className="w-full max-w-190 border border-[#ddd6cc] bg-white p-[clamp(1rem,3vw,2rem)]">
                         <button
                             type="button"
-                            className="float-right cursor-pointer border-none bg-transparent text-[#8c8d8e]"
+                            className="float-right cursor-pointer border-none bg-transparent text-[#8c8d8e] hover:text-black"
                             onClick={() => {
                                 setIsModal2Open(false);
-                                setSent(false);
                             }}
                         >
                             Fermer
                         </button>
 
-                        <h2>Disponibilités - {watch.model}</h2>
-                        <form className="grid gap-3" onSubmit={handleReservation}>
-                            blablabla du form
-                            <button className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" type="submit">Bouton ??</button>
-                        </form>
-                        <br/>
-                        {message && <p className={isSent ? "border border-[#7ca584] bg-[#edf9ef] p-3 text-[#275030]" : "border border-[#a57c7c] bg-[#f9eded] p-3 text-[#502727]"}>{message}</p>}
-
-
+                        <h2 className="text-2xl font-['Cormorant_Garamond'] mb-6">Disponibilités - {watch.model}</h2>
+                        {isLocLoading ? (
+                            <p className="animate-pulse py-4 italic text-[#8c8d8e]">Recherche des stocks en magasin...</p>
+                        ) : location ? (
+                            <div className="grid gap-3 border-t border-[#ddd6cc] pt-4">
+                                <div className="flex justify-between border-b border-[#eee] py-2 text-[0.95rem]">
+                                    <span className="font-bold">Ville</span>
+                                    <span>{location.cityName}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-[#eee] py-2 text-[0.95rem]">
+                                    <span className="font-bold">Magasin</span>
+                                    <span>{location.storeName}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-[#eee] py-2 text-[0.95rem]">
+                                    <span className="font-bold">Armoire</span>
+                                    <span>{location.cabinetName}</span>
+                                </div>
+                                <div className="mt-4 flex justify-end">
+                                    <button 
+                                        className="inline-flex cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black"
+                                        onClick={() => {
+                                            setIsModal2Open(false);
+                                            setIsModalOpen(true);
+                                        }}
+                                    >
+                                        Réserver cette pièce
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <p className="text-red-600">Aucune information de stock disponible pour cette montre.</p>
+                        )}
                     </div>
                 </div>
             )}
-
             <SiteFooter />
         </div>
     );
