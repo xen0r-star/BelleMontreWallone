@@ -89,7 +89,7 @@ export async function fetchReservations(setReservations, setIsLoading) {
 export async function fetchWatchLocation(id, setLocation, setIsLoading) {
     setIsLoading(true);
     try {
-        const response = await fetch(`${API_URL}/watches/${id}/location`, {
+        const response = await fetch(`${API_URL}/watches/${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
