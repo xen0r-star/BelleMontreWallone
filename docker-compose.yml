@@ -13,6 +13,7 @@ services:
     networks:
       - default
       - traefik
+      - mail-shared-network
     environment:
       APP_ENV: ${APP_ENV:-development}
       DB_HOST: ${DB_HOST:-db}
@@ -81,6 +82,8 @@ networks:
   traefik:
     external: true
     name: ${TRAEFIK_NETWORK:-webproxy}
+  mail-shared-network:
+    external: true
 
 volumes:
   db_data:
