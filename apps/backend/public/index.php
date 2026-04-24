@@ -20,10 +20,12 @@ require __DIR__ . '/../src/Utils/json.php';
 require __DIR__ . '/../src/Utils/jwtToken.php';
 require __DIR__ . '/../src/Utils/normalize.php';
 require __DIR__ . '/../src/Utils/validation.php';
+require __DIR__ . '/../src/Services/sendMail.php';
 
 require __DIR__ . '/../src/Routes/auth.routes.php';
 require __DIR__ . '/../src/Routes/admin.routes.php';
 require __DIR__ . '/../src/Routes/contact.routes.php';
+require __DIR__ . '/../src/Routes/newsletter.routes.php';
 require __DIR__ . '/../src/Routes/reservation.routes.php';
 require __DIR__ . '/../src/Routes/watches.routes.php';
 require __DIR__ . '/../src/Routes/routes.php';
