@@ -48,6 +48,16 @@ function subscribeNewsletter(): void {
     $db = Database::connection();
 
     try {
+        $statement = $db->prepare('SELECT newsletterId FROM newsletter WHERE email = :email LIMIT 1');
+        $statement->execute(['email' => $email]);
+        if ($statement->fetch()) {
+            Response::json([
+                'error' => 'ALREADY_SUBSCRIBED',
+                'message' => 'This email is already subscribed to the newsletter',
+            ], 409);
+            return;
+        }
+
         $statement = $db->prepare('INSERT INTO newsletter(email) VALUES (:email)');
         $statement->execute([
             'email' => (string) $email
