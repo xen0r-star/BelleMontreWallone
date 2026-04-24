@@ -72,11 +72,18 @@ function subscribeNewsletter(): void {
     }
 
 
-    welcomeEmail($email);
+    try {
+        welcomeEmail($email);
 
+        Response::json([
+            'success' => true,
+            'message' => 'Newsletter subscription received successfully',
+        ]);
 
-    Response::json([
-        'success' => true,
-        'message' => 'Newsletter subscription received successfully',
-    ]);
+    } catch (\Throwable) {
+        Response::json([
+            'error' => 'EMAIL_ERROR',
+            'message' => 'Subscription saved but failed to send welcome email',
+        ], 500);
+    }
 }
