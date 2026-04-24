@@ -14,6 +14,15 @@ CREATE TABLE IF NOT EXISTS user(
     PRIMARY KEY (userId)
 )engine=innodb;
 
+CREATE TABLE IF NOT EXISTS newsletter(
+    newsletterId INT AUTO_INCREMENT NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    subscribedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (newsletterId),
+    UNIQUE KEY(email)
+)engine=innodb;
+
 CREATE TABLE IF NOT EXISTS refreshToken(
     tokenId INT AUTO_INCREMENT NOT NULL,
     userId INT NOT NULL,

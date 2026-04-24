@@ -23,13 +23,14 @@ function dispatch(string $method, string $path): void {
         'POST' => [
             '/api/reservations'  => fn() => createReservation(),
 
-            '/api/auth/login'    => fn() => login(),
-            '/api/auth/logout'   => fn() => logout(),
-            '/api/auth/register' => fn() => register(),
-            '/api/auth/refresh'  => fn() => refresh(),
+            '/api/auth/login'           => fn() => login(),
+            '/api/auth/logout'          => fn() => logout(),
+            '/api/auth/register'        => fn() => register(),
+            '/api/auth/refresh'         => fn() => refresh(),
 
-            '/api/admin/watches' => fn() => createAdminWatch(),
-            '/api/contact'       => fn() => contact(),
+            '/api/admin/watches'        => fn() => createAdminWatch(),
+            '/api/contact'              => fn() => contact(),
+            '/api/newsletter/subscribe' => fn() => subscribeNewsletter(),
         ],
         'PUT' => [
             '#/api/admin/watches/([^/]+)#' => fn($id) => updateAdminWatch($id),
