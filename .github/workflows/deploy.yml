@@ -1,13 +1,12 @@
-name: CI/CD - Build & Deploy
+name: CI/CD - Build & Deploy (Fixed)
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  # Détection des changements
   changes:
     runs-on: ubuntu-latest
     outputs:
@@ -17,86 +16,102 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
-      - name: Détecter les changements
+
+      - name: Detect changed paths
         id: changes
+        shell: bash
         run: |
-          if git diff --quiet HEAD~1 -- apps/frontend; then
-            echo "frontend=false" >> $GITHUB_OUTPUT
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            TARGET="${{ github.event.pull_request.head.sha }}"
           else
-            echo "frontend=true" >> $GITHUB_OUTPUT
-          fi
-          
-          if git diff --quiet HEAD~1 -- apps/backend; then
-            echo "backend=false" >> $GITHUB_OUTPUT
-          else
-            echo "backend=true" >> $GITHUB_OUTPUT
+            BASE="${{ github.event.before }}"
+            TARGET="${{ github.sha }}"
+
+            if [[ -z "${BASE}" || "${BASE}" == "0000000000000000000000000000000000000000" ]]; then
+              BASE="$(git rev-list --max-parents=0 HEAD | tail -n 1)"
+            fi
           fi
 
-  # Vérification du Frontend React
+          echo "Comparing ${BASE}..${TARGET}"
+
+          if git diff --quiet "${BASE}" "${TARGET}" -- apps/frontend; then
+            echo "frontend=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "frontend=true" >> "$GITHUB_OUTPUT"
+          fi
+
+          if git diff --quiet "${BASE}" "${TARGET}" -- apps/backend; then
+            echo "backend=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "backend=true" >> "$GITHUB_OUTPUT"
+          fi
+
   frontend-check:
     needs: changes
-    if: needs.changes.outputs.frontend == 'true' || github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./apps/frontend
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: 'npm'
-      
-      - name: Nettoyer cache npm
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: apps/frontend/package-lock.json
+
+      - name: Clean npm cache
         run: npm cache clean --force
 
-      - name: Installer dépendances
+      - name: Install dependencies
         run: npm ci --include=optional
 
-      - name: Créer .env frontend
+      - name: Create frontend env
         run: |
           cat > .env << 'EOF'
           VITE_API_URL=https://bellemontrewallone.store/api
           EOF
-      
+
       - name: Build
         run: npm run build
 
-      - name: Upload artifact frontend
+      - name: Upload frontend artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
           path: apps/frontend/dist
           if-no-files-found: error
 
-  # Vérification du Backend PHP
   backend-check:
     needs: changes
-    if: needs.changes.outputs.backend == 'true' || github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: "8.2"
           tools: composer
-      
-      - name: Vérifier syntaxe PHP
+
+      - name: Check PHP syntax
         run: |
           find apps/backend/src -name "*.php" -exec php -l {} \;
-      
+
       - name: Composer validation
         working-directory: ./apps/backend
-        run: composer validate --no-check-publish 2>/dev/null || echo "Pas de composer.json"
-      
-      - name: Tester avec Docker Compose
+        run: composer validate --no-check-publish 2>/dev/null || echo "No composer.json"
+
+      - name: Smoke test with Docker Compose
         working-directory: ./apps/backend
         run: |
           docker compose up -d
@@ -104,17 +119,16 @@ jobs:
           docker compose logs
           docker compose down
 
-  # Déploiement Backend sur OVH
   deploy-backend:
     needs: [changes, backend-check]
     if: github.event_name == 'push' && needs.changes.outputs.backend == 'true' && needs.backend-check.result == 'success'
     runs-on: ubuntu-latest
     environment: production
-    
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Générer .env backend depuis secrets
+      - name: Generate backend env from secrets
         run: |
           cat > .env.deploy << 'EOF'
           APP_ENV=${{ secrets.APP_ENV }}
@@ -140,8 +154,8 @@ jobs:
           TRAEFIK_ENTRYPOINTS=${{ secrets.TRAEFIK_ENTRYPOINTS }}
           TRAEFIK_CERTRESOLVER=${{ secrets.TRAEFIK_CERTRESOLVER }}
           EOF
-      
-      - name: Créer clé SSH privée
+
+      - name: Create SSH private key
         env:
           OVH_SSH_PRIVATE_KEY: ${{ secrets.OVH_SSH_PRIVATE_KEY }}
           OVH_SERVER_IP: ${{ secrets.OVH_SERVER_IP }}
@@ -150,32 +164,31 @@ jobs:
           mkdir -p ~/.ssh
           echo "$OVH_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p $OVH_PORT_SSH -H $OVH_SERVER_IP >> ~/.ssh/known_hosts
+          ssh-keyscan -p "$OVH_PORT_SSH" -H "$OVH_SERVER_IP" >> ~/.ssh/known_hosts
 
-      - name: Préparer dossiers distants
+      - name: Prepare remote folders
         run: |
           ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'mkdir -p ${{ secrets.OVH_PATH }} ${{ secrets.OVH_PATH }}/backend ${{ secrets.OVH_PATH }}/frontend ${{ secrets.OVH_PATH }}/config'
 
-      - name: Déployer Docker Compose racine
+      - name: Deploy root Docker Compose
         run: |
           scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa docker-compose.yml ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/docker-compose.yml
           scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa .env.deploy ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/.env
-      
-      - name: Déployer Backend
+
+      - name: Deploy backend files
         run: |
           ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'rm -rf ${{ secrets.OVH_PATH }}/backend/*'
           scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/backend/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/backend/
           scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa config/php.ini ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/config/php.ini
-      
-      - name: Lancer Docker Compose backend
+
+      - name: Run backend Docker Compose
         run: |
           ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'cd ${{ secrets.OVH_PATH }} && docker compose --env-file .env up -d --build --remove-orphans && docker compose ps'
-      
-      - name: Nettoyer clé SSH
+
+      - name: Clean SSH private key
         if: always()
         run: rm -f ~/.ssh/id_rsa
 
-  # Déploiement Frontend sur OVH
   deploy-frontend:
     needs: [changes, frontend-check]
     if: github.event_name == 'push' && needs.changes.outputs.frontend == 'true' && needs.frontend-check.result == 'success'
@@ -185,13 +198,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download artifact frontend
+      - name: Download frontend artifact
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
           path: apps/frontend/dist
 
-      - name: Créer clé SSH privée
+      - name: Create SSH private key
         env:
           OVH_SSH_PRIVATE_KEY: ${{ secrets.OVH_SSH_PRIVATE_KEY }}
           OVH_SERVER_IP: ${{ secrets.OVH_SERVER_IP }}
@@ -200,46 +213,65 @@ jobs:
           mkdir -p ~/.ssh
           echo "$OVH_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p $OVH_PORT_SSH -H $OVH_SERVER_IP >> ~/.ssh/known_hosts
+          ssh-keyscan -p "$OVH_PORT_SSH" -H "$OVH_SERVER_IP" >> ~/.ssh/known_hosts
 
-      - name: Préparer dossiers distants
+      - name: Prepare remote folders
         run: |
           ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'mkdir -p ${{ secrets.OVH_PATH }} ${{ secrets.OVH_PATH }}/frontend'
 
-      - name: Déployer Frontend
+      - name: Deploy frontend files
         run: |
           ssh -p ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }} 'rm -rf ${{ secrets.OVH_PATH }}/frontend/*'
           scp -P ${{ secrets.OVH_PORT_SSH }} -i ~/.ssh/id_rsa -r apps/frontend/dist/* ${{ secrets.OVH_SSH_USER }}@${{ secrets.OVH_SERVER_IP }}:${{ secrets.OVH_PATH }}/frontend/
 
-      - name: Nettoyer clé SSH
+      - name: Clean SSH private key
         if: always()
         run: rm -f ~/.ssh/id_rsa
 
-  # Notification des résultats
   notify:
     runs-on: ubuntu-latest
     if: always()
-    needs: [changes, frontend-check, backend-check, deploy-frontend, deploy-backend]
+    needs:
+      [changes, frontend-check, backend-check, deploy-frontend, deploy-backend]
     environment: notify
 
     steps:
-      - name: Envoyer Notification Discord
+      - name: Compute global status
+        id: final-status
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ok() {
+            local result="$1"
+            [[ "$result" == "success" || "$result" == "skipped" ]]
+          }
+
+          if ok "${{ needs.changes.result }}" \
+            && ok "${{ needs.frontend-check.result }}" \
+            && ok "${{ needs.backend-check.result }}" \
+            && ok "${{ needs.deploy-frontend.result }}" \
+            && ok "${{ needs.deploy-backend.result }}"; then
+            echo "status=Success" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=Failure" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Send Discord notification
         uses: sarisia/actions-status-discord@v1
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          title: "Résumé CI/CD - Projet"
+          title: "Resume CI/CD - Projet"
           description: |
-            **Changements détectés**
+            **Changes detected**
             - Frontend: ${{ needs.changes.outputs.frontend }}
             - Backend : ${{ needs.changes.outputs.backend }}
 
-            **Résultats checks**
+            **Checks**
             - Frontend check: ${{ needs.frontend-check.result }}
             - Backend check : ${{ needs.backend-check.result }}
 
-            **Résultats déploiements**
+            **Deployments**
             - Deploy frontend: ${{ needs.deploy-frontend.result }}
             - Deploy backend : ${{ needs.deploy-backend.result }}
-
-          status: ${{ (needs.frontend-check.result == 'success' && needs.backend-check.result == 'success') && 'success' || 'failure' }}
-
+          status: ${{ steps.final-status.outputs.status }}
