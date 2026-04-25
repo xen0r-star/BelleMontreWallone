@@ -4,26 +4,36 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-function welcomeEmail($to): void {
-    $subject = "Bienvenue - Belle Montre Wallonne";
-    $from = "noreply@bellemontrewallone.store";
-    $template = "./Resources/newsletter-welcome-email.html";
+function welcomeEmail(string $to): void {
+    $subject = 'Bienvenue - Belle Montre Wallonne';
+    $from = (string) (getenv('SMTP_FROM') ?: 'noreply@bellemontrewallone.store');
+    $smtpHost = (string) (getenv('SMTP_HOST') ?: 'postfix');
+    $smtpPort = (int) (getenv('SMTP_PORT') ?: 25);
 
-    $command = "swaks --to " . escapeshellarg($to) . " " .
-            "--from " . escapeshellarg($from) . " " .
-            "--server postfix " .
-            "--header " . escapeshellarg("Subject: $subject") . " " .
-            "--body " . escapeshellarg($template) . " " .
-            "--add-header 'Content-Type: text/html'";
+    $templatePath = dirname(__DIR__) . '/Resources/newsletter-welcome-email.html';
+    $templateBody = file_get_contents($templatePath);
 
-    exec($command, $output, $return_var);
+    if ($templateBody === false) {
+        throw new \RuntimeException('Unable to load welcome email template.');
+    }
 
-    if ($return_var === 0) {
-        echo "Mail envoyé avec succès !";
+    $command =
+        'swaks --to ' . escapeshellarg($to) . ' ' .
+        '--from ' . escapeshellarg($from) . ' ' .
+        '--server ' . escapeshellarg($smtpHost . ':' . (string) $smtpPort) . ' ' .
+        '--header ' . escapeshellarg('Subject: ' . $subject) . ' ' .
+        '--add-header ' . escapeshellarg('Content-Type: text/html; charset=UTF-8') . ' ' .
+        '--body ' . escapeshellarg($templateBody) . ' ' .
+        '--timeout 15';
 
-    } else {
-        echo "Erreur lors de l'envoi.";
-        print_r($output);
+    $output = [];
+    $returnCode = 0;
+
+    exec($command . ' 2>&1', $output, $returnCode);
+
+    if ($returnCode !== 0) {
+        $debugOutput = implode(' | ', array_slice($output, 0, 5));
+        throw new \RuntimeException('SMTP send failed. ' . $debugOutput);
     }
 }
 ?>
