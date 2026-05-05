@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { fetchWatches } from "../hooks/fetchAPI";
+import { fetchWatches, toggleWatchActif } from "../hooks/fetchAPI";
 
 const emptyForm = {
     brand: "",
@@ -33,7 +33,7 @@ export default function AdminWatchPage() {
     const [toast, setToast] = useState("");
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
-    fetchWatches(setWatches, setIsLoading);
+    fetchWatches(setWatches, () => {}, setIsLoading, 1, {});
     if (!watches || watches.length === 0 || isLoading) {
         return (
             <div className="flex min-h-screen flex-col">
@@ -169,9 +169,17 @@ export default function AdminWatchPage() {
         resetBuilder();
     }
 
+    async function handleToggleActif(watchId, currentIsActif) {
+        const updated = await toggleWatchActif(watchId, currentIsActif ? 0 : 1);
+        if (updated) {
+            setWatches((prev) => prev.map((w) => w.watchId === watchId ? { ...w, isActif: updated.isActif } : w));
+            pushToast(currentIsActif ? "Montre désactivée." : "Montre activée.");
+        }
+    }
+
     function handleEdit(id) {
         if (!watches) return;
-        const watch = watches.find((item) => item.id === id);
+        const watch = watches.find((item) => item.watchId === id);
         if (!watch) {
             return;
         }
@@ -196,7 +204,7 @@ export default function AdminWatchPage() {
     }
 
     function handleDelete(id) {
-        setWatches((prev) => prev.filter((item) => item.id !== id));
+        setWatches((prev) => prev.filter((item) => item.watchId !== id));
         pushToast("Montre supprimee avec succes.");
 
         if (editingId === id) {
@@ -338,12 +346,17 @@ export default function AdminWatchPage() {
                             )}
 
                             {watches.map((watch) => (
-                                <article className="grid grid-rows-[auto_1fr_auto] gap-3 border border-[#ddd6cc] bg-white p-3" key={watch.id}>
-                                    <div className="h-65 w-full overflow-hidden border border-[#ddd6cc] bg-[#f4f3f1]">
-                                        <ImageWithFallback
-                                            src={watch.imageUrl}
-                                            alt={`${watch.brand} ${watch.model}`}
-                                        />
+                                <article className="grid grid-rows-[auto_1fr_auto] gap-3 border border-[#ddd6cc] bg-white p-3" key={watch.watchId}>
+                                    <div className="relative">
+                                        <div className="h-65 w-full overflow-hidden border border-[#ddd6cc] bg-[#f4f3f1]">
+                                            <ImageWithFallback
+                                                src={watch.imageUrl}
+                                                alt={`${watch.brand} ${watch.model}`}
+                                            />
+                                        </div>
+                                        <span className={`absolute top-2 left-2 px-2 py-0.5 text-[0.68rem] uppercase tracking-[0.06em] font-medium ${watch.isActif ? "bg-[#d1fae5] text-[#065f46] border border-[#6ee7b7]" : "bg-[#ffe4e6] text-[#9f1239] border border-[#fda4af]"}`}>
+                                            {watch.isActif ? "Actif" : "Inactif"}
+                                        </span>
                                     </div>
                                     <div>
                                         <h3 className="my-1 font-serif">{watch.brand} - {watch.model}</h3>
@@ -356,11 +369,17 @@ export default function AdminWatchPage() {
                                         <p className="text-[0.83rem]">Diamètre: {(watch.diameter || "--") + " mm"}</p>
                                         <p className="text-[0.83rem]">Matériaux boitier: {watch.materials || "--"}</p>
                                         <p className="text-[0.83rem]">Etancheite: {(watch.watertightness || "--") + " m"}</p>
-                                        <p className="text-[0.83rem]">Est actif: {watch.isActif ? "Oui" : "Non"}</p>
                                     </div>
                                     <div className="flex flex-wrap gap-1">
-                                        <button className="cursor-pointer border border-[#ddd6cc] bg-white px-2 py-1 text-[0.72rem]" type="button" onClick={() => handleEdit(watch.id)}>Modifier</button>
-                                        <button className="cursor-pointer border border-[#ddd6cc] bg-white px-2 py-1 text-[0.72rem]" type="button" onClick={() => setPendingDeleteId(watch.id)}>
+                                        <button className="cursor-pointer border border-[#ddd6cc] bg-white px-2 py-1 text-[0.72rem]" type="button" onClick={() => handleEdit(watch.watchId)}>Modifier</button>
+                                        <button
+                                            className={`cursor-pointer border px-2 py-1 text-[0.72rem] ${watch.isActif ? "border-[#fda4af] bg-[#ffe4e6] text-[#9f1239]" : "border-[#6ee7b7] bg-[#d1fae5] text-[#065f46]"}`}
+                                            type="button"
+                                            onClick={() => handleToggleActif(watch.watchId, watch.isActif)}
+                                        >
+                                            {watch.isActif ? "Désactiver" : "Activer"}
+                                        </button>
+                                        <button className="cursor-pointer border border-[#ddd6cc] bg-white px-2 py-1 text-[0.72rem]" type="button" onClick={() => setPendingDeleteId(watch.watchId)}>
                                             Supprimer
                                         </button>
                                     </div>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
-import { fetchWatches, fetchWatchLocation } from "../hooks/fetchAPI";
+import { fetchWatchLocation } from "../hooks/fetchAPI";
 import { checkAuth } from "../hooks/auth";
 import { clientReservation } from "../hooks/reservations";
 import { sleep } from "../utils/sleep";
@@ -25,7 +25,6 @@ function ImageWithSkeleton({ src, alt, className }) {
 }
 
 export default function WatchDetailPage() {
-    const [watches, setWatches] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModal2Open, setIsModal2Open] = useState(false);
     const [sent, setSent] = useState(false);
@@ -35,28 +34,30 @@ export default function WatchDetailPage() {
     const [user, setUser] = useState(null);
     const [isSent, setIsSent] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isAuthLoading, setIsAuthLoading] = useState(true);
+    const navigate = useNavigate();
 
     const [location, setLocation] = useState(null);
-    const[isLocLoading, setIsLocLoading] = useState(false);
-    
+    const [isLocLoading, setIsLocLoading] = useState(true);
+
     useEffect(() => {
         const checkUser = async () => {
-            await checkAuth(setUser, setIsSent, setIsLoading);
+            await checkAuth(setUser, setIsSent, setIsAuthLoading);
         };
         checkUser();
     }, []);
 
     useEffect(() => {
-        if(isModal2Open && id) {
+        if (id) {
             fetchWatchLocation(id, setLocation, setIsLocLoading);
         }
-    }, [isModal2Open, id]);
+    }, [id]);
 
-    fetchWatches(setWatches, setIsLoading);
-    if (!watches || watches.length === 0 || isLoading) {
+    const watch = location?.watch ?? null;
+
+    if (isLocLoading || isAuthLoading) {
         return (<div className="flex min-h-screen flex-col">
             <SiteHeader />
-            
             <main className="mx-auto my-8 grid w-[min(1380px,calc(100%-5rem))] grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] gap-8 max-[1024px]:grid-cols-1 max-[700px]:w-[calc(100%-1.5rem)]">
                 <p>Chargement de la montre...</p>
             </main>
@@ -64,8 +65,6 @@ export default function WatchDetailPage() {
         </div>);
     }
 
-    const watch = watches.find(item => Number(item.watchId) === Number(id));
-    
     if (!watch) {
         return (
             <div className="flex min-h-screen flex-col">
@@ -147,12 +146,10 @@ export default function WatchDetailPage() {
                             <span>{watch.watertightness || "/"}</span>
                         </li>
                     </ul>
-                    {<button type="button" className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black">
-                        Demander une réservation [/]
-                    </button>}
-                    <div className="text-red-700 font-bold">
-                        ⚠️ Attention : Les réservations sont réserver à nos membres. Pour réserver, veuillez vous connecter ! ⚠️
-                    </div>
+                    <button type="button" className="inline-flex w-fit cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" onClick={() => navigate('/connexion')}>
+                        Demander une réservation
+                    </button>
+                    <p className="text-sm text-[#8c8d8e]">Réservations réservées aux membres. Connectez-vous pour accéder.</p>
                 </section>
             </main>
 
@@ -267,6 +264,14 @@ export default function WatchDetailPage() {
                                 <div className="flex justify-between border-b border-[#eee] py-2 text-[0.95rem]">
                                     <span className="font-bold">Armoire</span>
                                     <span>{location.cabinetName}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-[#eee] py-2 text-[0.95rem]">
+                                    <span className="font-bold">Position dans le magasin</span>
+                                    <span>{location.positionInStore || "/"}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-[#eee] py-2 text-[0.95rem]">
+                                    <span className="font-bold">Position dans l'armoire</span>
+                                    <span>{location.positionInCabinet || "/"}</span>
                                 </div>
                                 <div className="mt-4 flex justify-end">
                                     <button 

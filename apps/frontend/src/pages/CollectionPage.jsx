@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { formatPrice } from "../data/watches";
-import { fetchWatches } from "../hooks/fetchAPI";
+import { fetchWatches, fetchWatchFilters } from "../hooks/fetchAPI";
 
 function NoImagePlaceholder() {
     return (
@@ -43,82 +43,76 @@ function WatchImage({ watch }) {
 
 export default function CollectionPage() {
     const [watches, setWatches] = useState([]);
+    const [pagination, setPagination] = useState({ page: 1, perPage: 20, total: 0, totalPages: 0 });
     const [isLoading, setIsLoading] = useState(true);
+    const [filterOptions, setFilterOptions] = useState({ brand: [], materials: [], movement: [], diameter: [] });
 
-    const [activeBrands, setActiveBrands] = useState([]);
-    const [activeMaterials, setActiveMaterials] = useState([]);
-    const [activeMovements, setActiveMovements] = useState([]);
+    const [activeBrand, setActiveBrand] = useState(null);
+    const [activeMaterial, setActiveMaterial] = useState(null);
+    const [activeMovement, setActiveMovement] = useState(null);
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
     const [diameter, setDiameter] = useState("");
     const [sortBy, setSortBy] = useState("featured");
+    const [currentPage, setCurrentPage] = useState(1);
 
-    fetchWatches(setWatches, setIsLoading);
+    fetchWatchFilters(setFilterOptions);
+    fetchWatches(setWatches, setPagination, setIsLoading, currentPage, {
+        brand: activeBrand,
+        materials: activeMaterial,
+        movement: activeMovement,
+        diameter,
+        minRetailPrice: minPrice,
+        maxRetailPrice: maxPrice,
+    });
 
-    const availableBrands = useMemo(() => {
-        const brands = watches.map(w => w.brand).filter(Boolean);
-        return [...new Set(brands)].sort();
-    }, [watches]);
-
-    const availableMaterials = useMemo(() => {
-        const mats = watches.map(w => w.materials).filter(Boolean);
-        return [...new Set(mats)].sort();
-    }, [watches]);
-
-    const availableMovements = useMemo(() => {
-        const movements = watches.map(w => w.movement).filter(Boolean);
-        return [...new Set(movements)].sort();
-    }, [watches]);
-
-    const filteredWatches = useMemo(() => {
-        if (!watches || watches.length === 0) return [];
-
-        const filtered = watches.filter((watch) => {
-            const brandOk = activeBrands.length === 0 || activeBrands.includes(watch.brand);
-            const materialOk = activeMaterials.length === 0 || activeMaterials.includes(watch.materials);
-            const movementOk = activeMovements.length === 0 || activeMovements.includes(watch.movement);
-
-            const minPriceOk = minPrice === "" || (watch.retailPrice && watch.retailPrice >= Number(minPrice));
-            const maxPriceOk = maxPrice === "" || (watch.retailPrice && watch.retailPrice <= Number(maxPrice));
-            
-            const diameterOk = diameter === "" || (watch.diameter && Number(watch.diameter) === Number(diameter));
-
-            return brandOk && materialOk && movementOk && minPriceOk && maxPriceOk && diameterOk;
-        });
-
-        const sorted = [...filtered];
-        if (sortBy === "priceAsc") {
-            sorted.sort((a, b) => a.retailPrice - b.retailPrice);
-        }
-        if (sortBy === "priceDesc") {
-            sorted.sort((a, b) => b.retailPrice - a.retailPrice);
-        }
-        if (sortBy === "nameAsc") {
-            sorted.sort((a, b) => a.model.localeCompare(b.model, "fr"));
-        }
+    const sortedWatches = useMemo(() => {
+        const sorted = [...watches];
+        if (sortBy === "priceAsc") sorted.sort((a, b) => a.retailPrice - b.retailPrice);
+        if (sortBy === "priceDesc") sorted.sort((a, b) => b.retailPrice - a.retailPrice);
+        if (sortBy === "nameAsc") sorted.sort((a, b) => a.model.localeCompare(b.model, "fr"));
         return sorted;
-    }, [watches, activeBrands, activeMaterials, activeMovements, minPrice, maxPrice, diameter, sortBy]);
+    }, [watches, sortBy]);
 
-    function toggleBrand(brand) {
-        setActiveBrands((prev) => prev.includes(brand) ? prev.filter((item) => item !== brand) : [...prev, brand]);
+    function selectBrand(brand) {
+        setActiveBrand(prev => prev === brand ? null : brand);
+        setCurrentPage(1);
     }
 
-    function toggleMaterial(material) {
-        setActiveMaterials((prev) => prev.includes(material) ? prev.filter((item) => item !== material) : [...prev, material]);
+    function selectMaterial(material) {
+        setActiveMaterial(prev => prev === material ? null : material);
+        setCurrentPage(1);
     }
 
-    function toggleMovement(movement) {
-        setActiveMovements((prev) => prev.includes(movement) ? prev.filter((item) => item !== movement) : [...prev, movement]);
+    function selectMovement(movement) {
+        setActiveMovement(prev => prev === movement ? null : movement);
+        setCurrentPage(1);
+    }
+
+    function handleMinPrice(val) {
+        setMinPrice(val);
+        setCurrentPage(1);
+    }
+
+    function handleMaxPrice(val) {
+        setMaxPrice(val);
+        setCurrentPage(1);
+    }
+
+    function handleDiameter(val) {
+        setDiameter(val);
+        setCurrentPage(1);
     }
 
     function resetFilters() {
-        setActiveBrands([]);
-        setActiveMaterials([]);
-        setActiveMovements([]);
+        setActiveBrand(null);
+        setActiveMaterial(null);
+        setActiveMovement(null);
         setMinPrice("");
         setMaxPrice("");
         setDiameter("");
         setSortBy("featured");
+        setCurrentPage(1);
     }
 
     if (isLoading) {
@@ -142,12 +136,12 @@ export default function CollectionPage() {
                     <div className="border-t border-[#ddd6cc] pt-3">
                         <p className="text-[#8c8d8e]">Marque</p>
                         <div className="flex flex-wrap gap-2">
-                            {availableBrands.map((brand) => (
+                            {filterOptions.brand.map((brand) => (
                                 <button
                                     key={brand}
                                     type="button"
-                                    className={`cursor-pointer border px-2 py-1 text-xs uppercase tracking-[0.07em] ${activeBrands.includes(brand) ? "border-[#141823] bg-[#141823] text-[#faf8f5]" : "border-[#ddd6cc] bg-white text-[#1c1d21]"}`}
-                                    onClick={() => toggleBrand(brand)}
+                                    className={`cursor-pointer border px-2 py-1 text-xs uppercase tracking-[0.07em] ${activeBrand === brand ? "border-[#141823] bg-[#141823] text-[#faf8f5]" : "border-[#ddd6cc] bg-white text-[#1c1d21]"}`}
+                                    onClick={() => selectBrand(brand)}
                                 >
                                     {brand}
                                 </button>
@@ -157,12 +151,12 @@ export default function CollectionPage() {
                     <div className="border-t border-[#ddd6cc] pt-3">
                         <p className="text-[#8c8d8e]">Matière</p>
                         <div className="flex flex-wrap gap-2">
-                            {availableMaterials.map((material) => (
+                            {filterOptions.materials.map((material) => (
                                 <button
                                     key={material}
                                     type="button"
-                                    className={`cursor-pointer border px-2 py-1 text-xs uppercase tracking-[0.07em] ${activeMaterials.includes(material) ? "border-[#141823] bg-[#141823] text-[#faf8f5]" : "border-[#ddd6cc] bg-white text-[#1c1d21]"}`}
-                                    onClick={() => toggleMaterial(material)}
+                                    className={`cursor-pointer border px-2 py-1 text-xs uppercase tracking-[0.07em] ${activeMaterial === material ? "border-[#141823] bg-[#141823] text-[#faf8f5]" : "border-[#ddd6cc] bg-white text-[#1c1d21]"}`}
+                                    onClick={() => selectMaterial(material)}
                                 >
                                     {material}
                                 </button>
@@ -181,41 +175,41 @@ export default function CollectionPage() {
                     <div className="border-t border-[#ddd6cc] pt-3">
                         <p className="text-[#8c8d8e]">Prix Retail (€)</p>
                         <div className="flex gap-2.5">
-                            <input 
-                                type="number" 
-                                placeholder="Min" 
-                                value={minPrice} 
-                                onChange={(e) => setMinPrice(e.target.value)} 
+                            <input
+                                type="number"
+                                placeholder="Min"
+                                value={minPrice}
+                                onChange={(e) => handleMinPrice(e.target.value)}
                                 className="w-full border border-[#ddd6cc] bg-white px-2 py-1"
                             />
-                            <input 
-                                type="number" 
-                                placeholder="Max" 
-                                value={maxPrice} 
-                                onChange={(e) => setMaxPrice(e.target.value)} 
+                            <input
+                                type="number"
+                                placeholder="Max"
+                                value={maxPrice}
+                                onChange={(e) => handleMaxPrice(e.target.value)}
                                 className="w-full border border-[#ddd6cc] bg-white px-2 py-1"
                             />
                         </div>
                     </div>
                     <div className="border-t border-[#ddd6cc] pt-3">
                         <p className="text-[#8c8d8e]">Diamètre (mm)</p>
-                        <input 
-                            type="number" 
-                            placeholder="Ex: 40" 
-                            value={diameter} 
-                            onChange={(e) => setDiameter(e.target.value)} 
+                        <input
+                            type="number"
+                            placeholder="Ex: 40"
+                            value={diameter}
+                            onChange={(e) => handleDiameter(e.target.value)}
                             className="w-full border border-[#ddd6cc] bg-white px-2 py-1"
                         />
                     </div>
                     <div className="border-t border-[#ddd6cc] pt-3">
                         <p className="text-[#8c8d8e]">Mouvement</p>
                         <div className="flex flex-wrap gap-2">
-                            {availableMovements.map((mvmt) => (
+                            {filterOptions.movement.map((mvmt) => (
                                 <button
                                     key={mvmt}
                                     type="button"
-                                    className={`cursor-pointer border px-2 py-1 text-xs uppercase tracking-[0.07em] ${activeMovements.includes(mvmt) ? "border-[#141823] bg-[#141823] text-[#faf8f5]" : "border-[#ddd6cc] bg-white text-[#1c1d21]"}`}
-                                    onClick={() => toggleMovement(mvmt)}
+                                    className={`cursor-pointer border px-2 py-1 text-xs uppercase tracking-[0.07em] ${activeMovement === mvmt ? "border-[#141823] bg-[#141823] text-[#faf8f5]" : "border-[#ddd6cc] bg-white text-[#1c1d21]"}`}
+                                    onClick={() => selectMovement(mvmt)}
                                 >
                                     {mvmt}
                                 </button>
@@ -236,10 +230,10 @@ export default function CollectionPage() {
                 <section>
                     <div className="mb-4 flex items-baseline justify-between gap-3 max-[700px]:flex-col max-[700px]:items-start">
                         <h1>Collection</h1>
-                        <p className="text-[#8c8d8e]">{filteredWatches.length} modèle(s)</p>
+                        <p className="text-[#8c8d8e]">{pagination.total} modèle(s)</p>
                     </div>
                     <div className="grid grid-cols-3 gap-4 max-[1024px]:grid-cols-2 max-[700px]:grid-cols-1">
-                        {filteredWatches.map((watch) => (
+                        {sortedWatches.map((watch) => (
                             <article className="grid grid-rows-[auto_1fr_auto] gap-3 border border-[#ddd6cc] bg-white p-3" key={watch.watchId}>
                                 <Link to={`/montre/${watch.watchId}`} className="block">
                                     <div className="h-65 w-full overflow-hidden border border-[#ddd6cc] bg-[#f4f3f1] max-[700px]:h-57.5">
@@ -259,10 +253,30 @@ export default function CollectionPage() {
                             </article>
                         ))}
                     </div>
+                    {pagination.totalPages > 1 && (
+                        <div className="mt-8 flex items-center justify-center gap-3">
+                            <button
+                                type="button"
+                                disabled={currentPage <= 1}
+                                onClick={() => setCurrentPage(p => p - 1)}
+                                className="cursor-pointer border border-[#141823] bg-transparent px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#1c1d21] hover:bg-[#141823] hover:text-[#faf8f5] disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                                Précédent
+                            </button>
+                            <span className="text-sm text-[#8c8d8e]">{currentPage} / {pagination.totalPages}</span>
+                            <button
+                                type="button"
+                                disabled={currentPage >= pagination.totalPages}
+                                onClick={() => setCurrentPage(p => p + 1)}
+                                className="cursor-pointer border border-[#141823] bg-transparent px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#1c1d21] hover:bg-[#141823] hover:text-[#faf8f5] disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                                Suivant
+                            </button>
+                        </div>
+                    )}
                 </section>
             </main>
             <SiteFooter />
         </div>
     );
 }
-

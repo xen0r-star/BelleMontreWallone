@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { fetchWatches, fetchReservations } from "../hooks/fetchAPI";
+import { fetchReservations } from "../hooks/fetchAPI";
 
 function toDateTime(date, time) {
     return new Date(`${date}T${time}:00`);
@@ -17,9 +17,9 @@ function formatDateFr(dateIso) {
     }).format(date);
 }
 
-function computeStatus(reservationDate, reservationTime, returnDate) {
+function computeStatus(reservationDate, returnDate) {
     const now = new Date();
-    const start = toDateTime(reservationDate, reservationTime);
+    const start = new Date(`${reservationDate}T00:00:00`);
     const end = new Date(`${returnDate}T23:59:59`);
 
     if (now < start) {
@@ -27,7 +27,7 @@ function computeStatus(reservationDate, reservationTime, returnDate) {
     }
 
     if (now > end) {
-        return { label: "Dépasser", className: "inline-block whitespace-nowrap border border-[#ddd6cc] bg-[#ffe4e6] px-2 py-1 text-[0.72rem] uppercase text-[#9f1239]" };
+        return { label: "En retard", className: "inline-block whitespace-nowrap border border-[#ddd6cc] bg-[#ffe4e6] px-2 py-1 text-[0.72rem] uppercase text-[#9f1239]" };
     }
 
     return { label: "En cours", className: "inline-block whitespace-nowrap border border-[#ddd6cc] bg-[#d1fae5] px-2 py-1 text-[0.72rem] uppercase text-[#065f46]" };
@@ -42,7 +42,6 @@ function computeDurationDays(reservationDate, returnDate) {
 }
 
 export default function AdminReservationsPage() {
-    const [watches, setWatches] = useState([]);
     const [reservations, setReservations] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -50,19 +49,16 @@ export default function AdminReservationsPage() {
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
 
-    fetchWatches(setWatches, setIsLoading);
     fetchReservations(setReservations, setIsLoading);
 
     const allRows = useMemo(() => {
-        if (!reservations || !watches) return [];
-    
+        if (!reservations) return [];
         return reservations.map((item) => ({
             ...item,
-            watch: watches.find((watch) => watch.id === item.watchId),
-            status: computeStatus(item.reservationDate, item.reservationTime, item.returnDate),
+            status: computeStatus(item.reservationDate, item.returnDate),
             durationDays: computeDurationDays(item.reservationDate, item.returnDate)
         }));
-    }, [reservations, watches]);
+    }, [reservations]);
 
     const rows = useMemo(() => {
         return allRows.filter((row) => {
@@ -80,19 +76,16 @@ export default function AdminReservationsPage() {
     }, [allRows, statusFilter, fromDate, toDate]);
 
     const kpis = useMemo(() => {
-        if (!watches || reservations) return [];
-
-        const waiting = allRows.filter((row) => row.status.className.includes("future")).length;
-        const late = allRows.filter((row) => row.status.className.includes("late")).length;
-
+        const waiting = allRows.filter((row) => row.status.label === "A venir chercher").length;
+        const late = allRows.filter((row) => row.status.label === "En retard").length;
         return {
-            totalWatches: watches.length,
+            totalReservations: reservations.length,
             waitingReservations: waiting,
             lateReturns: late
         };
-    }, [allRows, watches]);
+    }, [allRows, reservations]);
 
-    if (!watches || watches.length === 0 || !reservations || reservations.length === 0 || isLoading) {
+    if (isLoading) {
         return (
             <div className="flex min-h-screen flex-col">
                 <SiteHeader isAdmin />
@@ -188,8 +181,8 @@ export default function AdminReservationsPage() {
             <main className="mx-auto my-8 w-[min(1380px,calc(100%-5rem))] max-[700px]:w-[calc(100%-1.5rem)]">
                 <section className="mb-4 grid grid-cols-3 gap-3 max-[1024px]:grid-cols-1">
                     <article className="border border-[#ddd6cc] bg-white p-4">
-                        <p className="m-0 text-[0.74rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Montres</p>
-                        <p className="m-0 mt-2 font-serif text-[1.8rem]">{kpis.totalWatches}</p>
+                        <p className="m-0 text-[0.74rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Réservations</p>
+                        <p className="m-0 mt-2 font-serif text-[1.8rem]">{kpis.totalReservations}</p>
                     </article>
                     <article className="border border-[#ddd6cc] bg-white p-4">
                         <p className="m-0 text-[0.74rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Reservations en attente</p>
@@ -237,21 +230,19 @@ export default function AdminReservationsPage() {
                             <thead>
                                 <tr>
                                     <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Date réservation</th>
-                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Temps</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Durée</th>
                                     <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Date retour</th>
                                     <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Statut</th>
-                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Nom</th>
-                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Prénom</th>
-                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Modèle</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Utilisateur</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Email</th>
+                                    <th className="border-b border-[#ddd6cc] p-3 text-left text-[0.75rem] uppercase tracking-[0.08em] text-[#8c8d8e]">Montre</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {rows.map((row) => (
-                                    <tr key={row.id}>
+                                {rows.map((row, idx) => (
+                                    <tr key={`${row.userId}-${row.watchId}-${idx}`}>
                                         <td className="border-b border-[#ddd6cc] p-3 align-top">
                                             {formatDateFr(row.reservationDate)}
-                                            <br />
-                                            <span className="text-[0.83rem] text-[#8c8d8e]">{row.reservationTime}</span>
                                         </td>
                                         <td className="border-b border-[#ddd6cc] p-3 align-top">
                                             {row.durationDays} jour(s)
@@ -262,14 +253,10 @@ export default function AdminReservationsPage() {
                                         <td className="border-b border-[#ddd6cc] p-3 align-top">
                                             <span className={row.status.className}>{row.status.label}</span>
                                         </td>
-                                        <td className="border-b border-[#ddd6cc] p-3 align-top">{row.lastName}</td>
-                                        <td className="border-b border-[#ddd6cc] p-3 align-top">{row.firstName}</td>
+                                        <td className="border-b border-[#ddd6cc] p-3 align-top">{row.userName}</td>
+                                        <td className="border-b border-[#ddd6cc] p-3 align-top">{row.mail}</td>
                                         <td className="border-b border-[#ddd6cc] p-3 align-top">
-                                            {row.watch ? (
-                                                <Link to={`/montre/${row.watch.id}`} className="underline">{row.watch.model}</Link>
-                                            ) : (
-                                                "N/A"
-                                            )}
+                                            <Link to={`/montre/${row.watchId}`} className="underline">{row.brand} {row.model}</Link>
                                         </td>
                                     </tr>
                                 ))}
