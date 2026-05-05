@@ -122,7 +122,7 @@ export async function toggleWatchActif(watchId, isActif) {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ isActif })
+            body: JSON.stringify({ isActif: Boolean(isActif) })
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const json = await response.json();
@@ -130,6 +130,55 @@ export async function toggleWatchActif(watchId, isActif) {
     } catch (e) {
         console.error("Erreur toggle isActif:", e);
         return null;
+    }
+}
+
+export async function updateAdminWatchAPI(watchId, fields) {
+    try {
+        const response = await fetch(`${API_URL}/admin/watches/${watchId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(fields)
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const json = await response.json();
+        return json.data ?? null;
+    } catch (e) {
+        console.error("Erreur updateAdminWatch:", e);
+        return null;
+    }
+}
+
+export async function createAdminWatchAPI(fields) {
+    try {
+        const response = await fetch(`${API_URL}/admin/watches`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(fields)
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const json = await response.json();
+        return json.data ?? null;
+    } catch (e) {
+        console.error("Erreur createAdminWatch:", e);
+        return null;
+    }
+}
+
+export async function deleteAdminWatchAPI(watchId) {
+    try {
+        const response = await fetch(`${API_URL}/admin/watches/${watchId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return true;
+    } catch (e) {
+        console.error("Erreur deleteAdminWatch:", e);
+        return false;
     }
 }
 

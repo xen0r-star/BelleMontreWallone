@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { fetchWatches, toggleWatchActif } from "../hooks/fetchAPI";
+import { fetchWatches, toggleWatchActif, updateAdminWatchAPI, createAdminWatchAPI, deleteAdminWatchAPI } from "../hooks/fetchAPI";
 
 const emptyForm = {
+    idShelf: "",
     brand: "",
     model: "",
     watchDesc: "",
     watchCollection: "",
     imageUrl: "",
+    imageUrlText: "",
     retailPrice: "",
     marketPrice: "",
     isInProduction: false,
@@ -28,13 +30,15 @@ export default function AdminWatchPage() {
     const [showBuilder, setShowBuilder] = useState(false);
     const [form, setForm] = useState(emptyForm);
     const [watches, setWatches] = useState([]);
+    const [pagination, setPagination] = useState({ page: 1, perPage: 20, total: 0, totalPages: 0 });
+    const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
     const [editingId, setEditingId] = useState(null);
     const [toast, setToast] = useState("");
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
-    fetchWatches(setWatches, () => {}, setIsLoading, 1, {});
-    if (!watches || watches.length === 0 || isLoading) {
+    fetchWatches(setWatches, setPagination, setIsLoading, currentPage, {});
+    if (isLoading && watches.length === 0) {
         return (
             <div className="flex min-h-screen flex-col">
                 <SiteHeader isAdmin />
@@ -146,23 +150,57 @@ export default function AdminWatchPage() {
         setEditingId(null);
     }
 
-    function handleSaveWatch(event) {
+    async function handleSaveWatch(event) {
         event.preventDefault();
 
-        if (!form.brand || !form.model || !form.watchDesc || !form.movement) {
-            return;
-        }
+        if (!form.brand || !form.model || !form.watchDesc || !form.movement) return;
 
         if (editingId) {
-            setWatches((prev) =>
-                prev.map((watch) =>
-                    watch.id === editingId ? { ...watch, ...form } : watch
-                )
-            );
-            pushToast("Montre modifiee avec succes.");
+            const payload = {
+                brand: form.brand,
+                model: form.model,
+                watchDesc: form.watchDesc,
+                isInProduction: Boolean(form.isInProduction),
+                movement: form.movement,
+                isActif: Boolean(form.isActif),
+            };
+            if (form.watchCollection) payload.watchCollection = form.watchCollection;
+            if (form.imageUrlText) payload.imageUrl = form.imageUrlText;
+            if (form.retailPrice !== "") payload.retailPrice = Number(form.retailPrice);
+            if (form.marketPrice !== "") payload.marketPrice = Number(form.marketPrice);
+            if (form.diameter !== "") payload.diameter = Number(form.diameter);
+            if (form.materials) payload.materials = form.materials;
+            if (form.watertightness) payload.watertightness = form.watertightness;
+
+            const updated = await updateAdminWatchAPI(editingId, payload);
+            if (!updated) return pushToast("Erreur : connexion admin requise ou champs invalides.");
+            setWatches((prev) => prev.map((w) => w.watchId === editingId ? { ...w, ...updated } : w));
+            pushToast("Montre modifiée avec succès.");
         } else {
-            setWatches((prev) => [{ id: Date.now(), ...form }, ...prev]);
-            pushToast("Montre ajoutee avec succes.");
+            if (!form.idShelf) return pushToast("L'ID de l'armoire est requis.");
+            if (!form.imageUrlText) return pushToast("L'URL de l'image est requise.");
+            if (!form.watchCollection) return pushToast("La collection est requise.");
+            const payload = {
+                idShelf: form.idShelf,
+                brand: form.brand,
+                model: form.model,
+                watchDesc: form.watchDesc,
+                watchCollection: form.watchCollection,
+                imageUrl: form.imageUrlText,
+                isInProduction: Boolean(form.isInProduction),
+                movement: form.movement,
+                isActif: Boolean(form.isActif),
+            };
+            if (form.retailPrice !== "") payload.retailPrice = Number(form.retailPrice);
+            if (form.marketPrice !== "") payload.marketPrice = Number(form.marketPrice);
+            if (form.diameter !== "") payload.diameter = Number(form.diameter);
+            if (form.materials) payload.materials = form.materials;
+            if (form.watertightness) payload.watertightness = form.watertightness;
+
+            const created = await createAdminWatchAPI(payload);
+            if (!created) return pushToast("Erreur : vérifiez l'ID armoire et les champs.");
+            setWatches((prev) => [created, ...prev]);
+            pushToast("Montre ajoutée avec succès.");
         }
 
         setShowBuilder(false);
@@ -170,10 +208,13 @@ export default function AdminWatchPage() {
     }
 
     async function handleToggleActif(watchId, currentIsActif) {
-        const updated = await toggleWatchActif(watchId, currentIsActif ? 0 : 1);
+        const newState = !(Number(currentIsActif) === 1);
+        const updated = await toggleWatchActif(watchId, newState);
         if (updated) {
             setWatches((prev) => prev.map((w) => w.watchId === watchId ? { ...w, isActif: updated.isActif } : w));
-            pushToast(currentIsActif ? "Montre désactivée." : "Montre activée.");
+            pushToast(newState ? "Montre activée." : "Montre désactivée.");
+        } else {
+            pushToast("Erreur : connexion admin requise.");
         }
     }
 
@@ -187,25 +228,29 @@ export default function AdminWatchPage() {
         setShowBuilder(true);
         setEditingId(id);
         setForm({
+            idShelf: "",
             brand: watch.brand,
             model: watch.model,
             watchDesc: watch.watchDesc,
             watchCollection: watch.watchCollection,
             imageUrl: watch.imageUrl,
+            imageUrlText: watch.imageUrl ?? "",
             retailPrice: watch.retailPrice,
             marketPrice: watch.marketPrice,
-            isInProduction: Boolean(watch.isInProduction),
+            isInProduction: Number(watch.isInProduction) === 1,
             movement: watch.movement,
             diameter: watch.diameter,
             materials: watch.materials,
             watertightness: watch.watertightness,
-            isActif: Boolean(watch.isActif)
+            isActif: Number(watch.isActif) === 1
         });
     }
 
-    function handleDelete(id) {
+    async function handleDelete(id) {
+        const ok = await deleteAdminWatchAPI(id);
+        if (!ok) return pushToast("Erreur : connexion admin requise.");
         setWatches((prev) => prev.filter((item) => item.watchId !== id));
-        pushToast("Montre supprimee avec succes.");
+        pushToast("Montre supprimée avec succès.");
 
         if (editingId === id) {
             setShowBuilder(false);
@@ -252,7 +297,7 @@ export default function AdminWatchPage() {
                                     <div className="border border-[#ddd6cc] bg-white">
                                         <div className="h-130 w-[min(100%,600px)] overflow-hidden border border-[#ddd6cc] bg-[#f4f3f1]">
                                             <ImageWithFallback
-                                                src={form.imageUrl}
+                                                src={form.imageUrl || form.imageUrlText}
                                                 alt={`${form.brand || "Marque"} ${form.model || "Modèle"}`}
                                                 fallbackText="Aucune image selectionnee"
                                             />
@@ -278,6 +323,7 @@ export default function AdminWatchPage() {
                                     <h3>Informations montre</h3>
                                     <form className="grid gap-3" onSubmit={handleSaveWatch}>
 
+                                        {!editingId && <input className={inputClass} name="idShelf" required value={form.idShelf} onChange={handleChange} placeholder="ID Armoire (idShelf)" />}
                                         <input className={inputClass} name="brand" required value={form.brand} onChange={handleChange} placeholder="Marque" />
                                         <input className={inputClass} name="model" required value={form.model} onChange={handleChange} placeholder="Modèle" />
                                         <input className={inputClass} name="watchDesc" required value={form.watchDesc} onChange={handleChange} placeholder="Description" />
@@ -304,6 +350,7 @@ export default function AdminWatchPage() {
                                             Montre active
                                         </label>
 
+                                        <input className={inputClass} name="imageUrlText" value={form.imageUrlText} onChange={handleChange} placeholder="URL de l'image (https://...)" />
                                         <label
                                             className="cursor-pointer border-2 border-dashed border-[color-mix(in_srgb,#0f4b22_28%,white)] bg-[color-mix(in_srgb,#faf8f5_92%,white)] p-4 text-center"
                                             onDragOver={(event) => event.preventDefault()}
@@ -354,8 +401,8 @@ export default function AdminWatchPage() {
                                                 alt={`${watch.brand} ${watch.model}`}
                                             />
                                         </div>
-                                        <span className={`absolute top-2 left-2 px-2 py-0.5 text-[0.68rem] uppercase tracking-[0.06em] font-medium ${watch.isActif ? "bg-[#d1fae5] text-[#065f46] border border-[#6ee7b7]" : "bg-[#ffe4e6] text-[#9f1239] border border-[#fda4af]"}`}>
-                                            {watch.isActif ? "Actif" : "Inactif"}
+                                        <span className={`absolute top-2 left-2 px-2 py-0.5 text-[0.68rem] uppercase tracking-[0.06em] font-medium ${Number(watch.isActif) === 1 ? "bg-[#d1fae5] text-[#065f46] border border-[#6ee7b7]" : "bg-[#ffe4e6] text-[#9f1239] border border-[#fda4af]"}`}>
+                                            {Number(watch.isActif) === 1 ? "Actif" : "Inactif"}
                                         </span>
                                     </div>
                                     <div>
@@ -373,11 +420,11 @@ export default function AdminWatchPage() {
                                     <div className="flex flex-wrap gap-1">
                                         <button className="cursor-pointer border border-[#ddd6cc] bg-white px-2 py-1 text-[0.72rem]" type="button" onClick={() => handleEdit(watch.watchId)}>Modifier</button>
                                         <button
-                                            className={`cursor-pointer border px-2 py-1 text-[0.72rem] ${watch.isActif ? "border-[#fda4af] bg-[#ffe4e6] text-[#9f1239]" : "border-[#6ee7b7] bg-[#d1fae5] text-[#065f46]"}`}
+                                            className={`cursor-pointer border px-2 py-1 text-[0.72rem] ${Number(watch.isActif) === 1 ? "border-[#fda4af] bg-[#ffe4e6] text-[#9f1239]" : "border-[#6ee7b7] bg-[#d1fae5] text-[#065f46]"}`}
                                             type="button"
                                             onClick={() => handleToggleActif(watch.watchId, watch.isActif)}
                                         >
-                                            {watch.isActif ? "Désactiver" : "Activer"}
+                                            {Number(watch.isActif) === 1 ? "Désactiver" : "Activer"}
                                         </button>
                                         <button className="cursor-pointer border border-[#ddd6cc] bg-white px-2 py-1 text-[0.72rem]" type="button" onClick={() => setPendingDeleteId(watch.watchId)}>
                                             Supprimer
@@ -386,6 +433,27 @@ export default function AdminWatchPage() {
                                 </article>
                             ))}
                         </div>
+                        {pagination.totalPages > 1 && (
+                            <div className="mt-6 flex items-center justify-center gap-3">
+                                <button
+                                    type="button"
+                                    disabled={currentPage <= 1 || isLoading}
+                                    onClick={() => setCurrentPage(p => p - 1)}
+                                    className="cursor-pointer border border-[#141823] bg-transparent px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#1c1d21] hover:bg-[#141823] hover:text-[#faf8f5] disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                    Précédent
+                                </button>
+                                <span className="text-sm text-[#8c8d8e]">{currentPage} / {pagination.totalPages}</span>
+                                <button
+                                    type="button"
+                                    disabled={currentPage >= pagination.totalPages || isLoading}
+                                    onClick={() => setCurrentPage(p => p + 1)}
+                                    className="cursor-pointer border border-[#141823] bg-transparent px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#1c1d21] hover:bg-[#141823] hover:text-[#faf8f5] disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                    Suivant
+                                </button>
+                            </div>
+                        )}
                     </section>
                 </section>
 

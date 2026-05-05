@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const adminLinks = [
     { to: "/admin/gestion-montre", label: "Gestion Montres" },
     { to: "/admin/reservations", label: "Suivi Reservations" }
@@ -17,8 +19,19 @@ export default function SiteHeader({ isAdmin = false, transparentOnTop = false, 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isMobileMenuVisible, setIsMobileMenuVisible] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isAdminFromAuth, setIsAdminFromAuth] = useState(false);
 
-    const mobileLinks = isAdmin
+    useEffect(() => {
+        if (isAdmin) return;
+        fetch(`${API_URL}/auth/me`, { method: 'GET', credentials: 'include' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => { if (Number(data?.user?.isAdmin) === 1) setIsAdminFromAuth(true); })
+            .catch(() => {});
+    }, [isAdmin]);
+
+    const showAdmin = isAdmin || isAdminFromAuth;
+
+    const mobileLinks = showAdmin
         ? [
             { to: "/collection", label: "Collection" },
             { to: "/besoin-daide", label: "Aide" },
@@ -142,7 +155,7 @@ export default function SiteHeader({ isAdmin = false, transparentOnTop = false, 
                 <div className="mx-auto flex h-24 w-full max-w-360 items-center justify-between px-6 max-[700px]:h-18.5 max-[700px]:px-4 max-[375px]:px-3 max-[320px]:px-2.5">
                     <div className="flex w-1/3 items-center gap-7.5 max-lg:hidden">
                         <NavLink to="/collection" className={desktopLinkClass}>Collection</NavLink>
-                        {isAdmin && <span className="border border-[#d7e5dc] bg-[#edf3ef] px-[0.55rem] py-1 text-[0.65rem] uppercase tracking-[0.08em] text-[#0f4b22]">Compte Admin</span>}
+                        {showAdmin && <span className="border border-[#d7e5dc] bg-[#edf3ef] px-[0.55rem] py-1 text-[0.65rem] uppercase tracking-[0.08em] text-[#0f4b22]">Compte Admin</span>}
                     </div>
 
                     <button
@@ -173,18 +186,23 @@ export default function SiteHeader({ isAdmin = false, transparentOnTop = false, 
 
                     <div className="flex w-1/3 items-center justify-end gap-7.5 max-lg:hidden">
                         <NavLink to="/besoin-daide" className={desktopLinkClass}>Aide</NavLink>
-                        {!isAdmin && (
+                        {!showAdmin && (
                             <NavLink to="/connexion" className={desktopLinkClass}>
                                 Compte
                             </NavLink>
                         )}
-                        {isAdmin &&
+                        {showAdmin &&
                             adminLinks.map((link) => (
                                 <NavLink key={link.to} to={link.to} className={desktopLinkClass}>
                                     {link.label}
                                 </NavLink>
                             ))
                         }
+                        {showAdmin && (
+                            <NavLink to="/connexion" className={desktopLinkClass}>
+                                Compte
+                            </NavLink>
+                        )}
                     </div>
 
                     <div className="h-11 w-11 lg:hidden max-[375px]:h-10 max-[375px]:w-10 max-[320px]:h-9 max-[320px]:w-9" aria-hidden="true" />
@@ -222,13 +240,23 @@ export default function SiteHeader({ isAdmin = false, transparentOnTop = false, 
                                 </li>
                             ))}
                         </ul>
-                        {isAdmin && (
-                            <p
-                                className={`${isMobileMenuOpen ? "mobile-menu-item-open" : "mobile-menu-item-close"} mt-3 border border-[#d7e5dc] bg-[#edf3ef] px-3 py-2 text-[0.65rem] uppercase tracking-[0.08em] text-[#0f4b22] max-[375px]:text-[0.62rem]`}
-                                style={{ animationDelay: `${isMobileMenuOpen ? 80 + mobileLinks.length * 55 : 24}ms` }}
-                            >
-                                Compte Admin
-                            </p>
+                        {showAdmin && (
+                            <div className="mt-3 grid gap-2">
+                                <p
+                                    className={`${isMobileMenuOpen ? "mobile-menu-item-open" : "mobile-menu-item-close"} border border-[#d7e5dc] bg-[#edf3ef] px-3 py-2 text-[0.65rem] uppercase tracking-[0.08em] text-[#0f4b22] max-[375px]:text-[0.62rem]`}
+                                    style={{ animationDelay: `${isMobileMenuOpen ? 80 + mobileLinks.length * 55 : 24}ms` }}
+                                >
+                                    Compte Admin
+                                </p>
+                                <NavLink
+                                    to="/connexion"
+                                    className={`${isMobileMenuOpen ? "mobile-menu-item-open" : "mobile-menu-item-close"} ${mobileLinkClass}`}
+                                    style={{ animationDelay: `${isMobileMenuOpen ? 80 + (mobileLinks.length + 1) * 55 : 24}ms` }}
+                                    onClick={() => closeMobileMenu(false)}
+                                >
+                                    Compte
+                                </NavLink>
+                            </div>
                         )}
                     </nav>
                 </>
