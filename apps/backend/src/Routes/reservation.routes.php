@@ -92,19 +92,21 @@ function createReservation(): void {
         $isPremium = $userReservationData['isPremium'] ?? 0;
         $activeReservations = $userReservationData['activeReservations'] ?? 0;
 
-        if (!$isPremium && $activeReservations >= 1) {
-            Response::json([
-                'error' => 'RESERVATION_LIMIT_REACHED',
-                'message' => 'Non-premium users can only have 1 active reservation',
-            ], 403);
-            return;
+        if (!$token['isAdmin']) {
+            if (!$isPremium && $activeReservations >= 1) {
+                Response::json([
+                    'error' => 'RESERVATION_LIMIT_REACHED',
+                    'message' => 'Non-premium users can only have 1 active reservation',
+                ], 403);
+                return;
 
-        } elseif ($isPremium && $activeReservations >= 5) {
-            Response::json([
-                'error' => 'RESERVATION_LIMIT_REACHED',
-                'message' => 'Premium users can only have 5 active reservations',
-            ], 403);
-            return;
+            } elseif ($isPremium && $activeReservations >= 5) {
+                Response::json([
+                    'error' => 'RESERVATION_LIMIT_REACHED',
+                    'message' => 'Premium users can only have 5 active reservations',
+                ], 403);
+                return;
+            }
         }
 
 

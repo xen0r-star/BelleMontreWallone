@@ -37,7 +37,7 @@ function getWatches(): void {
         $minMarketPrice = $_GET['minPrice'] ?? null;
         $maxMarketPrice = $_GET['maxPrice'] ?? null;
 
-        $where = [];
+        $where = ['isActif = 1'];
         $params = [];
 
         if ($movement !== null) {
@@ -80,11 +80,7 @@ function getWatches(): void {
             $params[':maxMarketPrice'] = $maxMarketPrice;
         }
 
-        $whereSql = '';
-
-        if (!empty($where)) {
-            $whereSql = 'WHERE ' . implode(' AND ', $where);
-        }
+        $whereSql = 'WHERE ' . implode(' AND ', $where);
 
 
 
@@ -217,40 +213,40 @@ function listSortValuesWatches(): void {
 
     try {
         $movements = $db->query("
-            SELECT movement 
-            FROM watch 
-            WHERE movement IS NOT NULL AND movement != ''
+            SELECT movement
+            FROM watch
+            WHERE isActif = 1 AND movement IS NOT NULL AND movement != ''
             GROUP BY movement
             ORDER BY movement ASC
         ")->fetchAll(PDO::FETCH_COLUMN);
-        
+
         $materials = $db->query("
             SELECT materials
             FROM watch
-            WHERE materials IS NOT NULL AND materials != ''
+            WHERE isActif = 1 AND materials IS NOT NULL AND materials != ''
             GROUP BY materials
             ORDER BY materials ASC
         ")->fetchAll(PDO::FETCH_COLUMN);
 
         $diameters = $db->query("
-            SELECT DISTINCT TRUNCATE(diameter, 0) AS diameter 
-            FROM watch 
-            WHERE diameter IS NOT NULL AND diameter != 0
+            SELECT DISTINCT TRUNCATE(diameter, 0) AS diameter
+            FROM watch
+            WHERE isActif = 1 AND diameter IS NOT NULL AND diameter != 0
             ORDER BY diameter ASC
         ")->fetchAll(PDO::FETCH_COLUMN);
 
         $brands = $db->query("
-            SELECT brand 
-            FROM watch 
-            WHERE brand IS NOT NULL AND brand != ''
+            SELECT brand
+            FROM watch
+            WHERE isActif = 1 AND brand IS NOT NULL AND brand != ''
             GROUP BY brand
             ORDER BY brand ASC
         ")->fetchAll(PDO::FETCH_COLUMN);
 
-        $minRetailPrice = $db->query('SELECT MIN(retailPrice) FROM watch')->fetchColumn();
-        $maxRetailPrice = $db->query('SELECT MAX(retailPrice) FROM watch')->fetchColumn();
-        $minMarketPrice = $db->query('SELECT MIN(marketPrice) FROM watch')->fetchColumn();
-        $maxMarketPrice = $db->query('SELECT MAX(marketPrice) FROM watch')->fetchColumn();
+        $minRetailPrice = $db->query('SELECT MIN(retailPrice) FROM watch WHERE isActif = 1')->fetchColumn();
+        $maxRetailPrice = $db->query('SELECT MAX(retailPrice) FROM watch WHERE isActif = 1')->fetchColumn();
+        $minMarketPrice = $db->query('SELECT MIN(marketPrice) FROM watch WHERE isActif = 1')->fetchColumn();
+        $maxMarketPrice = $db->query('SELECT MAX(marketPrice) FROM watch WHERE isActif = 1')->fetchColumn();
 
     } catch (PDOException) {
         Response::json([

@@ -53,6 +53,9 @@ export default function CollectionPage() {
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
     const [diameter, setDiameter] = useState("");
+    const [draftMinPrice, setDraftMinPrice] = useState("");
+    const [draftMaxPrice, setDraftMaxPrice] = useState("");
+    const [draftDiameter, setDraftDiameter] = useState("");
     const [sortBy, setSortBy] = useState("featured");
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -89,18 +92,10 @@ export default function CollectionPage() {
         setCurrentPage(1);
     }
 
-    function handleMinPrice(val) {
-        setMinPrice(val);
-        setCurrentPage(1);
-    }
-
-    function handleMaxPrice(val) {
-        setMaxPrice(val);
-        setCurrentPage(1);
-    }
-
-    function handleDiameter(val) {
-        setDiameter(val);
+    function applyPriceFilters() {
+        setMinPrice(draftMinPrice);
+        setMaxPrice(draftMaxPrice);
+        setDiameter(draftDiameter);
         setCurrentPage(1);
     }
 
@@ -111,6 +106,9 @@ export default function CollectionPage() {
         setMinPrice("");
         setMaxPrice("");
         setDiameter("");
+        setDraftMinPrice("");
+        setDraftMaxPrice("");
+        setDraftDiameter("");
         setSortBy("featured");
         setCurrentPage(1);
     }
@@ -178,15 +176,15 @@ export default function CollectionPage() {
                             <input
                                 type="number"
                                 placeholder="Min"
-                                value={minPrice}
-                                onChange={(e) => handleMinPrice(e.target.value)}
+                                value={draftMinPrice}
+                                onChange={(e) => setDraftMinPrice(e.target.value)}
                                 className="w-full border border-[#ddd6cc] bg-white px-2 py-1"
                             />
                             <input
                                 type="number"
                                 placeholder="Max"
-                                value={maxPrice}
-                                onChange={(e) => handleMaxPrice(e.target.value)}
+                                value={draftMaxPrice}
+                                onChange={(e) => setDraftMaxPrice(e.target.value)}
                                 className="w-full border border-[#ddd6cc] bg-white px-2 py-1"
                             />
                         </div>
@@ -196,8 +194,8 @@ export default function CollectionPage() {
                         <input
                             type="number"
                             placeholder="Ex: 40"
-                            value={diameter}
-                            onChange={(e) => handleDiameter(e.target.value)}
+                            value={draftDiameter}
+                            onChange={(e) => setDraftDiameter(e.target.value)}
                             className="w-full border border-[#ddd6cc] bg-white px-2 py-1"
                         />
                     </div>
@@ -216,16 +214,22 @@ export default function CollectionPage() {
                             ))}
                         </div>
                     </div>
-                    <button
-                        type="button"
-                        className="inline-flex w-fit cursor-pointer border border-[#141823] bg-transparent px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#1c1d21] hover:bg-black hover:text-[#faf8f5]"
-                        onClick={resetFilters}
-                    >
-                        Réinitialiser
-                    </button>
-                    <Link className="inline-flex w-full items-center justify-center border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black" to="/connexion">
-                        Connexion
-                    </Link>
+                    <div className="flex gap-2">
+                        <button
+                            type="button"
+                            className="inline-flex w-fit cursor-pointer border border-[#141823] bg-transparent px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#1c1d21] hover:bg-black hover:text-[#faf8f5]"
+                            onClick={resetFilters}
+                        >
+                            Réinitialiser
+                        </button>
+                        <button
+                            type="button"
+                            className="inline-flex flex-1 items-center justify-center cursor-pointer border border-[#141823] bg-[#141823] px-4 py-2 text-xs uppercase tracking-[0.08em] text-[#faf8f5] hover:bg-black"
+                            onClick={applyPriceFilters}
+                        >
+                            Valider
+                        </button>
+                    </div>
                 </aside>
                 <section>
                     <div className="mb-4 flex items-baseline justify-between gap-3 max-[700px]:flex-col max-[700px]:items-start">

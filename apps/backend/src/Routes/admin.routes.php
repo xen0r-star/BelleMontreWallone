@@ -21,12 +21,12 @@ function getAdminReservations(): void {
 
     try {
         $statement = $db->prepare("
-            SELECT l.userId, l.watchId, l.loanDate AS reservationDate, 
-                   l.returnLoanDate AS returnDate, l.isOutDelay, u.userName, 
-                   u.mail, w.brand, w.model 
-            FROM loan l 
-            INNER JOIN user u ON u.userId = l.userId 
-            INNER JOIN watch w ON w.watchId = l.watchId 
+            SELECT l.userId, l.watchId, l.loanDate AS reservationDate,
+                   l.returnLoanDate AS returnDate, u.userName,
+                   u.mail, w.brand, w.model
+            FROM loan l
+            INNER JOIN user u ON u.userId = l.userId
+            INNER JOIN watch w ON w.watchId = l.watchId
             ORDER BY l.loanDate DESC, l.returnLoanDate DESC
         ");
 
@@ -194,7 +194,7 @@ function updateAdminWatch(string $id): void {
         $params['model'] = $model;
     }
 
-    $watchDesc = Validation::String($data, 'watchDesc', $errors, 255, false);
+    $watchDesc = Validation::String($data, 'watchDesc', $errors, 255, true);
     if ($watchDesc !== null) {
         $setClauses[] = 'watchDesc = :watchDesc';
         $params['watchDesc'] = $watchDesc;

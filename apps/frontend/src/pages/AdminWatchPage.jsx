@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import { fetchWatches, toggleWatchActif, updateAdminWatchAPI, createAdminWatchAPI, deleteAdminWatchAPI } from "../hooks/fetchAPI";
+import { checkAuth } from "../hooks/auth";
 
 const emptyForm = {
     idShelf: "",
@@ -36,8 +38,22 @@ export default function AdminWatchPage() {
     const [editingId, setEditingId] = useState(null);
     const [toast, setToast] = useState("");
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
+    const [authUser, setAuthUser] = useState(null);
+    const [authVerified, setAuthVerified] = useState(false);
+    const [authLoading, setAuthLoading] = useState(true);
+
+    useEffect(() => {
+        checkAuth(setAuthUser, setAuthVerified, setAuthLoading);
+    }, []);
 
     fetchWatches(setWatches, setPagination, setIsLoading, currentPage, {});
+
+    if (authLoading) return null;
+
+    if (!authVerified || !authUser?.isAdmin) {
+        return <Navigate to="/connexion" replace />;
+    }
+
     if (isLoading && watches.length === 0) {
         return (
             <div className="flex min-h-screen flex-col">

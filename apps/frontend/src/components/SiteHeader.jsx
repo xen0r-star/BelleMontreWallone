@@ -35,7 +35,8 @@ export default function SiteHeader({ isAdmin = false, transparentOnTop = false, 
         ? [
             { to: "/collection", label: "Collection" },
             { to: "/besoin-daide", label: "Aide" },
-            ...adminLinks
+            ...adminLinks,
+            { to: "/connexion", label: "Compte" }
         ]
         : [
             { to: "/collection", label: "Collection" },
@@ -241,22 +242,12 @@ export default function SiteHeader({ isAdmin = false, transparentOnTop = false, 
                             ))}
                         </ul>
                         {showAdmin && (
-                            <div className="mt-3 grid gap-2">
-                                <p
-                                    className={`${isMobileMenuOpen ? "mobile-menu-item-open" : "mobile-menu-item-close"} border border-[#d7e5dc] bg-[#edf3ef] px-3 py-2 text-[0.65rem] uppercase tracking-[0.08em] text-[#0f4b22] max-[375px]:text-[0.62rem]`}
-                                    style={{ animationDelay: `${isMobileMenuOpen ? 80 + mobileLinks.length * 55 : 24}ms` }}
-                                >
-                                    Compte Admin
-                                </p>
-                                <NavLink
-                                    to="/connexion"
-                                    className={`${isMobileMenuOpen ? "mobile-menu-item-open" : "mobile-menu-item-close"} ${mobileLinkClass}`}
-                                    style={{ animationDelay: `${isMobileMenuOpen ? 80 + (mobileLinks.length + 1) * 55 : 24}ms` }}
-                                    onClick={() => closeMobileMenu(false)}
-                                >
-                                    Compte
-                                </NavLink>
-                            </div>
+                            <p
+                                className={`${isMobileMenuOpen ? "mobile-menu-item-open" : "mobile-menu-item-close"} mt-3 border border-[#d7e5dc] bg-[#edf3ef] px-3 py-2 text-[0.65rem] uppercase tracking-[0.08em] text-[#0f4b22] max-[375px]:text-[0.62rem]`}
+                                style={{ animationDelay: `${isMobileMenuOpen ? 80 + mobileLinks.length * 55 : 24}ms` }}
+                            >
+                                Compte Admin
+                            </p>
                         )}
                     </nav>
                 </>

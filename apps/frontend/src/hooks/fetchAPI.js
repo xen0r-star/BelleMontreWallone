@@ -96,7 +96,8 @@ export function fetchReservations(setReservations, setIsLoading) {
                     method: 'GET',
                     headers: {
                         'Content-Type' : 'application/json'
-                    }
+                    },
+                    credentials: 'include'
                 });
                 if (!response.ok) throw new Error(`Erreur requête HTTP : ${response.status}`);
                 const { data } = await response.json();
