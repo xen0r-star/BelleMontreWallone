@@ -4,7 +4,10 @@
 INSERT INTO user(userId, userName, mail, dateOfBirth, hashPassWord, isAdmin, isPremium) VALUES
 (1, 'Dupont', 'dupont@mail.com', '1990-05-12', '$2y$13$TYjrxpTfrvq5/jYggPlPheahDSkWyx57Rz1adeF2JmT206pLFvBxm', 1, 0),
 (2, 'Martin', 'martin@mail.com', '1985-03-22', '$2y$13$TYjrxpTfrvq5/jYggPlPheahDSkWyx57Rz1adeF2JmT206pLFvBxm', 0, 0),
-(3, 'Durand', 'durand@mail.com', '2000-11-02', '$2y$13$TYjrxpTfrvq5/jYggPlPheahDSkWyx57Rz1adeF2JmT206pLFvBxm', 0, 0);
+(3, 'Durand', 'durand@mail.com', '2000-11-02', '$2y$13$TYjrxpTfrvq5/jYggPlPheahDSkWyx57Rz1adeF2JmT206pLFvBxm', 0, 0),
+(4, 'compteAdmin', 'admin@bellemontreWallone.be', '2003-02-20', '$2y$13$8Yg5aCT269jE5XmfVehsdeFkP/57CGHaqqrISCMSareIhsFzNtZ5S', 1, 0),
+(5, 'comptePremium', 'premium@bellemontreWallone.be', '2002-09-18', '$2y$13$oKJ/Z2Ru0UroHomrg//R8OXlQqN0vmZsNUXf7.S/PuM7KwogtO5fm', 0, 1);
+
 
 -- Villes
 INSERT INTO city(idCity, cityName) VALUES

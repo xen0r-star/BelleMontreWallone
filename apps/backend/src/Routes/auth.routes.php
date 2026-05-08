@@ -73,7 +73,7 @@ function login(): void {
     setcookie('access_token', $accessToken, [
         'expires' => time() + 900,
         'path' => '/',
-        'secure' => false,
+        'secure' => $config["app_env"] === 'development' ? false : true,
         'httponly' => true,
         'samesite' => 'lax'
     ]);
@@ -81,7 +81,7 @@ function login(): void {
     setcookie('refresh_token', $refreshTokenRecord, [
         'expires' => time() + 604800,
         'path' => '/',
-        'secure' => false,
+        'secure' => $config["app_env"] === 'development' ? false : true,
         'httponly' => true,
         'samesite' => 'lax'
     ]);
@@ -99,6 +99,7 @@ function login(): void {
 }
 
 function logout(): void {
+    $config = require __DIR__ . '/../Config/config.php';
     $refreshToken = $_COOKIE['refresh_token'] ?? '';
     if (!$refreshToken) {
         Response::json([
@@ -125,7 +126,7 @@ function logout(): void {
     setcookie('access_token', '', [
         'expires' => time() - 2500,
         'path' => '/',
-        'secure' => false,
+        'secure' => $config["app_env"] === 'development' ? false : true,
         'httponly' => true,
         'samesite' => 'lax'
     ]);
@@ -133,7 +134,7 @@ function logout(): void {
     setcookie('refresh_token', '', [
         'expires' => time() - 2500,
         'path' => '/',
-        'secure' => false,
+        'secure' => $config["app_env"] === 'development' ? false : true,
         'httponly' => true,
         'samesite' => 'lax'
     ]);
@@ -266,7 +267,7 @@ function register(): void {
     setcookie('access_token', $accessToken, [
         'expires' => time() + 900,
         'path' => '/',
-        'secure' => false,
+        'secure' => $config["app_env"] === 'development' ? false : true,
         'httponly' => true,
         'samesite' => 'lax'
     ]);
@@ -274,7 +275,7 @@ function register(): void {
     setcookie('refresh_token', $refreshTokenRecord, [
         'expires' => time() + 604800,
         'path' => '/',
-        'secure' => false,
+        'secure' => $config["app_env"] === 'development' ? false : true,
         'httponly' => true,
         'samesite' => 'lax'
     ]);
@@ -383,7 +384,7 @@ function refresh(): void {
         setcookie('access_token', $newAccessToken, [
             'expires' => time() + 900,
             'path' => '/',
-            'secure' => false,
+            'secure' => $config["app_env"] === 'development' ? false : true,
             'httponly' => true,
             'samesite' => 'lax'
         ]);
@@ -452,7 +453,7 @@ function verifyPassword(string $plainPassword, string $storedHash): bool {
         return true;
     }
 
-    return hash_equals($storedHash, $plainPassword);
+    return false;
 }
 
 function generateAccessToken(array $user, array $config): string {
