@@ -64,9 +64,9 @@ export default function AdminReservationsPage() {
         return allRows.filter((row) => {
             const statusOk =
                 statusFilter === "all" ||
-                (statusFilter === "current" && row.status.className.includes("current")) ||
-                (statusFilter === "future" && row.status.className.includes("future")) ||
-                (statusFilter === "late" && row.status.className.includes("late"));
+                (statusFilter === "current" && row.status.label === "En cours") ||
+                (statusFilter === "future" && row.status.label === "A venir chercher") ||
+                (statusFilter === "late" && row.status.label === "En retard");
 
             const fromOk = !fromDate || row.reservationDate >= fromDate;
             const toOk = !toDate || row.reservationDate <= toDate;
