@@ -74,17 +74,12 @@ function subscribeNewsletter(): void {
 
     try {
         welcomeEmail((string) $email);
-
-        Response::json([
-            'success' => true,
-            'message' => 'Newsletter subscription received successfully',
-        ]);
-
     } catch (\Throwable $exception) {
         error_log('Newsletter email send failed: ' . $exception->getMessage());
-        Response::json([
-            'error' => 'EMAIL_ERROR',
-            'message' => 'Subscription saved but failed to send welcome email',
-        ], 500);
     }
+
+    Response::json([
+        'success' => true,
+        'message' => 'Newsletter subscription received successfully',
+    ]);
 }
